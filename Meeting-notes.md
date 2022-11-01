@@ -7,7 +7,7 @@ In each meeting, you are required to discuss:
 3. Plan for the next week for everyone
 4. Deviations and changes to the project plan, if any
 
-# Meeting 01.11.2022 16::00
+# Meeting 01.11.2022 16:00
 
 **Participants**: 
 1. Hung Vu - 1006058
