@@ -7,6 +7,46 @@ In each meeting, you are required to discuss:
 3. Plan for the next week for everyone
 4. Deviations and changes to the project plan, if any
 
+# Meeting 01.11.2022 16::00
+
+**Participants**: 
+1. Hung Vu - 1006058
+2. Harvey Lim - 1026986
+3. Saku Kovanen - 1024713
+4. Siim Kasela - 1006443 
+
+## Summary of works
+1. Teamwork (Harvey, Hung, Saku, Siim) 
+   
+   First stage project plan brainstorming, initial concept and class hierarchy.
+
+
+## Challenges
+
+1. Level editor to create levels and to save them in a file?
+2. Multiple paths of the enemies, so branched paths and enemies choose one with some intelligence? 
+3. Tower placement can be altered during an enemy wave ?
+
+
+## Actions
+1. Everyone (Harvey, Hung, Saku, Siim):
+
+   -Familiarize with UML-diagram format, libraries and git
+   
+
+
+## Project status 
+Project plan ideation is almost done. Basic theme of the game is done. Class hierarchy is done. Scope of work is done. High level structure is done. Use of external libraries is done.
+ 
+
+### TODOs
+1. UML-diagram
+2. Divide work
+3. Scheduling of project
+4. Format plan to .pdf
+5. Everyone: Familiarize with UML-diagram
+
+
 
 # Meeting dd.mm.2021 HH::MM
 
