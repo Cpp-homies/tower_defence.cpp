@@ -19,6 +19,7 @@ In each meeting, you are required to discuss:
 1. Teamwork (Harvey, Hung, Saku, Siim) 
    
    First stage project plan brainstorming, initial concept and class hierarchy.
+   Invite link to Miro board: https://miro.com/welcomeonboard/T0xiZXRHUHJjcWVtNGdhSUdFOGVEdVBJZEhCSjVCQVo0dzl6N2QzWk11NlhTeFBjOUo5TGNXY3B1eUt6VDNEQnwzNDU4NzY0NTIzOTQ0OTQ2OTIzfDI=?share_link_id=505897365883
 
 
 ## Challenges
