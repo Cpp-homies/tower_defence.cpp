@@ -47,7 +47,7 @@ Project plan ideation is almost done. Basic theme of the game is done. Class hie
 5. Everyone: Familiarize with UML-diagram
 6. Figure out CMake configuation for the project
 
-
+<!--
 # Meeting dd.mm.2021 HH::MM
 
 **Participants**: 
@@ -90,3 +90,4 @@ Short summary of current project status.
 ### TODOs
 1. Member 1: Write an action.
 2. ...
+-->
