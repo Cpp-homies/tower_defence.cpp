@@ -31,8 +31,8 @@ In each meeting, you are required to discuss:
 ## Actions
 1. Everyone (Harvey, Hung, Saku, Siim):
 
-   -Familiarize with UML-diagram format, libraries and git
-   
+   - Familiarize with UML-diagram format, libraries and git
+   - Figure out how to set up the development environment   
 
 
 ## Project status 
@@ -45,7 +45,7 @@ Project plan ideation is almost done. Basic theme of the game is done. Class hie
 3. Scheduling of project
 4. Format plan to .pdf
 5. Everyone: Familiarize with UML-diagram
-
+6. Figure out CMake configuation for the project
 
 
 # Meeting dd.mm.2021 HH::MM
