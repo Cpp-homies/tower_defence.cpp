@@ -7,6 +7,67 @@ In each meeting, you are required to discuss:
 3. Plan for the next week for everyone
 4. Deviations and changes to the project plan, if any
 
+# Meeting 08.11.2022 15:15
+Participants:
+1. Siim Kasela - 1006443
+2. Saku Kovanen - 1024713
+3. Harvey Lim - 1026986
+4. Hung Vu - 1006058
+
+## Summary of works
+- Teamwork (Siim, Saku, Harvey, Hung)
+   - UML diagram
+      - Can be found on Miro board (Linked in meeting notes of meeting 01.11.2022 16:00)
+   - Scheduling of project
+   - Decide on libraries to use
+      - Qt vs SFM
+
+- Individual work (Siim, Saku, Harvey, Hung)
+   - Get familiar with Git
+
+
+## Challenges
+   1. Need to learn Qt is a quite a challenge
+
+## Actions
+1. Everyone (Siim, Saku, Harvey, Hung)
+      - Mess around with Qt to get comfortable with Qt
+2. Siim
+      - Introduction text in project plan
+3. Saku
+      - Meeting notes
+4. Harvey
+      - Scope and features (bottom half) in project plan
+5. Hung
+      - Scope and features (top half) in project plan
+
+
+## Project status
+Project plan is almost done. UML diagram is done. Next big step is to start working on the program in Qt creator. Before that each team member has to learn a little of Qt since none of us has prior knowledge of it.
+
+### TODOs
+- Divide work
+- Get to know Qt
+- Finish project plan
+- Start program in Qt creator
+
+<!-- 
+End of meeting notes of meeting 08.11.2022 15:15
+Use the following to seperate meetings
+-->
+---
+---
+<br>
+
+# Meeting Notes
+In this file, you are required to take notes for your weekly meetings. 
+In each meeting, you are required to discuss:
+
+1. What each member has done during the week?
+2. Are there challenges or problems? Discuss the possible solutions
+3. Plan for the next week for everyone
+4. Deviations and changes to the project plan, if any
+
 # Meeting 01.11.2022 16:00
 
 **Participants**: 
