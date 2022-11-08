@@ -20,7 +20,7 @@ Participants:
       - Can be found on Miro board (Linked in meeting notes of meeting 01.11.2022 16:00)
    - Scheduling of project
    - Decide on libraries to use
-      - Qt vs SFM
+      - Qt vs SFML
 
 - Individual work (Siim, Saku, Harvey, Hung)
    - Get familiar with Git
