@@ -19,6 +19,12 @@
 # Libraries
 build
 
+# VSCode configuration files
+.vscode
+
+# Compiled file
+src/main
+
 # Shared objects (inc. Windows DLLs)
 
 
