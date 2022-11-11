@@ -4,10 +4,10 @@ This is the template for the projects. Please copy the project description here.
 You can use Markdown language to render it as formatted **HTML** file.
 
 # Group
-- Member 1
-- Member 2
-- Member 3
-- Member 4
+- Hung Vu - 1006058
+- Harvey Lim - 1026986
+- Saku Kovanen - 1024713
+- Siim Kasela - 1006443
 
 # Repository organization
 Your project implementation should follow the skelaton organization in this repository.
