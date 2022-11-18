@@ -1,8 +1,13 @@
-#include <iostream>
+#include <QApplication>
+#include "game.h"
 
-// Currently a placeholder document.
+Game * game;
 
-int main() {
-  std::cout << "Build works" << std::endl;
-  return 0;
+int main(int argc, char *argv[])
+{
+    QApplication a(argc, argv);
+    game = new Game();
+    game->show();
+
+    return a.exec();
 }

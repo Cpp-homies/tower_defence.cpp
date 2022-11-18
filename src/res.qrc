@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/CStudent_projectile.png</file>
+        <file>images/CStudent1.png</file>
+        <file>images/Path_tile_bottom_left.png</file>
+        <file>images/Path_tile_horizontal.png</file>
+        <file>images/Path_tile_left_top.png</file>
+        <file>images/Path_tile_right_bottom.png</file>
+        <file>images/Path_tile_top_right.png</file>
+        <file>images/Path_tile_vertical.png</file>
+        <file>images/syntax_error1.png</file>
+        <file>images/syntax_error2.png</file>
+        <file>images/syntax_error3.png</file>
+        <file>images/Tile.png</file>
+        <file>images/Tile2.png</file>
+        <file>images/Tile3.png</file>
+        <file>images/Tile4.png</file>
+    </qresource>
+</RCC>
