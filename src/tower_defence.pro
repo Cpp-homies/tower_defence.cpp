@@ -11,10 +11,12 @@ CONFIG += c++17
 SOURCES += \
     game.cpp \
     main.cpp \
+    projectile.cpp \
     square.cpp
 
 HEADERS += \
     game.h \
+    projectile.h \
     square.h
 
 # Default rules for deployment.

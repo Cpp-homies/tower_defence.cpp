@@ -1,4 +1,8 @@
 #include "square.h"
+#include "projectile.h"
+#include "game.h"
+
+extern Game * game;
 
 Square::Square(QWidget *parent)
     : QLabel(parent)
@@ -12,4 +16,17 @@ Square::Square(QWidget *parent)
 void Square::mousePressEvent(QMouseEvent* /* unused */){
 
     setPixmap(QPixmap(":/images/CStudent1.png"));
+
+    fire(game->getSquarePos(2,2));
+}
+
+void Square::fire(QPointF targetPos){
+
+    Projectile* projectile = new Projectile();
+    projectile->setPos(x(),y());
+    QLineF ln(pos(),targetPos);
+    int angle = -1 * ln.angle();
+    projectile->setTransformOriginPoint(projectile->pixmap().width()/2,projectile->pixmap().height()/2);
+    projectile->setRotation(angle);
+    game->scene->addItem(projectile);
 }
