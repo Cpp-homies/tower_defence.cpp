@@ -7,12 +7,14 @@
 #include <QGraphicsWidget>
 #include <QPushButton>
 #include "square.h"
+#include "mainview.h"
 
 #include <QIcon>
 #include <QScrollBar>
 
+extern MainView * view;
 
-Game::Game()
+Game::Game(QObject* parent): QGraphicsScene(parent)
 {
     health_ = 100;
     currency_ = 100;
@@ -25,12 +27,9 @@ Game::Game()
 
 void Game::createMap(){
 
-    scene = new QGraphicsScene(this);
-    scene ->setSceneRect(0,0,1000,1000);
 
-    setFixedSize(1000,1000);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+
 
     layout = new QGraphicsGridLayout();
     layout->setSpacing(0);
@@ -40,7 +39,7 @@ void Game::createMap(){
         for (int j = 0; j < 10; ++j) {
 
                 Square* tile = new Square(nullptr);
-                QGraphicsProxyWidget* backgroundTile = scene->addWidget(tile);
+                QGraphicsProxyWidget* backgroundTile = addWidget(tile);
                 layout->addItem(backgroundTile,i,j);
 
 
@@ -50,8 +49,7 @@ void Game::createMap(){
 
     QGraphicsWidget *form = new QGraphicsWidget;
     form->setLayout(layout);
-    scene->addItem(form);
-    setScene(scene);
+    addItem(form);
 }
 
 bool Game::isLost() const{
@@ -88,6 +86,14 @@ void Game::changeScore (int dPoints) {
 
 void Game::advanceLevel () {
     level_++;
+}
+
+//just testing scene changing
+//can be used for other purposes
+void Game::keyPressEvent(QKeyEvent* /* unused */)
+{
+    view->showLeaderboard();
+
 }
 
 QPointF Game::getSquarePos(int row, int column){

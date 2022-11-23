@@ -3,13 +3,13 @@
 #include <QGraphicsView>
 #include <QGraphicsGridLayout>
 
-class Game: public QGraphicsView
+class Game: public QGraphicsScene
 {
     Q_OBJECT
 
 public:
 
-    Game();
+    Game(QObject* parent);
     QPointF getSquarePos(int row, int column);
 
     bool isLost() const;
@@ -24,10 +24,10 @@ public:
     void changeScore(int points);
     void changeCurrency(int dCurrency);
     void advanceLevel();
-
+    void keyPressEvent(QKeyEvent *keyEvent);
 
     QGraphicsGridLayout* layout;
-    QGraphicsScene * scene;
+
 
 private:
 
