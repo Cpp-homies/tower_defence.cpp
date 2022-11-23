@@ -25,22 +25,21 @@ Square::Square(QWidget *parent, int& x, int& y) : QLabel(parent) {
     this->y_ = y;
 }
 
-/**
-*
-* TODO: delete the Square somehow without crashing the game
-*
-************************************************/
 void Square::mousePressEvent(QMouseEvent* /* unused */){
 //    setPixmap(QPixmap(":/images/CStudent1.png"));
+
+
+
+    // create a new tower and add it to the scene
+    QGraphicsWidget* tower = game->scene->addWidget(new Tower(nullptr, x_, y_));
 
     // remove the current square from the grid
     QGraphicsLayoutItem* square = game->layout->itemAt(x_, y_);
     game->layout->removeItem(square);
 
     // add a tower to the grid at the given possition
-    QGraphicsWidget* tower = game->scene->addWidget(new Tower());
     game->layout->addItem(tower, x_, y_);
+
     // delete the current square
-    // TODO: delete the Square somehow without crashing the game
-//    delete this;
+    deleteLater();
 }

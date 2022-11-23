@@ -10,9 +10,11 @@ public:
      Square(QWidget *parent = nullptr);
      Square(QWidget *parent, int& x, int& y);
      void mousePressEvent(QMouseEvent* event);
-private:
+protected:
      int x_;
      int y_;
+private:
+
 //     QGraphicsGridLayout* parentGrid;
      QList<QPixmap> tilePics;
 signals:
