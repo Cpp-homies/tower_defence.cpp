@@ -11,11 +11,11 @@ public:
 
     Game();
     QPointF getSquarePos(int row, int column);
-
+    QGraphicsScene * scene;
+    QGraphicsGridLayout* layout;
 private:
 
-    QGraphicsGridLayout* layout;
-    QGraphicsScene * scene;
+
 };
 
 #endif // GAME_H

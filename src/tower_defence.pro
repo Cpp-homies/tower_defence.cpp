@@ -11,11 +11,13 @@ CONFIG += c++17
 SOURCES += \
     game.cpp \
     main.cpp \
-    square.cpp
+    square.cpp \
+    tower.cpp \
 
 HEADERS += \
     game.h \
-    square.h
+    square.h \
+    tower.h \
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

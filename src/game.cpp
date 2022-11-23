@@ -28,7 +28,7 @@ Game::Game()
     {
         for (int j = 0; j < 10; ++j) {
 
-                Square* tile = new Square(nullptr);
+                Square* tile = new Square(nullptr, i, j);
                 QGraphicsProxyWidget* backgroundTile = scene->addWidget(tile);
                 layout->addItem(backgroundTile,i,j);
 
@@ -47,5 +47,3 @@ QPointF Game::getSquarePos(int row, int column){
 
     return layout->itemAt(row,column)->graphicsItem()->scenePos();
 }
-
-
