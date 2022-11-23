@@ -8,6 +8,7 @@ class Square : public QLabel
 public:
      Square(QWidget *parent = nullptr);
      void mousePressEvent(QMouseEvent* event);
+     void fire(QPointF target);
 private:
      QList<QPixmap> tilePics;
 signals:

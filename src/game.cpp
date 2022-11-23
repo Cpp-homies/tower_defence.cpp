@@ -14,6 +14,17 @@
 
 Game::Game()
 {
+    health_ = 100;
+    currency_ = 100;
+    level_ = 1;
+    score_ = 0;
+
+    createMap();
+
+}
+
+void Game::createMap(){
+
     scene = new QGraphicsScene(this);
     scene ->setSceneRect(0,0,1000,1000);
 
@@ -41,6 +52,42 @@ Game::Game()
     form->setLayout(layout);
     scene->addItem(form);
     setScene(scene);
+}
+
+bool Game::isLost() const{
+    return health_>0;
+}
+
+int Game::getHealth() const {
+    return health_;
+}
+
+int Game::getCurrency() const {
+    return currency_;
+}
+
+int Game::getLevel() const {
+    return level_;
+}
+
+int Game::getScore() const {
+    return score_;
+}
+
+void Game::changeHealth (int dHealth) {
+    health_+=dHealth;
+}
+
+void Game::changeCurrency (int dCurrency) {
+    currency_+=dCurrency;
+}
+
+void Game::changeScore (int dPoints) {
+    score_+=dPoints;
+}
+
+void Game::advanceLevel () {
+    level_++;
 }
 
 QPointF Game::getSquarePos(int row, int column){
