@@ -1,6 +1,7 @@
 #include "square.h"
 #include "projectile.h"
 #include "game.h"
+#include <QTransform>
 
 extern Game * game;
 
@@ -26,6 +27,9 @@ void Square::fire(QPointF targetPos){
     projectile->setPos(x(),y());
     QLineF ln(pos(),targetPos);
     int angle = -1 * ln.angle();
+    QTransform transform;
+    transform.rotate(angle);
+    Square::setPixmap(Square::pixmap().transformed(transform));
     projectile->setTransformOriginPoint(projectile->pixmap().width()/2,projectile->pixmap().height()/2);
     projectile->setRotation(angle);
     game->scene->addItem(projectile);
