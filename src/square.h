@@ -10,6 +10,8 @@ public:
      Square(QWidget *parent = nullptr);
      Square(QWidget *parent, int& x, int& y);
      void mousePressEvent(QMouseEvent* event);
+public slots:
+     virtual void getTarget() {};// virtual function for Tower class, needed for connecting the timer
 protected:
      int x_;
      int y_;

@@ -7,7 +7,6 @@
 #include <QGraphicsProxyWidget>
 #include <QGraphicsWidget>
 
-extern Game * game;
 extern MainView * view;
 
 Square::Square(QWidget *parent)
@@ -31,13 +30,13 @@ Square::Square(QWidget *parent, int& x, int& y) : QLabel(parent) {
 
 void Square::mousePressEvent(QMouseEvent* /* unused */){
     // if the build fail
-    if (game->buildTower(this->x_, this->y_)) {
+    if (view->getGame()->buildTower(this->x_, this->y_)) {
         // do something
     }
 
     deleteLater();
 
-    fire(view->getGame()->getSquarePos(2,2));
+//    fire(view->getGame()->getSquarePos(2,2));
 }
 
 //Fires a projectile at the targetPos

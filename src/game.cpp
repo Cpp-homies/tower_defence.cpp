@@ -38,15 +38,9 @@ void Game::createMap(){
     for(int i = 0; i<10; ++i)
     {
         for (int j = 0; j < 10; ++j) {
-
-<<<<<<< HEAD
-                Square* tile = new Square(nullptr, i, j);
-                QGraphicsProxyWidget* backgroundTile = scene->addWidget(tile);
-=======
-                Square* tile = new Square(nullptr);
-                QGraphicsProxyWidget* backgroundTile = addWidget(tile);
->>>>>>> master
-                layout->addItem(backgroundTile,i,j);
+            Square* tile = new Square(nullptr, i, j);
+            QGraphicsProxyWidget* backgroundTile = addWidget(tile);
+            layout->addItem(backgroundTile,i,j);
 
 
         }
@@ -56,6 +50,11 @@ void Game::createMap(){
     QGraphicsWidget *form = new QGraphicsWidget;
     form->setLayout(layout);
     addItem(form);
+
+
+    // add a dummy enemy for testing
+    Enemy* enemy = new Enemy();
+    addItem(enemy);
 }
 
 bool Game::isLost() const{
@@ -122,10 +121,10 @@ bool Game::buildTower(int row, int column) {
     }
     else {
         // create a new tower and add it to the scene
-        QGraphicsWidget* tower = this->scene->addWidget(new Tower(nullptr, row, column));
+        QGraphicsWidget* tower = this->addWidget(new Tower(nullptr, row, column));
 
         // remove the current square from the grid
-        this->scene->removeItem(square->graphicsItem());
+        this->removeItem(square->graphicsItem());
         this->layout->removeItem(square);
 
         // add a tower to the grid at the given possition
