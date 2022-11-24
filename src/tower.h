@@ -32,11 +32,15 @@ private:
     double damageMultiplier_;
     int totalCost_;
     bool has_target_;
+    int rotationAngle_ = 0;
     QGraphicsEllipseItem* attack_area;
     QPointF target_pos;
 };
 
-// dummy class for enemy
+
+
+
+// dummy enemy class for testing purpose
 class Enemy : public QGraphicsPixmapItem {
 public:
     Enemy() {

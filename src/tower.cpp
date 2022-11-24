@@ -127,6 +127,18 @@ void Tower::fire(QPointF targetPos) {
 //    transform.rotate(angle);
 //    Square::setPixmap(Square::pixmap().transformed(transform));
 
+    // if the angle towards the enemy changes,
+    // undo the previous rotation and update to the new rotation angle
+    if (this->rotationAngle_ != angle) {
+        // add by -rotationAngle to undo the previous rotation
+        // the add the new angle
+        rotationAngle_ = -1 * rotationAngle_ + angle;
+        QTransform transform;
+        transform.rotate(rotationAngle_);
+        Square::setPixmap(Square::pixmap().transformed(transform));
+    }
+
+
 }
 
 double Tower::distanceTo(QGraphicsItem * item) {
