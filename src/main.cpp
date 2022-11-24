@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     view = new MainView();
 
     //change this to showMenu() when ready
-    view->showGame();
+    view->showMenu();
 
     view->show();
 

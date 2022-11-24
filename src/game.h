@@ -32,6 +32,9 @@ public:
     QGraphicsLinearLayout* gameLayout; //the whole are of the game, including the controls
     QGraphicsLinearLayout* controlsLayout;//change this to your liking
 
+public slots:
+    void showMenu();
+
 private:
 
     int health_;
