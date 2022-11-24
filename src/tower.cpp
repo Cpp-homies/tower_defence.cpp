@@ -9,6 +9,11 @@
 
 extern MainView * view;
 
+const qreal atkArea_LineWidth = 0.3;
+const Qt::PenStyle atkArea_LineStyle = Qt::DashLine;
+const Qt::GlobalColor atkArea_Color = Qt::black;
+
+
 //Tower::Tower(QWidget *parent) : Square(parent) {
 
 //}
@@ -30,7 +35,7 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
     attack_area = new QGraphicsEllipseItem(QRect(QPoint(0,0),
                                                  QSize(this->pixmap().width(),
                                                  this->pixmap().height())));
-    attack_area->setPen(QPen(QBrush(Qt::black), 0.5, Qt::DashLine));
+    attack_area->setPen(QPen(QBrush(atkArea_Color), atkArea_LineWidth, atkArea_LineStyle));
     view->getGame()->addItem(attack_area);
 
     attack_area->setScale(this->range_);
@@ -62,7 +67,7 @@ Tower::Tower(int x, int y, QWidget *parent, int range, int damage, int attackInt
     attack_area = new QGraphicsEllipseItem(QRect(QPoint(0,0),
                                                  QSize(this->pixmap().width(),
                                                  this->pixmap().height())));
-    attack_area->setPen(QPen(QBrush(Qt::black), 0.5, Qt::DashLine));
+    attack_area->setPen(QPen(QBrush(atkArea_Color), atkArea_LineWidth, atkArea_LineStyle));
     view->getGame()->addItem(attack_area);
 
     attack_area->setScale(this->range_);
