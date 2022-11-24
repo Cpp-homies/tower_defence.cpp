@@ -9,14 +9,17 @@
 
 extern MainView * view;
 
-Tower::Tower(QWidget *parent) {
+//Tower::Tower(QWidget *parent) : Square(parent) {
 
-}
+//}
 
-Tower::Tower(QWidget *parent, int& x, int& y) {
-    // set Tower's coordinates in the gridMap
-    this->x_ = x;
-    this->y_ = y;
+Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
+    // set the default tower stats
+    range_ = 5;
+    damage_ = 10;
+    attackInterval_ = 1000;
+    damageMultiplier_ = 1.0;
+
 
     // set tower graphics
     QTransform rm;
@@ -30,29 +33,61 @@ Tower::Tower(QWidget *parent, int& x, int& y) {
     attack_area->setPen(QPen(QBrush(Qt::black), 0.5, Qt::DashLine));
     view->getGame()->addItem(attack_area);
 
-    attack_area->setScale(range);
+    attack_area->setScale(this->range_);
 
 
     // move the attack area to the right possition
     QPointF area_center(0 + attack_area->rect().width() / 2, 0 + attack_area->rect().height() / 2);
-    area_center *= range;
+    area_center *= this->range_;
     QLineF ln(area_center,towerCenter());
     attack_area->setPos(0+ln.dx(),0+ln.dy());
 
     // connect the timer to the getTarget function
     QTimer * timer = new QTimer();
     connect(timer,SIGNAL(timeout()),this,SLOT(getTarget()));
-    timer->start(1000);
+    timer->start(attackInterval_);
+}
+
+Tower::Tower(int x, int y, QWidget *parent, int range, int damage, int attackInterval) : Square(x, y, parent),
+                                                                    range_(range), damage_(damage), attackInterval_(attackInterval) {
+    // set the original damage multipier to 1.0
+    damageMultiplier_ = 1.0;
+
+    // set tower graphics
+    QTransform rm;
+    rm.rotate(90);
+    setPixmap(QPixmap(":/images/CStudent1.png").transformed(rm));
+
+    // create the attack circle
+    attack_area = new QGraphicsEllipseItem(QRect(QPoint(0,0),
+                                                 QSize(this->pixmap().width(),
+                                                 this->pixmap().height())));
+    attack_area->setPen(QPen(QBrush(Qt::black), 0.5, Qt::DashLine));
+    view->getGame()->addItem(attack_area);
+
+    attack_area->setScale(this->range_);
+
+
+    // move the attack area to the right possition
+    QPointF area_center(0 + attack_area->rect().width() / 2, 0 + attack_area->rect().height() / 2);
+    area_center *= this->range_;
+    QLineF ln(area_center,towerCenter());
+    attack_area->setPos(0+ln.dx(),0+ln.dy());
+
+    // connect the timer to the getTarget function
+    QTimer * timer = new QTimer();
+    connect(timer,SIGNAL(timeout()),this,SLOT(getTarget()));
+    timer->start(attackInterval_);
 }
 
 void Tower::getTarget() {
     // get all the items in the tower's range
     QList <QGraphicsItem*> items_in_range = attack_area->collidingItems();
 
-    has_target = false;
+    has_target_ = false;
 
     // initiallize min_dist with the largest possible distance in range (the max range of the tower)
-    double min_dist = this->range * this->pixmap().width();
+    double min_dist = this->range_ * this->pixmap().width();
     QPointF min_point = QPointF(0,0);
 
     // find the closest enemy
@@ -63,12 +98,12 @@ void Tower::getTarget() {
             if (cur_dist < min_dist){
                 min_dist = cur_dist;
                 min_point = items_in_range[i]->pos();
-                has_target = true;
+                has_target_ = true;
             }
         }
     }
 
-    if (has_target) {
+    if (has_target_) {
         this->target_pos = min_point;
         fire(target_pos);
     }
@@ -96,7 +131,7 @@ void Tower::fire(QPointF targetPos) {
 
 double Tower::distanceTo(QGraphicsItem * item) {
     QLineF line(pos(),item->pos());
-        return line.length();
+    return line.length();
 }
 
 QPointF Tower::towerCenter() {

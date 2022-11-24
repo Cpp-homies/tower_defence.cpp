@@ -135,22 +135,23 @@ QPointF Game::getSquarePos(int row, int column){
 *       and update the if condition accordingly
 */
 bool Game::buildTower(int row, int column) {
-    QGraphicsLayoutItem* square = this->layout->itemAt(row, column);
+    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
+    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
 
     // if there is a tower occupying the square, return false
-    if (dynamic_cast<Tower*>(square->graphicsItem())) {
+    if (dynamic_cast<Tower*>(widget)) {
         return false;
     }
     else {
         // create a new tower and add it to the scene
-        QGraphicsWidget* tower = this->addWidget(new Tower(nullptr, row, column));
+        QGraphicsWidget* tower = this->addWidget(new Tower(row, column, nullptr));
 
         // remove the current square from the grid
-        this->removeItem(square->graphicsItem());
-        this->layout->removeItem(square);
+        this->removeItem(item->graphicsItem());
+        this->mapLayout->removeItem(item);
 
         // add a tower to the grid at the given possition
-        this->layout->addItem(tower, row, column);
+        this->mapLayout->addItem(tower, row, column);
 
 /**
 *

@@ -16,15 +16,22 @@ extern MainView* view;
 class Tower : public Square {
 public:
     Tower(QWidget *parent = nullptr);
-    Tower(QWidget *parent, int& x, int& y);
+    Tower(int x, int y, QWidget *parent);
+    Tower(int x, int y, QWidget *parent, int range, int damage, int attackSpeed);
     QPointF towerCenter();
     double distanceTo(QGraphicsItem * item);
     void fire(QPointF targetPos);
 public slots:
     void getTarget();
 private:
-    int range = 5;
-    bool has_target;
+    int range_ = 5;
+    int damage_;
+    int attackInterval_;// in mili-seconds
+    bool upgradeable_;
+    int ugradeLevel_;
+    double damageMultiplier_;
+    int totalCost_;
+    bool has_target_;
     QGraphicsEllipseItem* attack_area;
     QPointF target_pos;
 };

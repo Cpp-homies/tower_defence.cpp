@@ -7,7 +7,7 @@ class Square : public QLabel
 {
     Q_OBJECT
 public:
-     Square(QWidget *parent = nullptr);
+//     Square(QWidget *parent = nullptr);
      Square(int x, int y, QWidget *parent = nullptr);
      void mousePressEvent(QMouseEvent* event);
 public slots:
@@ -20,8 +20,8 @@ private:
 
 //     QGraphicsGridLayout* parentGrid;
      QList<QPixmap> tilePics;
-     int x_;
-     int y_;
+//     int x_;
+//     int y_;
 signals:
 
 };

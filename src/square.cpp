@@ -18,23 +18,15 @@ Square::Square(int x, int y, QWidget *parent)
     setPixmap(tilePics[r]);
 }
 
-Square::Square(QWidget *parent, int& x, int& y) : QLabel(parent) {
-    // set randomized tile picture
-    tilePics << QPixmap(":/images/Tile.png") << QPixmap(":/images/Tile2.png") << QPixmap(":/images/Tile3.png") << QPixmap(":/images/Tile4.png");
-    int r = rand() % 4;
-    setPixmap(tilePics[r]);
-
-    this->x_ = x;
-    this->y_ = y;
-}
-
 void Square::mousePressEvent(QMouseEvent* /* unused */){
     // if the build fail
-    if (view->getGame()->buildTower(this->x_, this->y_)) {
+    if (!view->getGame()->buildTower(this->x_, this->y_)) {
         // do something
     }
-
-    deleteLater();
+    else {
+        // build successful, schedule to delete the square
+        deleteLater();
+    }
 
 //    fire(view->getGame()->getSquarePos(2,2));
 }
