@@ -23,6 +23,9 @@ build*/
 # VSCode configuration files
 .vscode
 
+# VSCode configuration files
+tower_defence.pro.user.*
+
 # Compiled file
 src/main
 

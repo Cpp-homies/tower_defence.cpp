@@ -13,6 +13,7 @@ public:
 protected:
      int x_;
      int y_;
+     void fire(QPointF target);
 private:
 
 //     QGraphicsGridLayout* parentGrid;
