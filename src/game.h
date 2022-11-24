@@ -2,6 +2,7 @@
 #define GAME_H
 #include <QGraphicsView>
 #include <QGraphicsGridLayout>
+#include <QGraphicsLinearLayout>
 
 class Game: public QGraphicsScene
 {
@@ -17,6 +18,7 @@ public:
     // QGraphicsGridLayout* layout;
     bool isLost() const;
     void createMap();
+    void createGameControls();
 
     int getHealth() const;
     int getScore() const;
@@ -29,7 +31,10 @@ public:
     void advanceLevel();
     void keyPressEvent(QKeyEvent *keyEvent);
 
-    QGraphicsGridLayout* layout;
+    QGraphicsGridLayout* mapLayout; //map area where the action is
+    QGraphicsLinearLayout* gameLayout; //the whole are of the game, including the controls
+    QGraphicsLinearLayout* controlsLayout;//change this to your liking
+
 private:
 
     int health_;

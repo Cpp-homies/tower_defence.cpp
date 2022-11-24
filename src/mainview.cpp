@@ -7,7 +7,7 @@ MainView::MainView(QWidget *parent): QGraphicsView(parent)
     game_= new Game(this);
     menu_ = new Menu(this);
     leaderboard_ = new Leaderboard(this);
-    setFixedSize(700,700);
+    setFixedSize(800,700);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 

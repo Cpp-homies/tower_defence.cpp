@@ -5,7 +5,7 @@
 #include <QLabel>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsWidget>
-#include <QPushButton>
+#include <QGraphicsTextItem>
 #include "square.h"
 #include "mainview.h"
 #include "tower.h"
@@ -22,7 +22,12 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     level_ = 1;
     score_ = 0;
 
+    gameLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     createMap();
+    createGameControls();
+    QGraphicsWidget *form = new QGraphicsWidget;
+    form->setLayout(gameLayout);
+    addItem(form);
 
 }
 
@@ -32,30 +37,47 @@ void Game::createMap(){
 
 
 
-    layout = new QGraphicsGridLayout();
-    layout->setSpacing(0);
+    mapLayout = new QGraphicsGridLayout();
+    mapLayout->setSpacing(0);
 
     for(int i = 0; i<10; ++i)
     {
         for (int j = 0; j < 10; ++j) {
-            Square* tile = new Square(nullptr, i, j);
-            QGraphicsProxyWidget* backgroundTile = addWidget(tile);
-            layout->addItem(backgroundTile,i,j);
-
+                Square* tile = new Square(i,j,nullptr);
+                QGraphicsProxyWidget* backgroundTile = addWidget(tile);
+                mapLayout->addItem(backgroundTile,i,j);
 
         }
     }
 
 
     QGraphicsWidget *form = new QGraphicsWidget;
-    form->setLayout(layout);
-    addItem(form);
-
+    form->setLayout(mapLayout);
+    gameLayout->addItem(form);
 
     // add a dummy enemy for testing
     Enemy* enemy = new Enemy();
     addItem(enemy);
 }
+
+void Game::createGameControls()
+{
+    //for testing purposes, all Layouts will auto adjust the size
+    controlsLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    for(int i = 0; i<5; ++i)
+    {
+        QLabel* test = new QLabel();
+        test->setText(QString("success!!"));
+        QGraphicsProxyWidget* player = addWidget(test);
+        controlsLayout->addItem(player);
+    }
+
+    QGraphicsWidget *form = new QGraphicsWidget;
+    form->setLayout(controlsLayout);
+    gameLayout->addItem(form);
+}
+
+
 
 bool Game::isLost() const{
     return health_>0;
@@ -103,7 +125,7 @@ void Game::keyPressEvent(QKeyEvent* /* unused */)
 
 QPointF Game::getSquarePos(int row, int column){
 
-    return layout->itemAt(row,column)->graphicsItem()->scenePos();
+    return mapLayout->itemAt(row,column)->graphicsItem()->scenePos();
 }
 
 /**
