@@ -11,6 +11,8 @@ public:
 
     Game();
     QPointF getSquarePos(int row, int column);
+    bool buildTower(int row, int column);
+
     QGraphicsScene * scene;
     QGraphicsGridLayout* layout;
 private:

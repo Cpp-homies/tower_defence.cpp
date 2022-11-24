@@ -6,6 +6,7 @@
 #include <QGraphicsEllipseItem>
 #include <QGraphicsPixmapItem>
 #include <QPointF>
+#include <QObject>
 
 
 class Tower : public Square {
@@ -16,6 +17,7 @@ public:
 private:
     int range = 5;
     QGraphicsEllipseItem* attack_area;
+    QPointF attack_point;
 };
 
 #endif // TOWER_H

@@ -7,6 +7,7 @@
 #include <QGraphicsWidget>
 #include <QPushButton>
 #include "square.h"
+#include "tower.h"
 
 #include <QIcon>
 #include <QScrollBar>
@@ -46,4 +47,38 @@ Game::Game()
 QPointF Game::getSquarePos(int row, int column){
 
     return layout->itemAt(row,column)->graphicsItem()->scenePos();
+}
+
+/**
+*
+* TODO: delete the square without crashing the game
+* TODO: use a table to keep track of where the empty squares, towers, and path are
+*       and update the if condition accordingly
+*/
+bool Game::buildTower(int row, int column) {
+    QGraphicsLayoutItem* square = this->layout->itemAt(row, column);
+
+    // if there is a tower occupying the square, return false
+    if (dynamic_cast<Tower*>(square->graphicsItem())) {
+        return false;
+    }
+    else {
+        // create a new tower and add it to the scene
+        QGraphicsWidget* tower = this->scene->addWidget(new Tower(nullptr, row, column));
+
+        // remove the current square from the grid
+        this->scene->removeItem(square->graphicsItem());
+        this->layout->removeItem(square);
+
+        // add a tower to the grid at the given possition
+        this->layout->addItem(tower, row, column);
+
+/**
+*
+* TODO: delete the square without crashing the game
+*/
+        // delete the current square
+//        delete square;
+        return true;
+    }
 }

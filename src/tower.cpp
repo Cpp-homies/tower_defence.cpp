@@ -21,7 +21,7 @@ Tower::Tower(QWidget *parent, int& x, int& y) {
     rm.rotate(90);
     setPixmap(QPixmap(":/images/CStudent1.png").transformed(rm));
 
-    // set the attack circle
+    // create the attack circle
     attack_area = new QGraphicsEllipseItem(QRect(QPoint(0,0),
                                                  QSize(this->pixmap().width(),
                                                  this->pixmap().height())));
@@ -34,7 +34,6 @@ Tower::Tower(QWidget *parent, int& x, int& y) {
     // move the attack area to the right possition
     QPointF area_center(0 + attack_area->rect().width() / 2, 0 + attack_area->rect().height() / 2);
     area_center *= range;
-//    area_center = this->mapToGlobal(area_center);
     QLineF ln(area_center,towerCenter());
     attack_area->setPos(0+ln.dx(),0+ln.dy());
 
