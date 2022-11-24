@@ -6,8 +6,8 @@
 
 extern MainView * view;
 
-Square::Square(QWidget *parent)
-    : QLabel(parent)
+Square::Square(int x, int y, QWidget *parent)
+    : QLabel(parent), x_(x), y_(y)
 {
     // set randomized tile picture
     tilePics << QPixmap(":/images/Tile.png") << QPixmap(":/images/Tile2.png") << QPixmap(":/images/Tile3.png") << QPixmap(":/images/Tile4.png");
@@ -26,8 +26,8 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
 void Square::fire(QPointF targetPos){
 
     Projectile* projectile = new Projectile();
-    projectile->setPos(x(),y()); //takes the same coordinates as the tower
-    QLineF ln(pos(),targetPos); //path of the projectile
+    projectile->setPos(view->getGame()->getSquarePos(x_,y_)); //takes the same coordinates as the tower
+    QLineF ln(view->getGame()->getSquarePos(x_,y_),targetPos); //path of the projectile
     int angle = -1 * ln.angle(); //the angle from tower to target
 
     //set the projectile image to rotate around it's centre and then add it to the scene
