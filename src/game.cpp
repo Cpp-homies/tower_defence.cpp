@@ -128,12 +128,6 @@ QPointF Game::getSquarePos(int row, int column){
     return mapLayout->itemAt(row,column)->graphicsItem()->scenePos();
 }
 
-/**
-*
-* TODO: delete the square without crashing the game
-* TODO: use a table to keep track of where the empty squares, towers, and path are
-*       and update the if condition accordingly
-*/
 bool Game::buildTower(int row, int column) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
@@ -153,12 +147,16 @@ bool Game::buildTower(int row, int column) {
         // add a tower to the grid at the given possition
         this->mapLayout->addItem(tower, row, column);
 
-/**
-*
-* TODO: delete the square without crashing the game
-*/
-        // delete the current square
-//        delete square;
         return true;
     }
+}
+
+QWidget* Game::getWidgetAt(int row, int column) {
+    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
+    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
+    return widget;
+}
+
+bool Game::isTower(int row, int column) {
+    return dynamic_cast<Tower*>(getWidgetAt(row, column));
 }

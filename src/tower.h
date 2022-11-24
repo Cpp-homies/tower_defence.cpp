@@ -39,7 +39,7 @@ private:
 // dummy class for enemy
 class Enemy : public QGraphicsPixmapItem {
 public:
-    Enemy(QGraphicsItem * parent=nullptr) {
+    Enemy() {
         setPixmap(QPixmap(":/images/syntax_error3.png"));
 
         // get the possition of the square at (4, 4)

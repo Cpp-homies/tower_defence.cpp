@@ -12,11 +12,9 @@ public:
 
     Game(QObject* parent);
     QPointF getSquarePos(int row, int column);
-//    QWidget* getWidgetAt(int row, int column);
+    QWidget* getWidgetAt(int row, int column);
     bool buildTower(int row, int column);
 
-    // QGraphicsScene * scene;
-    // QGraphicsGridLayout* layout;
     bool isLost() const;
     void createMap();
     void createGameControls();
@@ -36,7 +34,7 @@ public:
     QGraphicsLinearLayout* gameLayout; //the whole are of the game, including the controls
     QGraphicsLinearLayout* controlsLayout;//change this to your liking
 
-//    bool
+    bool isTower(int row, int column);
 
 private:
 
