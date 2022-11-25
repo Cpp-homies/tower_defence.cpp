@@ -9,13 +9,21 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    button.cpp \
     game.cpp \
+    leaderboard.cpp \
     main.cpp \
+    mainview.cpp \
+    menu.cpp \
     projectile.cpp \
     square.cpp
 
 HEADERS += \
+    button.h \
     game.h \
+    leaderboard.h \
+    mainview.h \
+    menu.h \
     projectile.h \
     square.h
 
@@ -26,3 +34,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     res.qrc
+
+FORMS +=

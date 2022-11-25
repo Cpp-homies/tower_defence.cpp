@@ -15,5 +15,9 @@
         <file>images/Tile2.png</file>
         <file>images/Tile3.png</file>
         <file>images/Tile4.png</file>
+        <file>images/Currency.png</file>
+        <file>images/hp_icon.png</file>
+        <file>images/Mainmenu.png</file>
+        <file>images/Game_controls.png</file>
     </qresource>
 </RCC>

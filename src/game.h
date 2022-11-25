@@ -2,18 +2,20 @@
 #define GAME_H
 #include <QGraphicsView>
 #include <QGraphicsGridLayout>
+#include <QGraphicsLinearLayout>
 
-class Game: public QGraphicsView
+class Game: public QGraphicsScene
 {
     Q_OBJECT
 
 public:
 
-    Game();
+    Game(QObject* parent);
     QPointF getSquarePos(int row, int column);
 
     bool isLost() const;
     void createMap();
+    void createGameControls();
 
     int getHealth() const;
     int getScore() const;
@@ -24,10 +26,14 @@ public:
     void changeScore(int points);
     void changeCurrency(int dCurrency);
     void advanceLevel();
+    void keyPressEvent(QKeyEvent *keyEvent);
 
+    QGraphicsGridLayout* mapLayout; //map area where the action is
+    QGraphicsLinearLayout* gameLayout; //the whole are of the game, including the controls
+    QGraphicsLinearLayout* controlsLayout;//change this to your liking
 
-    QGraphicsGridLayout* layout;
-    QGraphicsScene * scene;
+public slots:
+    void showMenu();
 
 private:
 

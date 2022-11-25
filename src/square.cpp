@@ -1,12 +1,13 @@
 #include "square.h"
 #include "projectile.h"
 #include "game.h"
+#include "mainview.h"
 #include <QTransform>
 
-extern Game * game;
+extern MainView * view;
 
-Square::Square(QWidget *parent)
-    : QLabel(parent)
+Square::Square(int x, int y, QWidget *parent)
+    : QLabel(parent), x_(x), y_(y)
 {
     // set randomized tile picture
     tilePics << QPixmap(":/images/Tile.png") << QPixmap(":/images/Tile2.png") << QPixmap(":/images/Tile3.png") << QPixmap(":/images/Tile4.png");
@@ -18,19 +19,27 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
 
     setPixmap(QPixmap(":/images/CStudent1.png"));
 
-    fire(game->getSquarePos(2,2));
+    fire(view->getGame()->getSquarePos(2,2));
 }
 
+//Fires a projectile at the targetPos
 void Square::fire(QPointF targetPos){
 
     Projectile* projectile = new Projectile();
-    projectile->setPos(x(),y());
-    QLineF ln(pos(),targetPos);
-    int angle = -1 * ln.angle();
+    projectile->setPos(view->getGame()->getSquarePos(x_,y_)); //takes the same coordinates as the tower
+    QLineF ln(view->getGame()->getSquarePos(x_,y_),targetPos); //path of the projectile
+    int angle = -1 * ln.angle(); //the angle from tower to target
+
+    //set the projectile image to rotate around it's centre and then add it to the scene
+    projectile->setTransformOriginPoint(projectile->pixmap().width()/2,projectile->pixmap().height()/2);
+    projectile->setRotation(angle);
+    view->getGame()->addItem(projectile);
+
+    //rotate the square
     QTransform transform;
     transform.rotate(angle);
     Square::setPixmap(Square::pixmap().transformed(transform));
-    projectile->setTransformOriginPoint(projectile->pixmap().width()/2,projectile->pixmap().height()/2);
-    projectile->setRotation(angle);
-    game->scene->addItem(projectile);
+
+
+
 }

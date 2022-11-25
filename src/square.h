@@ -6,11 +6,13 @@ class Square : public QLabel
 {
     Q_OBJECT
 public:
-     Square(QWidget *parent = nullptr);
+     Square(int x, int y, QWidget *parent = nullptr);
      void mousePressEvent(QMouseEvent* event);
      void fire(QPointF target);
 private:
      QList<QPixmap> tilePics;
+     int x_;
+     int y_;
 signals:
 
 };
