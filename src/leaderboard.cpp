@@ -24,8 +24,8 @@ Leaderboard::Leaderboard(QObject* parent): QGraphicsScene(parent)
 
     // main menu button
     Button * menuButton = new Button(QString("Main menu"), 200, 50);
-    int lxPos = this->width() - menuButton->boundingRect().width() - 10;
-    int lyPos = 10;
+    int lxPos = this->width() - menuButton->boundingRect().width() - 40;
+    int lyPos = 40;
     menuButton->setPos(lxPos, lyPos);
     connect(menuButton, SIGNAL(clicked()), this, SLOT(showMenu()));
     menuButton->setZValue(10);
