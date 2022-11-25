@@ -2,7 +2,9 @@
 #define LEADERBOARD_H
 
 #include <QGraphicsScene>
-
+/**
+ * @brief The Leaderboard class. Contains the leaderboard interface.
+ */
 class Leaderboard: public QGraphicsScene
 {
     Q_OBJECT

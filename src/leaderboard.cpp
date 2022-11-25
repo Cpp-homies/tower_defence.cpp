@@ -2,7 +2,10 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsProxyWidget>
 #include <QLabel>
-
+/**
+ * @brief Leaderboard contructor
+ * @param parent The parent object of the leaderboard.
+ */
 Leaderboard::Leaderboard(QObject* parent): QGraphicsScene(parent)
 {
     //only testing purposes

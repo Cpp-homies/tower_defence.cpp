@@ -5,7 +5,12 @@
 #include <QTransform>
 
 extern MainView * view;
-
+/**
+ * @brief Square constructor
+ * @param x The X-coordinate (column) of the square.
+ * @param y The Y-coordinate (row) of the square.
+ * @param parent The parent object of the square.
+ */
 Square::Square(int x, int y, QWidget *parent)
     : QLabel(parent), x_(x), y_(y)
 {
@@ -14,7 +19,9 @@ Square::Square(int x, int y, QWidget *parent)
     int r = rand() % 4;
     setPixmap(tilePics[r]);
 }
-
+/**
+ * @brief Event handler for mouse events.
+ */
 void Square::mousePressEvent(QMouseEvent* /* unused */){
 
     setPixmap(QPixmap(":/images/CStudent1.png"));
@@ -22,7 +29,10 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
     fire(view->getGame()->getSquarePos(2,2));
 }
 
-//Fires a projectile at the targetPos
+/**
+ * @brief Fires a projectile at the target position.
+ * @param targetPos The target position.
+ */
 void Square::fire(QPointF targetPos){
 
     Projectile* projectile = new Projectile();

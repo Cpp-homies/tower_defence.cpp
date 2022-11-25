@@ -3,13 +3,14 @@
 #include <QGraphicsView>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
-
+/**
+ * @brief The Game class. Contains the game interface part.
+ */
 class Game: public QGraphicsScene
 {
     Q_OBJECT
 
 public:
-
     Game(QObject* parent);
     QPointF getSquarePos(int row, int column);
 
@@ -33,13 +34,33 @@ public:
     QGraphicsLinearLayout* controlsLayout;//change this to your liking
 
 private:
-
+    /**
+     * @brief The amount of reputation points (health) the player has.
+     */
     int health_;
+    /**
+     * @brief The amount of currency the player has.
+     */
     int currency_;
+    /**
+     * @brief The current time of the game. (?)
+     */
     int time_;
+    /**
+     * @brief The current number of waves.
+     */
     int wavesCount_;
+    /**
+     * @brief The number of enemies killed. (?)
+     */
     int enemyCount_;
+    /**
+     * @brief The current level of the game.
+     */
     int level_;
+    /**
+     * @brief The current score.
+     */
     int score_;
 };
 
