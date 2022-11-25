@@ -9,8 +9,9 @@ public:
      Square(int x, int y, QWidget *parent = nullptr);
      void mousePressEvent(QMouseEvent* event);
      void fire(QPointF target);
+
 private:
-     QList<QPixmap> tilePics;
+     QPixmap rotate(int angle, QPixmap pixmap);
      int x_;
      int y_;
 signals:
