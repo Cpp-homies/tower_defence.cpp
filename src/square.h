@@ -19,8 +19,6 @@ protected:
 
 private:
      QPixmap rotate(int angle, QPixmap pixmap);
-     int x_;
-     int y_;
 signals:
 
 };
