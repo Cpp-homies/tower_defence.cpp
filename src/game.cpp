@@ -26,6 +26,7 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     currency_ = 100;
     level_ = 1;
     score_ = 0;
+    mode_ = Modes::build;
 
     // set size 1280x717 (use 717 height because we dont want scroll)
     setSceneRect(0,0,1280,717);
@@ -93,6 +94,17 @@ void Game::createGameControls()
     menuButton->setZValue(10);
     addItem(menuButton);
 
+    // upgrade button
+    Button * upgradeButton = new Button(QString("Upgrade"), 200, 50);
+//    upgradeButton->setRect(QRectF(upgradeButton->boundingRect().topLeft(),
+//                            QSizeF(upgradeButton->boundingRect().width() + 20, upgradeButton->boundingRect().height())));
+    int uxPos = this->width() - upgradeButton->boundingRect().width() - 40;
+    int uyPos = this->height() - upgradeButton->boundingRect().height() - 20;
+    upgradeButton->setPos(uxPos, uyPos);
+    connect(upgradeButton, SIGNAL(clicked()), this, SLOT(enterUpgradeMode()));
+    upgradeButton->setZValue(10);
+    addItem(upgradeButton);
+
     QGraphicsWidget *form = new QGraphicsWidget;
     form->setLayout(controlsLayout);
     gameLayout->addItem(form);
@@ -139,6 +151,10 @@ int Game::getScore() const {
     return score_;
 }
 
+Modes::MODES Game::getMode() const {
+    return mode_;
+}
+
 void Game::changeHealth (int dHealth) {
     health_+=dHealth;
 }
@@ -151,9 +167,14 @@ void Game::changeScore (int dPoints) {
     score_+=dPoints;
 }
 
+void Game::setMode(Modes::MODES m) {
+    mode_ = m;
+}
+
 void Game::advanceLevel () {
     level_++;
 }
+
 
 //just testing scene changing
 //can be used for other purposes
@@ -180,8 +201,6 @@ bool Game::buildTower(int row, int column) {
 
     // if there is a tower occupying the square, return false
     if (dynamic_cast<Tower*>(widget)) {
-        // test upgrade tower function
-        dynamic_cast<Tower*>(widget)->upgrade();
         return false;
     }
     else {
@@ -207,4 +226,22 @@ QWidget* Game::getWidgetAt(int row, int column) {
 
 bool Game::isTower(int row, int column) {
     return dynamic_cast<Tower*>(getWidgetAt(row, column));
+}
+
+void Game::enterUpgradeMode() {
+    mode_ = Modes::upgrade;
+}
+
+bool Game::upgradeTower(int row, int column) {
+    QWidget* widget = getWidgetAt(row, column);
+    Tower* tower= dynamic_cast<Tower*>(widget);
+
+    // if the square is a tower, upgrade it if possible
+    if (tower) {
+        return tower->upgrade();// return the state of the upgrade
+    }
+    else {
+        // not a tower
+        return false;
+    }
 }
