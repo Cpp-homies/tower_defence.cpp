@@ -140,8 +140,9 @@ void Tower::fire(QPointF targetPos) {
         // the add the new angle
         rotationAngle_ = -1 * rotationAngle_ + angle;
         QTransform transform;
-        transform.rotate(rotationAngle_);
-        Square::setPixmap(Square::pixmap().transformed(transform));
+        transform.rotate(angle);
+//        transform.translate(towerCenter().x(), towerCenter().y());
+        Square::setPixmap(QPixmap(":/images/CStudent1.png").transformed(transform).scaled(pixmap().size(), Qt::IgnoreAspectRatio));
     }
 
 
