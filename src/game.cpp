@@ -9,6 +9,7 @@
 #include "square.h"
 #include "mainview.h"
 #include "tower.h"
+#include "enemy.h"
 
 #include <QIcon>
 #include <QScrollBar>
@@ -17,7 +18,7 @@ extern MainView * view;
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
-    health_ = 100;
+    health_ = 1;
     currency_ = 100;
     level_ = 1;
     score_ = 0;
@@ -55,9 +56,7 @@ void Game::createMap(){
     form->setLayout(mapLayout);
     gameLayout->addItem(form);
 
-    // add a dummy enemy for testing
-    Enemy* enemy = new Enemy();
-    addItem(enemy);
+
 }
 
 void Game::createGameControls()
@@ -77,10 +76,29 @@ void Game::createGameControls()
     gameLayout->addItem(form);
 }
 
+void Game::createWave(QList<QPoint> path)
+{
+    Enemy* enemy = new Enemy(1,1,1, convertCoordinates(path), *this);
+    addItem(enemy);
+}
+
+QList<QPointF> Game::convertCoordinates(QList<QPoint> path)
+{
+    QList<QPointF> pathF =  QList<QPointF>(path.length());
+    int i = 0;
+    foreach(QPoint coord,path)
+    {
+        QPointF coordF = getSquarePos(coord.x(),coord.y());
+        pathF[i]= QPointF(coordF);
+        i++;
+    }
+    return pathF;
+}
+
 
 
 bool Game::isLost() const{
-    return health_>0;
+    return health_<=0;
 }
 
 int Game::getHealth() const {
@@ -119,7 +137,9 @@ void Game::advanceLevel () {
 //can be used for other purposes
 void Game::keyPressEvent(QKeyEvent* /* unused */)
 {
-    view->showLeaderboard();
+    QList<QPoint> path;
+    path << QPoint(7,0) << QPoint(7,1) << QPoint(6,1)<< QPoint(6,4);
+    createWave(path);
 
 }
 

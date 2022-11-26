@@ -1,4 +1,5 @@
 #include "tower.h"
+#include "enemy.h"
 #include <QPointF>
 #include <QPen>
 #include <QTransform>
@@ -102,7 +103,7 @@ void Tower::getTarget() {
             double cur_dist = distanceTo(enemy);
             if (cur_dist < min_dist){
                 min_dist = cur_dist;
-                min_point = items_in_range[i]->pos();
+                min_point = enemy->scenePos();
                 has_target_ = true;
             }
         }
@@ -118,8 +119,8 @@ void Tower::getTarget() {
 void Tower::fire(QPointF targetPos) {
 
     Projectile* projectile = new Projectile();
-    projectile->setPos(x(),y()); //takes the same coordinates as the tower
-    QLineF ln(pos(),targetPos); //path of the projectile
+    projectile->setPos(view->getGame()->getSquarePos(x_,y_)); //takes the same coordinates as the tower
+    QLineF ln(view->getGame()->getSquarePos(x_,y_),targetPos); //path of the projectile
     int angle = -1 * ln.angle(); //the angle from tower to target
 
     //set the projectile image to rotate around it's centre and then add it to the scene
