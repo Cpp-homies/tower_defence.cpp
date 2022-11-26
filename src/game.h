@@ -18,6 +18,8 @@ public:
     bool isLost() const;
     void createMap();
     void createGameControls();
+    void createWave(QList<QPoint> path);
+    QList<QPointF> convertCoordinates(QList<QPoint> path);
 
     int getHealth() const;
     int getScore() const;
@@ -35,6 +37,8 @@ public:
     QGraphicsLinearLayout* controlsLayout;//change this to your liking
 
     bool isTower(int row, int column);
+public slots:
+    void showMenu();
 
 private:
 
@@ -45,6 +49,7 @@ private:
     int enemyCount_;
     int level_;
     int score_;
+    QList<QPoint> shortest_path_;
 };
 
 #endif // GAME_H

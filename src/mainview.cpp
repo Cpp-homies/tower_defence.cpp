@@ -7,10 +7,14 @@ MainView::MainView(QWidget *parent): QGraphicsView(parent)
     game_= new Game(this);
     menu_ = new Menu(this);
     leaderboard_ = new Leaderboard(this);
-    setFixedSize(800,700);
+    setFixedSize(1280,720);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    // Set background image
+    QBrush brush;
+    brush.setTexture(QPixmap(":/images/Mainmenu.png"));
+    setBackgroundBrush(brush);
 
 }
 
@@ -32,11 +36,21 @@ Leaderboard* MainView::getLeaderboard()
 void MainView::showGame()
 {
     setScene(game_);
+
+    // Set background image
+    QBrush brush;
+    brush.setTexture(QPixmap(":/images/Game_controls.png"));
+    setBackgroundBrush(brush);
 }
 
 void MainView::showMenu()
 {
     setScene(menu_);
+
+    // Set background image
+    QBrush brush;
+    brush.setTexture(QPixmap(":/images/Mainmenu.png"));
+    setBackgroundBrush(brush);
 }
 
 void MainView::showLeaderboard()

@@ -39,17 +39,4 @@ private:
 
 
 
-
-// dummy enemy class for testing purpose
-class Enemy : public QGraphicsPixmapItem {
-public:
-    Enemy() {
-        setPixmap(QPixmap(":/images/syntax_error3.png"));
-
-        // get the possition of the square at (4, 4)
-//        QPointF pos = view->getGame()->getSquarePos(4, 4);
-        setPos(200, 200);
-    }
-};
-
 #endif // TOWER_H

@@ -8,7 +8,7 @@ Projectile::Projectile(QGraphicsItem *parent)
     : QObject(),QGraphicsPixmapItem(parent)
 {
     setPixmap(QPixmap(":/images/CStudent_projectile.png"));
-
+    setTransformOriginPoint(pixmap().width()/2,pixmap().height()/2);
     QTimer * move_timer = new QTimer(this);
     connect(move_timer,SIGNAL(timeout()),this,SLOT(move()));
     move_timer->start(10);

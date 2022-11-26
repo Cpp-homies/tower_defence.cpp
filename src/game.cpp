@@ -1,4 +1,7 @@
 #include "game.h"
+#include "square.h"
+#include "mainview.h"
+#include "button.h"
 #include <QGraphicsScene>
 #include <QGraphicsGridLayout>
 #include <QGraphicsPixmapItem>
@@ -9,6 +12,7 @@
 #include "square.h"
 #include "mainview.h"
 #include "tower.h"
+#include "enemy.h"
 
 #include <QIcon>
 #include <QScrollBar>
@@ -17,15 +21,21 @@ extern MainView * view;
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
+    // set starting values of health, currency etc
     health_ = 100;
     currency_ = 100;
     level_ = 1;
     score_ = 0;
 
+    // set size 1280x717 (use 717 height because we dont want scroll)
+    setSceneRect(0,0,1280,717);
+
     gameLayout = new QGraphicsLinearLayout(Qt::Horizontal);
     createMap();
     createGameControls();
     QGraphicsWidget *form = new QGraphicsWidget;
+    gameLayout->setContentsMargins(0,0,0,0);
+    mapLayout->setSpacing(0);
     form->setLayout(gameLayout);
     addItem(form);
 
@@ -38,11 +48,11 @@ void Game::createMap(){
 
 
     mapLayout = new QGraphicsGridLayout();
-    mapLayout->setSpacing(0);
 
-    for(int i = 0; i<10; ++i)
+    for(int i = 0; i<11; ++i)
     {
-        for (int j = 0; j < 10; ++j) {
+        for (int j = 0; j < 11; ++j) {
+
                 Square* tile = new Square(i,j,nullptr);
                 QGraphicsProxyWidget* backgroundTile = addWidget(tile);
                 mapLayout->addItem(backgroundTile,i,j);
@@ -50,14 +60,13 @@ void Game::createMap(){
         }
     }
 
+    // set margins to 0
+    mapLayout->setContentsMargins(0,0,0,0);
 
     QGraphicsWidget *form = new QGraphicsWidget;
     form->setLayout(mapLayout);
     gameLayout->addItem(form);
 
-    // add a dummy enemy for testing
-    Enemy* enemy = new Enemy();
-    addItem(enemy);
 }
 
 void Game::createGameControls()
@@ -72,15 +81,46 @@ void Game::createGameControls()
         controlsLayout->addItem(player);
     }
 
+    // set margins to 0
+    controlsLayout->setContentsMargins(0,0,0,0);
+
+    // main menu button
+    Button * menuButton = new Button(QString("Main menu"), 200, 50);
+    int lxPos = this->width() - menuButton->boundingRect().width() - 40;
+    int lyPos = 40;
+    menuButton->setPos(lxPos, lyPos);
+    connect(menuButton, SIGNAL(clicked()), this, SLOT(showMenu()));
+    menuButton->setZValue(10);
+    addItem(menuButton);
+
     QGraphicsWidget *form = new QGraphicsWidget;
     form->setLayout(controlsLayout);
     gameLayout->addItem(form);
 }
 
+void Game::createWave(QList<QPoint> path)
+{
+    Enemy* enemy = new Enemy(1,1,1, convertCoordinates(path), *this);
+    addItem(enemy);
+}
+
+QList<QPointF> Game::convertCoordinates(QList<QPoint> path)
+{
+    QList<QPointF> pathF =  QList<QPointF>(path.length());
+    int i = 0;
+    foreach(QPoint coord,path)
+    {
+        QPointF coordF = getSquarePos(coord.x(),coord.y());
+        pathF[i]= QPointF(coordF);
+        i++;
+    }
+    return pathF;
+}
+
 
 
 bool Game::isLost() const{
-    return health_>0;
+    return health_<=0;
 }
 
 int Game::getHealth() const {
@@ -119,13 +159,19 @@ void Game::advanceLevel () {
 //can be used for other purposes
 void Game::keyPressEvent(QKeyEvent* /* unused */)
 {
-    view->showLeaderboard();
+    QList<QPoint> path;
+    path << QPoint(7,0) << QPoint(7,1) << QPoint(6,1)<< QPoint(6,4);
+    createWave(path);
 
 }
 
 QPointF Game::getSquarePos(int row, int column){
 
     return mapLayout->itemAt(row,column)->graphicsItem()->scenePos();
+}
+
+void Game::showMenu(){
+    view->showMenu();
 }
 
 bool Game::buildTower(int row, int column) {

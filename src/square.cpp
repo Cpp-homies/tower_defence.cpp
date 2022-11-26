@@ -13,7 +13,9 @@ Square::Square(int x, int y, QWidget *parent)
     : QLabel(parent), x_(x), y_(y)
 {
     // set randomized tile picture
-    tilePics << QPixmap(":/images/Tile.png") << QPixmap(":/images/Tile2.png") << QPixmap(":/images/Tile3.png") << QPixmap(":/images/Tile4.png");
+    QList<QPixmap> tilePics;
+    tilePics << QPixmap(":/images/Tile.png") << rotate(90, QPixmap(":/images/Tile.png"))
+             << rotate(180, QPixmap(":/images/Tile.png")) << rotate(270, QPixmap(":/images/Tile.png"));
     int r = rand() % 4;
     setPixmap(tilePics[r]);
 }
@@ -49,4 +51,11 @@ void Square::fire(QPointF targetPos){
     transform.rotate(angle);
     Square::setPixmap(Square::pixmap().transformed(transform));
 
+}
+
+
+QPixmap Square::rotate(int angle, QPixmap pixmap){
+    QTransform rotation;
+    rotation.rotate(angle);
+    return pixmap.transformed(rotation);
 }

@@ -9,6 +9,9 @@ class Leaderboard: public QGraphicsScene
 public:
     Leaderboard(QObject* parent  = 0);
 
+public slots:
+    void showMenu();
+
 private:
 
 
