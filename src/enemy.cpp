@@ -32,7 +32,11 @@ void Enemy::move()
         // last point reached
         if (point_index_ >= path_.size()){
             game_.changeHealth(-damage_);
-            if(game_.isLost()) //qobject_cast<MainView*>(game_.parent())->showLeaderboard();
+            if(game_.isLost())
+            {
+                //game is lost here
+            }
+            deleteLater();
             return;
         }
         // last point not reached
