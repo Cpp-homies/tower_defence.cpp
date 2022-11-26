@@ -9,7 +9,7 @@ class Projectile : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Projectile(QGraphicsItem * parent=0);
+    Projectile(int damage, QGraphicsItem * parent=0);
     double getMaxRange();
     double getDistanceTravelled();
     void setMaxRange(double rng);
@@ -21,6 +21,7 @@ public slots:
 private:
     double maxRange_;
     double distanceTravelled_;
+    int damage_;
 
 };
 

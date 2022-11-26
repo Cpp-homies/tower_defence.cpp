@@ -12,7 +12,7 @@
 #include "square.h"
 #include "mainview.h"
 #include "tower.h"
-#include "enemy.h"
+#include "compilererror.h"
 
 #include <QIcon>
 #include <QScrollBar>
@@ -100,8 +100,9 @@ void Game::createGameControls()
 
 void Game::createWave(QList<QPoint> path)
 {
-    Enemy* enemy = new Enemy(1,1,1, convertCoordinates(path), *this);
+    CompilerError* enemy = new CompilerError(EnemyName::Exception, convertCoordinates(path), *this);
     addItem(enemy);
+    enemy->startMove();
 }
 
 QList<QPointF> Game::convertCoordinates(QList<QPoint> path)
@@ -160,7 +161,7 @@ void Game::advanceLevel () {
 void Game::keyPressEvent(QKeyEvent* /* unused */)
 {
     QList<QPoint> path;
-    path << QPoint(7,0) << QPoint(7,1) << QPoint(6,1)<< QPoint(6,4);
+    path << QPoint(7,0) << QPoint(7,1) << QPoint(8,1)<< QPoint(8,5);
     createWave(path);
 
 }

@@ -1,26 +1,39 @@
 #include "enemy.h"
-#include "mainview.h"
 
 #include <QTimer>
 
-Enemy::Enemy(int health, int damage, int speed, QList<QPointF> path,Game& game, QGraphicsItem * parent):
+Enemy::Enemy(QList<QPointF> path, Game& game, int health , int damage , int speed , QGraphicsItem * parent):
      QGraphicsPixmapItem(parent), health_(health), damage_(damage), speed_(speed), game_(game), path_(path)
 {
-    setPixmap(QPixmap(":/images/syntax_error3.png"));
-    setOffset(QPointF(16,16));
-    setTransformOriginPoint(pixmap().height(), pixmap().width());
+
+
     setPos(path_[0]);
     point_index_ = 0;
     dest_ = path_[0];
 
-    QTimer * timer = new QTimer(this);
-    connect(timer,SIGNAL(timeout()),this,SLOT(move()));
-    timer->start(50);
+
 }
 
-void Enemy::die()
+void Enemy::takeDamage(int damage)
 {
-    deleteLater();
+    health_-=damage;
+    if(health_<=0)
+    {
+        die();
+    }
+
+}
+
+void Enemy::setSpeed(int speed)
+{
+    speed_=speed;
+}
+
+void Enemy::startMove()
+{
+    QTimer * timer = new QTimer(this);
+    connect(timer,SIGNAL(timeout()),this,SLOT(move()));
+    timer->start(90-speed_);
 }
 
 void Enemy::move()
