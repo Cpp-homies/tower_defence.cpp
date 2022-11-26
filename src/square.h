@@ -1,18 +1,17 @@
 #ifndef SQUARE_H
 #define SQUARE_H
 #include <QLabel>
+#include <QPoint>
 
 class Square : public QLabel
 {
     Q_OBJECT
 public:
-     Square(int x, int y, QWidget *parent = nullptr);
+     Square(QPoint pos, QWidget *parent = nullptr);
      void mousePressEvent(QMouseEvent* event);
      void fire(QPointF target);
 private:
-     QList<QPixmap> tilePics;
-     int x_;
-     int y_;
+     int pos_;
 signals:
 
 };

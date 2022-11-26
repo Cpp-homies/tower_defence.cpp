@@ -18,10 +18,12 @@ SOURCES += \
     square.cpp
 
 HEADERS += \
+    comment.h \
     game.h \
     leaderboard.h \
     mainview.h \
     menu.h \
+    path.h \
     projectile.h \
     square.h
 

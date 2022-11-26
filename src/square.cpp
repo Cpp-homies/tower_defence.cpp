@@ -10,6 +10,7 @@ Square::Square(int x, int y, QWidget *parent)
     : QLabel(parent), x_(x), y_(y)
 {
     // set randomized tile picture
+    QList<QPixmap> tilePics;
     tilePics << QPixmap(":/images/Tile.png") << QPixmap(":/images/Tile2.png") << QPixmap(":/images/Tile3.png") << QPixmap(":/images/Tile4.png");
     int r = rand() % 4;
     setPixmap(tilePics[r]);
@@ -17,9 +18,9 @@ Square::Square(int x, int y, QWidget *parent)
 
 void Square::mousePressEvent(QMouseEvent* /* unused */){
 
-    setPixmap(QPixmap(":/images/CStudent1.png"));
+//    setPixmap(QPixmap(":/images/CStudent1.png"));
 
-    fire(view->getGame()->getSquarePos(2,2));
+//    fire(view->getGame()->getSquarePos(2,2));
 }
 
 //Fires a projectile at the targetPos
@@ -39,7 +40,4 @@ void Square::fire(QPointF targetPos){
     QTransform transform;
     transform.rotate(angle);
     Square::setPixmap(Square::pixmap().transformed(transform));
-
-
-
 }
