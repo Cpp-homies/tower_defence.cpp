@@ -8,6 +8,8 @@
 #include <QGraphicsTextItem>
 #include "square.h"
 #include "mainview.h"
+#include "tower.h"
+#include "enemy.h"
 
 #include <QIcon>
 #include <QScrollBar>
@@ -16,7 +18,7 @@ extern MainView * view;
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
-    health_ = 100;
+    health_ = 1;
     currency_ = 100;
     level_ = 1;
     score_ = 0;
@@ -42,11 +44,9 @@ void Game::createMap(){
     for(int i = 0; i<10; ++i)
     {
         for (int j = 0; j < 10; ++j) {
-
                 Square* tile = new Square(i,j,nullptr);
                 QGraphicsProxyWidget* backgroundTile = addWidget(tile);
                 mapLayout->addItem(backgroundTile,i,j);
-
 
         }
     }
@@ -55,6 +55,8 @@ void Game::createMap(){
     QGraphicsWidget *form = new QGraphicsWidget;
     form->setLayout(mapLayout);
     gameLayout->addItem(form);
+
+
 }
 
 void Game::createGameControls()
@@ -74,10 +76,29 @@ void Game::createGameControls()
     gameLayout->addItem(form);
 }
 
+void Game::createWave(QList<QPoint> path)
+{
+    Enemy* enemy = new Enemy(1,1,1, convertCoordinates(path), *this);
+    addItem(enemy);
+}
+
+QList<QPointF> Game::convertCoordinates(QList<QPoint> path)
+{
+    QList<QPointF> pathF =  QList<QPointF>(path.length());
+    int i = 0;
+    foreach(QPoint coord,path)
+    {
+        QPointF coordF = getSquarePos(coord.x(),coord.y());
+        pathF[i]= QPointF(coordF);
+        i++;
+    }
+    return pathF;
+}
+
 
 
 bool Game::isLost() const{
-    return health_>0;
+    return health_<=0;
 }
 
 int Game::getHealth() const {
@@ -116,7 +137,9 @@ void Game::advanceLevel () {
 //can be used for other purposes
 void Game::keyPressEvent(QKeyEvent* /* unused */)
 {
-    view->showLeaderboard();
+    QList<QPoint> path;
+    path << QPoint(7,0) << QPoint(7,1) << QPoint(6,1)<< QPoint(6,4);
+    createWave(path);
 
 }
 
@@ -125,4 +148,35 @@ QPointF Game::getSquarePos(int row, int column){
     return mapLayout->itemAt(row,column)->graphicsItem()->scenePos();
 }
 
+bool Game::buildTower(int row, int column) {
+    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
+    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
 
+    // if there is a tower occupying the square, return false
+    if (dynamic_cast<Tower*>(widget)) {
+        return false;
+    }
+    else {
+        // create a new tower and add it to the scene
+        QGraphicsWidget* tower = this->addWidget(new Tower(row, column, nullptr));
+
+        // remove the current square from the grid
+        this->removeItem(item->graphicsItem());
+        this->mapLayout->removeItem(item);
+
+        // add a tower to the grid at the given possition
+        this->mapLayout->addItem(tower, row, column);
+
+        return true;
+    }
+}
+
+QWidget* Game::getWidgetAt(int row, int column) {
+    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
+    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
+    return widget;
+}
+
+bool Game::isTower(int row, int column) {
+    return dynamic_cast<Tower*>(getWidgetAt(row, column));
+}

@@ -12,10 +12,14 @@ public:
 
     Game(QObject* parent);
     QPointF getSquarePos(int row, int column);
+    QWidget* getWidgetAt(int row, int column);
+    bool buildTower(int row, int column);
 
     bool isLost() const;
     void createMap();
     void createGameControls();
+    void createWave(QList<QPoint> path);
+    QList<QPointF> convertCoordinates(QList<QPoint> path);
 
     int getHealth() const;
     int getScore() const;
@@ -32,6 +36,8 @@ public:
     QGraphicsLinearLayout* gameLayout; //the whole are of the game, including the controls
     QGraphicsLinearLayout* controlsLayout;//change this to your liking
 
+    bool isTower(int row, int column);
+
 private:
 
     int health_;
@@ -41,6 +47,7 @@ private:
     int enemyCount_;
     int level_;
     int score_;
+    QList<QPoint> shortest_path_;
 };
 
 #endif // GAME_H
