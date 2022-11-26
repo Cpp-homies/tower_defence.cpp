@@ -180,6 +180,8 @@ bool Game::buildTower(int row, int column) {
 
     // if there is a tower occupying the square, return false
     if (dynamic_cast<Tower*>(widget)) {
+        // test upgrade tower function
+        dynamic_cast<Tower*>(widget)->upgrade();
         return false;
     }
     else {

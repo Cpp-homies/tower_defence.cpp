@@ -9,6 +9,7 @@
 #include <QGraphicsItem>
 #include <QPointF>
 #include <QObject>
+#include <QList>
 #include "mainview.h"
 
 extern MainView* view;
@@ -18,23 +19,32 @@ public:
     Tower(QWidget *parent = nullptr);
     Tower(int x, int y, QWidget *parent);
     Tower(int x, int y, QWidget *parent, int range, int damage, int attackSpeed);
+
     QPointF towerCenter();
     double distanceTo(QGraphicsItem * item);
-    void fire(QPointF targetPos);
+    virtual void fire(QPointF targetPos);
+
+    virtual bool upgrade();
 public slots:
     void getTarget();
 private:
     int range_ = 5;
     int damage_;
     int attackInterval_;// in mili-seconds
-    bool upgradeable_;
-    int ugradeLevel_;
     double damageMultiplier_;
+
+    bool upgradeable_;
+    int upgradeLevel_;
+    int maxLevel_;
+
     int totalCost_;
     bool has_target_;
     int rotationAngle_ = 0;
-    QGraphicsEllipseItem* attack_area;
-    QPointF target_pos;
+
+    QGraphicsEllipseItem* attack_area_;
+    QPointF target_pos_;
+    QString ogImagePath_;// the original imagepath in use
+//    QList<Enemy available_EnemyTypes_;
 };
 
 
