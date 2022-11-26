@@ -1,8 +1,11 @@
 #include "square.h"
 #include "projectile.h"
+#include "tower.h"
 #include "game.h"
 #include "mainview.h"
 #include <QTransform>
+#include <QGraphicsProxyWidget>
+#include <QGraphicsWidget>
 
 extern MainView * view;
 
@@ -16,10 +19,16 @@ Square::Square(int x, int y, QWidget *parent)
 }
 
 void Square::mousePressEvent(QMouseEvent* /* unused */){
+    // if the build fail
+    if (!view->getGame()->buildTower(this->x_, this->y_)) {
+        // do something
+    }
+    else {
+        // build successful, schedule to delete the square
+        deleteLater();
+    }
 
-    setPixmap(QPixmap(":/images/CStudent1.png"));
-
-    fire(view->getGame()->getSquarePos(2,2));
+//    fire(view->getGame()->getSquarePos(2,2));
 }
 
 //Fires a projectile at the targetPos
@@ -39,7 +48,5 @@ void Square::fire(QPointF targetPos){
     QTransform transform;
     transform.rotate(angle);
     Square::setPixmap(Square::pixmap().transformed(transform));
-
-
 
 }
