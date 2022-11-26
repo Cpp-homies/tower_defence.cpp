@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     enemy.cpp \
+    button.cpp \
     game.cpp \
     leaderboard.cpp \
     main.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 
 HEADERS += \
     enemy.h \
+    button.h \
     game.h \
     leaderboard.h \
     mainview.h \
@@ -36,3 +38,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     res.qrc
+
+FORMS +=

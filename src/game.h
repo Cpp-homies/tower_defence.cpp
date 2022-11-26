@@ -37,6 +37,8 @@ public:
     QGraphicsLinearLayout* controlsLayout;//change this to your liking
 
     bool isTower(int row, int column);
+public slots:
+    void showMenu();
 
 private:
 

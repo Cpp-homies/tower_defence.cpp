@@ -16,12 +16,11 @@ protected:
      int x_;
      int y_;
      void fire(QPointF target);
-private:
 
-//     QGraphicsGridLayout* parentGrid;
-     QList<QPixmap> tilePics;
-//     int x_;
-//     int y_;
+private:
+     QPixmap rotate(int angle, QPixmap pixmap);
+     int x_;
+     int y_;
 signals:
 
 };

@@ -17,9 +17,11 @@ public:
     Game* getGame();
     Menu* getMenu();
     Leaderboard* getLeaderboard();
+public slots:
     void showGame();
     void showMenu();
     void showLeaderboard();
+
 
 private:
     Game* game_;
