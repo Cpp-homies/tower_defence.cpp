@@ -12,6 +12,8 @@
 #include <QList>
 #include "mainview.h"
 
+
+
 extern MainView* view;
 
 class Tower : public Square {

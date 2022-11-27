@@ -9,6 +9,11 @@ namespace Modes{
     enum MODES{normal, build, upgrade};
 }
 
+// enumeration to keep track of tower types for build
+namespace TowerTypes{
+    enum TYPES{CSstudent, TA, SearchEngine, LanguageServer, Valgrind};
+}
+
 class Game: public QGraphicsScene
 {
     Q_OBJECT
@@ -32,6 +37,7 @@ public:
     int getLevel() const;
     int getCurrency() const;
     Modes::MODES getMode() const;
+    TowerTypes::TYPES getBuildType() const;
 
     void changeHealth(int dHealth);
     void changeScore(int points);
@@ -48,6 +54,7 @@ public:
 public slots:
     void showMenu();
     void enterUpgradeMode();
+    void enterBuildMode();
 
 private:
 
@@ -59,6 +66,7 @@ private:
     int level_;
     int score_;
     Modes::MODES mode_;
+    TowerTypes::TYPES buildType_;
     QList<QPoint> shortest_path_;
 };
 

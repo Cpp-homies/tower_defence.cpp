@@ -28,10 +28,15 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
         // if the build fail
         if (!view->getGame()->buildTower(this->x_, this->y_)) {
             // do something
+
+            // reset the mode of the game back to normal
+            view->getGame()->setMode(Modes::normal);
         }
         else {
             // build successful, schedule to delete the square
             deleteLater();
+            // reset the mode of the game back to normal
+            view->getGame()->setMode(Modes::normal);
         }
         break;
     case Modes::upgrade:
@@ -48,14 +53,14 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
         }
         break;
     default:
-        // if the build fail
-        if (!view->getGame()->buildTower(this->x_, this->y_)) {
-            // do something
-        }
-        else {
-            // build successful, schedule to delete the square
-            deleteLater();
-        }
+//        // if the build fail
+//        if (!view->getGame()->buildTower(this->x_, this->y_)) {
+//            // do something
+//        }
+//        else {
+//            // build successful, schedule to delete the square
+//            deleteLater();
+//        }
         break;
     }
 

@@ -9,10 +9,11 @@
 #include <QGraphicsProxyWidget>
 #include <QGraphicsWidget>
 #include <QGraphicsTextItem>
+#include <QToolButton>
 #include "square.h"
 #include "mainview.h"
-#include "tower.h"
 #include "enemy.h"
+#include "tower.h"
 
 #include <QIcon>
 #include <QScrollBar>
@@ -26,7 +27,7 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     currency_ = 100;
     level_ = 1;
     score_ = 0;
-    mode_ = Modes::build;
+    mode_ = Modes::normal;
 
     // set size 1280x717 (use 717 height because we dont want scroll)
     setSceneRect(0,0,1280,717);
@@ -95,15 +96,44 @@ void Game::createGameControls()
     addItem(menuButton);
 
     // upgrade button
-    Button * upgradeButton = new Button(QString("Upgrade"), 200, 50);
+    Button * upgradeButton = new Button(QString("Upgrade Tower"), 240, 50);
 //    upgradeButton->setRect(QRectF(upgradeButton->boundingRect().topLeft(),
 //                            QSizeF(upgradeButton->boundingRect().width() + 20, upgradeButton->boundingRect().height())));
+
     int uxPos = this->width() - upgradeButton->boundingRect().width() - 40;
     int uyPos = this->height() - upgradeButton->boundingRect().height() - 20;
     upgradeButton->setPos(uxPos, uyPos);
     connect(upgradeButton, SIGNAL(clicked()), this, SLOT(enterUpgradeMode()));
     upgradeButton->setZValue(10);
     addItem(upgradeButton);
+
+    // tower build buttons
+        // create CSstudent button
+    QToolButton* build_CSstudent = new QToolButton();
+    // create the icon for the button
+    QTransform tr;
+    tr.rotate(90);
+    build_CSstudent->setIcon(QIcon(QPixmap(":/images/CStudent1.png").transformed(tr)));
+    addWidget(build_CSstudent);
+
+    // adjust button size and move it to the right position
+    build_CSstudent->setIconSize(QSize(64, 64));
+    build_CSstudent->move(this->width() - build_CSstudent->iconSize().width() - 20, 200);
+
+    // connect the button with the enterBuildMode function
+    connect(build_CSstudent, SIGNAL(clicked()), this, SLOT(enterBuildMode()));
+
+
+        // create TA button
+//    QToolButton* build_TA = new QToolButton();
+//    // create the icon for the button
+//    build_CSstudent->setIcon(QIcon(QPixmap(":/images/CStudent1.png").transformed(tr)));
+//    addWidget(build_CSstudent);
+
+//    // adjust button size and move it to the right position
+//    build_CSstudent->setIconSize(QSize(64, 64));
+//    build_CSstudent->move(this->width() - build_CSstudent->iconSize().width() - 20, 200);
+
 
     QGraphicsWidget *form = new QGraphicsWidget;
     form->setLayout(controlsLayout);
@@ -153,6 +183,10 @@ int Game::getScore() const {
 
 Modes::MODES Game::getMode() const {
     return mode_;
+}
+
+TowerTypes::TYPES Game::getBuildType() const {
+    return buildType_;
 }
 
 void Game::changeHealth (int dHealth) {
@@ -230,6 +264,10 @@ bool Game::isTower(int row, int column) {
 
 void Game::enterUpgradeMode() {
     mode_ = Modes::upgrade;
+}
+
+void Game::enterBuildMode() {
+    mode_ = Modes::build;
 }
 
 bool Game::upgradeTower(int row, int column) {
