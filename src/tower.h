@@ -23,17 +23,25 @@ extern MainView* view;
 class Tower : public Square {
 public:
     Tower(QWidget *parent = nullptr);
-    Tower(int x, int y, QWidget *parent);
-    Tower(int x, int y, QWidget *parent, int range, int damage, int attackSpeed);
+    Tower(int x, int y, QWidget *parent=nullptr);
+    Tower(int x, int y, int range, int damage, int attackSpeed, QWidget *parent=nullptr);
 
     QPointF towerCenter();
     double distanceTo(QGraphicsItem * item);
     virtual void fire(QPointF targetPos);
     bool isTargetable(Enemy* enemy);
+    void damageBuff(double buffFactor);
+
+    QList<QGraphicsItem*> getItemInRange();
+    void setRange(int range);
 
     virtual bool upgrade();
 public slots:
     void getTarget();
+protected:
+    QString ogImagePath_;// the original image path in use
+    int maxLevel_;
+    int upgradeLevel_;
 private:
     int range_ = 5;
     int damage_;
@@ -41,8 +49,6 @@ private:
     double damageMultiplier_;
 
     bool upgradeable_;
-    int upgradeLevel_;
-    int maxLevel_;
 
     int totalCost_;
     bool has_target_;
@@ -50,7 +56,6 @@ private:
 
     QGraphicsEllipseItem* attack_area_;
     QPointF target_pos_;
-    QString ogImagePath_;// the original imagepath in use
     bool targetAble_[3];// array for checking if an enemy is targetable
 };
 

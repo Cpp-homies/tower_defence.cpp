@@ -62,16 +62,11 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
     timer->start(attackInterval_);
 }
 
-Tower::Tower(int x, int y, QWidget *parent, int range, int damage, int attackInterval) : Square(x, y, parent),
+// constructor that set specific stats, used in subclasses of tower
+Tower::Tower(int x, int y, int range, int damage, int attackInterval, QWidget *parent) : Square(x, y, parent),
                                                                     range_(range), damage_(damage), attackInterval_(attackInterval) {
     // set the original damage multipier to 1.0
     damageMultiplier_ = 1.0;
-
-    // set tower graphics
-    QTransform rm;
-    rm.rotate(90);
-    ogImagePath_ = ":/images/CStudent1.png";
-    setPixmap(QPixmap(ogImagePath_).transformed(rm));
 
     // create the attack circle
     attack_area_ = new QGraphicsEllipseItem(QRect(QPoint(0,0),
@@ -128,6 +123,31 @@ void Tower::getTarget() {
     }
 }
 
+void Tower::setRange(int range) {
+    this->range_ = range;
+
+    // remove the old attack area
+    view->getGame()->removeItem(attack_area_);
+    delete attack_area_;
+
+    // create the new attack circle
+    attack_area_ = new QGraphicsEllipseItem(QRect(QPoint(0,0),
+                                                 QSize(this->pixmap().width(),
+                                                 this->pixmap().height())));
+    attack_area_->setPen(QPen(QBrush(atkArea_Color), atkArea_LineWidth, atkArea_LineStyle));
+    view->getGame()->addItem(attack_area_);
+
+    attack_area_->setScale(this->range_);
+
+
+    // move the attack area to the right possition
+    QPointF area_center(0 + attack_area_->rect().width() / 2, 0 + attack_area_->rect().height() / 2);
+    area_center *= this->range_;
+    QLineF ln(area_center,towerCenter());
+    attack_area_->setPos(0+ln.dx(),0+ln.dy());
+
+}
+
 //Fires a projectile at the targetPos
 void Tower::fire(QPointF targetPos) {
 
@@ -160,32 +180,7 @@ void Tower::fire(QPointF targetPos) {
 }
 
 bool Tower::isTargetable(Enemy* enemy) {
-    bool enemyTypes[3];
-    for (int i = 0; i < 3; i++) {
-        // if the current enemy type is targetable
-        if (targetAble_[i]) {
-            // try casting the input enemy to the current type
-            switch (i) {
-            case EnemyTypes::boss:
-            {
 
-                // insert casting here after the merge with enemy implementation
-                break;
-            }
-            case EnemyTypes::memory:
-            {
-                // insert casting here after the merge with enemy implementation
-                break;
-            }
-            case EnemyTypes::normal:
-            {
-                break;
-            }
-            default:
-                break;
-            }
-        }
-    }
     // iterate through the targetable enemy types
     for (int i = 0; i < 3; i++) {
         // if the current enemy type is targetable
@@ -220,12 +215,20 @@ double Tower::distanceTo(QGraphicsItem * item) {
     return line.length();
 }
 
+QList<QGraphicsItem*> Tower::getItemInRange() {
+    return attack_area_->collidingItems();
+}
+
 QPointF Tower::towerCenter() {
     QPoint towerPos = view->getGame()->getSquarePos(x_, y_).toPoint();
     QPointF center(towerPos.x() + this->pixmap().width()/2,
                    towerPos.y() + this->pixmap().height()/2);
 
     return center;
+}
+
+void Tower::damageBuff(double buffFactor) {
+    damageMultiplier_ *= buffFactor;
 }
 
 bool Tower::upgrade() {

@@ -11,7 +11,7 @@ namespace Modes{
 
 // enumeration to keep track of tower types for build
 namespace TowerTypes{
-    enum TYPES{CSstudent, TA, SearchEngine, LanguageServer, Valgrind};
+    enum TYPES{CS_Student, TA, SearchEngine, LanguageServer, Valgrind};
 }
 
 class Game: public QGraphicsScene

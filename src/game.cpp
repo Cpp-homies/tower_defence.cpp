@@ -14,6 +14,8 @@
 #include "mainview.h"
 #include "enemy.h"
 #include "tower.h"
+#include "cs_student.h"
+#include "ta.h"
 
 #include <QIcon>
 #include <QScrollBar>
@@ -310,10 +312,23 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
         // the square is available for build
         // build tower according to the passed in type
         switch (type) {
-        case TowerTypes::CSstudent:
+        case TowerTypes::CS_Student:
         {
             // create a new tower and add it to the scene
-            QGraphicsWidget* tower = this->addWidget(new Tower(row, column, nullptr));
+            QGraphicsWidget* tower = this->addWidget(new CS_Student(row, column, nullptr));
+
+            // remove the current square from the grid
+            this->removeItem(item->graphicsItem());
+            this->mapLayout->removeItem(item);
+
+            // add a tower to the grid at the given possition
+            this->mapLayout->addItem(tower, row, column);
+            break;
+        }
+        case TowerTypes::TA:
+        {
+            // create a new tower and add it to the scene
+            QGraphicsWidget* tower = this->addWidget(new TA(row, column, nullptr));
 
             // remove the current square from the grid
             this->removeItem(item->graphicsItem());
@@ -347,7 +362,7 @@ void Game::enterUpgradeMode() {
 
 void Game::enterBuildCS() {
     mode_ = Modes::build;
-    buildType_ = TowerTypes::CSstudent;
+    buildType_ = TowerTypes::CS_Student;
 }
 
 void Game::enterBuildTA() {
