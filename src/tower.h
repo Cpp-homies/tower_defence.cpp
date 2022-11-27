@@ -11,8 +11,12 @@
 #include <QObject>
 #include <QList>
 #include "mainview.h"
+#include "enemy.h"
 
-
+// enum to act as shorthand that denotes enemy types
+namespace EnemyTypes{
+    enum TYPES{normal=0, memory=1, boss=2};
+}
 
 extern MainView* view;
 
@@ -25,6 +29,7 @@ public:
     QPointF towerCenter();
     double distanceTo(QGraphicsItem * item);
     virtual void fire(QPointF targetPos);
+    bool isTargetable(Enemy* enemy);
 
     virtual bool upgrade();
 public slots:
@@ -46,7 +51,7 @@ private:
     QGraphicsEllipseItem* attack_area_;
     QPointF target_pos_;
     QString ogImagePath_;// the original imagepath in use
-//    QList<Enemy available_EnemyTypes_;
+    bool targetAble_[3];// array for checking if an enemy is targetable
 };
 
 

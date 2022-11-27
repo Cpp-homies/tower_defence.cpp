@@ -29,6 +29,10 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
     upgradeLevel_ = 1;
     maxLevel_ = 4;
 
+    // initialize the targetable enemies at first the tower can only target normal enemies
+    std::fill_n(targetAble_, std::size(targetAble_), false);
+    targetAble_[EnemyTypes::normal] = true;
+
     // set tower graphics
     QTransform rm;
     rm.rotate(90);
@@ -104,12 +108,16 @@ void Tower::getTarget() {
     // find the closest enemy
     for (int i = 0, n = items_in_range.size(); i < n; i++) {
         Enemy * enemy = dynamic_cast<Enemy *>(items_in_range[i]);
+        // if this is an enemy
         if (enemy) {
-            double cur_dist = distanceTo(enemy);
-            if (cur_dist < min_dist){
-                min_dist = cur_dist;
-                min_point = enemy->scenePos();
-                has_target_ = true;
+            // check if the enemy is targetable or not
+            if (isTargetable(enemy)) {
+                double cur_dist = distanceTo(enemy);
+                if (cur_dist < min_dist){
+                    min_dist = cur_dist;
+                    min_point = enemy->scenePos();
+                    has_target_ = true;
+                }
             }
         }
     }
@@ -151,6 +159,62 @@ void Tower::fire(QPointF targetPos) {
 
 }
 
+bool Tower::isTargetable(Enemy* enemy) {
+    bool enemyTypes[3];
+    for (int i = 0; i < 3; i++) {
+        // if the current enemy type is targetable
+        if (targetAble_[i]) {
+            // try casting the input enemy to the current type
+            switch (i) {
+            case EnemyTypes::boss:
+            {
+
+                // insert casting here after the merge with enemy implementation
+                break;
+            }
+            case EnemyTypes::memory:
+            {
+                // insert casting here after the merge with enemy implementation
+                break;
+            }
+            case EnemyTypes::normal:
+            {
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    }
+    // iterate through the targetable enemy types
+    for (int i = 0; i < 3; i++) {
+        // if the current enemy type is targetable
+        if (targetAble_[i]) {
+            // try casting the input enemy to the current type
+            switch (i) {
+            case EnemyTypes::boss:
+            {
+                // insert casting here after the merge with enemy implementation
+                break;
+            }
+            case EnemyTypes::memory:
+            {
+                // insert casting here after the merge with enemy implementation
+                break;
+            }
+            case EnemyTypes::normal:
+            {
+                // insert casting here after the merge with enemy implementation
+                break;
+            }
+            default:
+                break;
+            }
+        }
+    }
+    return true;
+}
+
 double Tower::distanceTo(QGraphicsItem * item) {
     QLineF line(pos(),item->pos());
     return line.length();
@@ -179,6 +243,7 @@ bool Tower::upgrade() {
         case 2:
             // increase damage by 20%
             this->damage_ = this->damage_ * 1.2;
+            targetAble_[EnemyTypes::memory] = true;
 
             // update tower graphics
             ogImagePath_ = ":/images/CStudent2.png";
