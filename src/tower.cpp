@@ -6,7 +6,11 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QTimer>
-#include <compilererror.h>
+#include <typeinfo>
+#include <iostream>
+#include "compilererror.h"
+#include "memoryerror.h"
+#include "runtimeerror.h"
 #include "mainview.h"
 
 extern MainView * view;
@@ -99,7 +103,7 @@ void Tower::getTarget() {
 
     // find the closest enemy
     for (int i = 0, n = items_in_range.size(); i < n; i++) {
-        Enemy * enemy = dynamic_cast<CompilerError *>(items_in_range[i]);
+       RuntimeError* enemy = dynamic_cast<RuntimeError *>(items_in_range[i]);
         if (enemy) {
             double cur_dist = distanceTo(enemy);
             if (cur_dist < min_dist){

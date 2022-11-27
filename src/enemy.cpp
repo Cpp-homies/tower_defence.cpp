@@ -2,8 +2,8 @@
 
 #include <QTimer>
 
-Enemy::Enemy(QList<QPointF> path, Game& game, int health , int damage , int speed , QGraphicsItem * parent):
-     QGraphicsPixmapItem(parent), health_(health), damage_(damage), speed_(speed), game_(game), path_(path)
+Enemy::Enemy(EnemyType type, QList<QPointF> path, Game& game, int health , int damage , int speed , QGraphicsItem * parent):
+     QGraphicsPixmapItem(parent), health_(health), damage_(damage), speed_(speed), game_(game),path_(path), type_(type)
 {
 
 
@@ -22,6 +22,13 @@ void Enemy::takeDamage(int damage)
         die();
     }
 
+}
+
+void Enemy::die()
+{
+    game_.changeScore(pointValue_);
+    game_.changeCurrency(pointValue_);
+    deleteLater();
 }
 
 void Enemy::setSpeed(int speed)

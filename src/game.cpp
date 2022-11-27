@@ -13,6 +13,8 @@
 #include "mainview.h"
 #include "tower.h"
 #include "compilererror.h"
+#include "memoryerror.h"
+#include "runtimeerror.h"
 
 #include <QIcon>
 #include <QScrollBar>
@@ -26,6 +28,8 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     currency_ = 100;
     level_ = 1;
     score_ = 0;
+    enemyCount_ = 0;
+    wavesCount_ = 0;
 
     // set size 1280x717 (use 717 height because we dont want scroll)
     setSceneRect(0,0,1280,717);
@@ -100,7 +104,7 @@ void Game::createGameControls()
 
 void Game::createWave(QList<QPoint> path)
 {
-    CompilerError* enemy = new CompilerError(EnemyName::Exception, convertCoordinates(path), *this);
+   RuntimeError* enemy = new RuntimeError(RuntimeErrorType::StackOverflow, convertCoordinates(path), *this);
     addItem(enemy);
     enemy->startMove();
 }

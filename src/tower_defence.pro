@@ -16,8 +16,10 @@ SOURCES += \
     leaderboard.cpp \
     main.cpp \
     mainview.cpp \
+    memoryerror.cpp \
     menu.cpp \
     projectile.cpp \
+    runtimeerror.cpp \
     square.cpp \
     tower.cpp \
 
@@ -28,8 +30,10 @@ HEADERS += \
     game.h \
     leaderboard.h \
     mainview.h \
+    memoryerror.h \
     menu.h \
     projectile.h \
+    runtimeerror.h \
     square.h \
     tower.h
 
