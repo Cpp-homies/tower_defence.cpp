@@ -17,7 +17,7 @@
 
 #include <QIcon>
 #include <QScrollBar>
-
+#define BUILD_BUTTON_SIZE 80
 extern MainView * view;
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
@@ -75,13 +75,13 @@ void Game::createGameControls()
 {
     //for testing purposes, all Layouts will auto adjust the size
     controlsLayout = new QGraphicsLinearLayout(Qt::Vertical);
-    for(int i = 0; i<5; ++i)
-    {
-        QLabel* test = new QLabel();
-        test->setText(QString("success!!"));
-        QGraphicsProxyWidget* player = addWidget(test);
-        controlsLayout->addItem(player);
-    }
+//    for(int i = 0; i<5; ++i)
+//    {
+//        QLabel* test = new QLabel();
+//        test->setText(QString("success!!"));
+//        QGraphicsProxyWidget* player = addWidget(test);
+//        controlsLayout->addItem(player);
+//    }
 
     // set margins to 0
     controlsLayout->setContentsMargins(0,0,0,0);
@@ -114,27 +114,73 @@ void Game::createGameControls()
     QTransform tr;
     tr.rotate(90);
     build_CSstudent->setIcon(QIcon(QPixmap(":/images/CStudent1.png").transformed(tr)));
-    addWidget(build_CSstudent);
-
-    // adjust button size and move it to the right position
-    build_CSstudent->setIconSize(QSize(64, 64));
-    build_CSstudent->move(this->width() - build_CSstudent->iconSize().width() - 20, 200);
+    build_CSstudent->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
 
     // connect the button with the enterBuildMode function
     connect(build_CSstudent, SIGNAL(clicked()), this, SLOT(enterBuildMode()));
 
+    // add the button to the control layout
+    QGraphicsProxyWidget* CSstudentWidget = addWidget(build_CSstudent);
+    controlsLayout->addItem(CSstudentWidget);
+
 
         // create TA button
-//    QToolButton* build_TA = new QToolButton();
-//    // create the icon for the button
-//    build_CSstudent->setIcon(QIcon(QPixmap(":/images/CStudent1.png").transformed(tr)));
-//    addWidget(build_CSstudent);
+    QToolButton* build_TA = new QToolButton();
+    // create the icon for the button
+    build_TA->setIcon(QIcon(QPixmap(":/images/TA.png").transformed(tr)));
+    build_TA->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
 
-//    // adjust button size and move it to the right position
-//    build_CSstudent->setIconSize(QSize(64, 64));
-//    build_CSstudent->move(this->width() - build_CSstudent->iconSize().width() - 20, 200);
+    // connect the button with the enterBuildMode function
+    connect(build_TA, SIGNAL(clicked()), this, SLOT(enterBuildMode()));
+
+    // add the button to the control layout
+    QGraphicsProxyWidget* TAWidget = addWidget(build_TA);
+    controlsLayout->addItem(TAWidget);
 
 
+        // create Search Engine button
+    QToolButton* build_SE = new QToolButton();
+    // create the icon for the button
+    build_SE->setIcon(QIcon(QPixmap(":/images/Bing.png").transformed(tr)));
+    build_SE->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+
+    // connect the button with the enterBuildMode function
+    connect(build_SE, SIGNAL(clicked()), this, SLOT(enterBuildMode()));
+
+    // add the button to the control layout
+    QGraphicsProxyWidget* SEWidget = addWidget(build_SE);
+    controlsLayout->addItem(SEWidget);
+
+
+        // create Language server button
+    QToolButton* build_LS = new QToolButton();
+    // create the icon for the button
+    build_LS->setIcon(QIcon(QPixmap(":/images/Language_server.png").transformed(tr)));
+    build_LS->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+
+    // connect the button with the enterBuildMode function
+    connect(build_LS, SIGNAL(clicked()), this, SLOT(enterBuildMode()));
+
+    // add the button to the control layout
+    QGraphicsProxyWidget* LSWidget = addWidget(build_LS);
+    controlsLayout->addItem(LSWidget);
+
+
+        // create Language server button
+    QToolButton* build_Valgrind = new QToolButton();
+    // create the icon for the button
+    build_Valgrind->setIcon(QIcon(QPixmap(":/images/Valgrind.png").transformed(tr)));
+    build_Valgrind->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+
+    // connect the button with the enterBuildMode function
+    connect(build_Valgrind, SIGNAL(clicked()), this, SLOT(enterBuildMode()));
+
+    // add the button to the control layout
+    QGraphicsProxyWidget* ValWidget = addWidget(build_Valgrind);
+    controlsLayout->addItem(ValWidget);
+
+
+    // add the control layout to the game layout
     QGraphicsWidget *form = new QGraphicsWidget;
     form->setLayout(controlsLayout);
     gameLayout->addItem(form);
