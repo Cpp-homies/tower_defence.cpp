@@ -117,7 +117,7 @@ void Game::createGameControls()
     build_CSstudent->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
 
     // connect the button with the enterBuildMode function
-    connect(build_CSstudent, SIGNAL(clicked()), this, SLOT(enterBuildMode()));
+    connect(build_CSstudent, SIGNAL(clicked()), this, SLOT(enterBuildCS()));
 
     // add the button to the control layout
     QGraphicsProxyWidget* CSstudentWidget = addWidget(build_CSstudent);
@@ -131,7 +131,7 @@ void Game::createGameControls()
     build_TA->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
 
     // connect the button with the enterBuildMode function
-    connect(build_TA, SIGNAL(clicked()), this, SLOT(enterBuildMode()));
+    connect(build_TA, SIGNAL(clicked()), this, SLOT(enterBuildTA()));
 
     // add the button to the control layout
     QGraphicsProxyWidget* TAWidget = addWidget(build_TA);
@@ -145,7 +145,7 @@ void Game::createGameControls()
     build_SE->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
 
     // connect the button with the enterBuildMode function
-    connect(build_SE, SIGNAL(clicked()), this, SLOT(enterBuildMode()));
+    connect(build_SE, SIGNAL(clicked()), this, SLOT(enterBuildSE()));
 
     // add the button to the control layout
     QGraphicsProxyWidget* SEWidget = addWidget(build_SE);
@@ -159,21 +159,21 @@ void Game::createGameControls()
     build_LS->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
 
     // connect the button with the enterBuildMode function
-    connect(build_LS, SIGNAL(clicked()), this, SLOT(enterBuildMode()));
+    connect(build_LS, SIGNAL(clicked()), this, SLOT(enterBuildLS()));
 
     // add the button to the control layout
     QGraphicsProxyWidget* LSWidget = addWidget(build_LS);
     controlsLayout->addItem(LSWidget);
 
 
-        // create Language server button
+        // create Valgrind button
     QToolButton* build_Valgrind = new QToolButton();
     // create the icon for the button
     build_Valgrind->setIcon(QIcon(QPixmap(":/images/Valgrind.png").transformed(tr)));
     build_Valgrind->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
 
     // connect the button with the enterBuildMode function
-    connect(build_Valgrind, SIGNAL(clicked()), this, SLOT(enterBuildMode()));
+    connect(build_Valgrind, SIGNAL(clicked()), this, SLOT(enterBuildVal()));
 
     // add the button to the control layout
     QGraphicsProxyWidget* ValWidget = addWidget(build_Valgrind);
@@ -298,6 +298,39 @@ bool Game::buildTower(int row, int column) {
     }
 }
 
+bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
+    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
+    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
+
+    // if there is a tower occupying the square, return false
+    if (dynamic_cast<Tower*>(widget)) {
+        return false;
+    }
+    else {
+        // the square is available for build
+        // build tower according to the passed in type
+        switch (type) {
+        case TowerTypes::CSstudent:
+        {
+            // create a new tower and add it to the scene
+            QGraphicsWidget* tower = this->addWidget(new Tower(row, column, nullptr));
+
+            // remove the current square from the grid
+            this->removeItem(item->graphicsItem());
+            this->mapLayout->removeItem(item);
+
+            // add a tower to the grid at the given possition
+            this->mapLayout->addItem(tower, row, column);
+            break;
+        }
+        default:
+            break;
+        }
+        return true;
+    }
+
+}
+
 QWidget* Game::getWidgetAt(int row, int column) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
@@ -312,8 +345,29 @@ void Game::enterUpgradeMode() {
     mode_ = Modes::upgrade;
 }
 
-void Game::enterBuildMode() {
+void Game::enterBuildCS() {
     mode_ = Modes::build;
+    buildType_ = TowerTypes::CSstudent;
+}
+
+void Game::enterBuildTA() {
+    mode_ = Modes::build;
+    buildType_ = TowerTypes::TA;
+}
+
+void Game::enterBuildSE() {
+    mode_ = Modes::build;
+    buildType_ = TowerTypes::SearchEngine;
+}
+
+void Game::enterBuildLS() {
+    mode_ = Modes::build;
+    buildType_ = TowerTypes::LanguageServer;
+}
+
+void Game::enterBuildVal() {
+    mode_ = Modes::build;
+    buildType_ = TowerTypes::Valgrind;
 }
 
 bool Game::upgradeTower(int row, int column) {

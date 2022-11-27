@@ -24,6 +24,7 @@ public:
     QPointF getSquarePos(int row, int column);
     QWidget* getWidgetAt(int row, int column);
     bool buildTower(int row, int column);
+    bool buildTower(int row, int column, TowerTypes::TYPES type);
     bool upgradeTower(int row, int column);
 
     bool isLost() const;
@@ -54,7 +55,11 @@ public:
 public slots:
     void showMenu();
     void enterUpgradeMode();
-    void enterBuildMode();
+    void enterBuildCS();
+    void enterBuildTA();
+    void enterBuildSE();
+    void enterBuildLS();
+    void enterBuildVal();
 
 private:
 

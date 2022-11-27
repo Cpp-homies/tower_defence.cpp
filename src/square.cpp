@@ -25,19 +25,27 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
     // according to current mode of the game
     switch (view->getGame()->getMode()) {
     case Modes::build:
-        // if the build fail
-        if (!view->getGame()->buildTower(this->x_, this->y_)) {
-            // do something
+        // build the tower according to the chosen type
+        switch (view->getGame()->getBuildType()) {
+        case TowerTypes::CSstudent:
+            // if the build fail
+            if (!view->getGame()->buildTower(this->x_, this->y_, TowerTypes::CSstudent)) {
+                // do something
 
-            // reset the mode of the game back to normal
-            view->getGame()->setMode(Modes::normal);
+                // reset the mode of the game back to normal
+                view->getGame()->setMode(Modes::normal);
+            }
+            else {
+                // build successful, schedule to delete the square
+                deleteLater();
+                // reset the mode of the game back to normal
+                view->getGame()->setMode(Modes::normal);
+            }
+            break;
+        default:
+            break;
         }
-        else {
-            // build successful, schedule to delete the square
-            deleteLater();
-            // reset the mode of the game back to normal
-            view->getGame()->setMode(Modes::normal);
-        }
+
         break;
     case Modes::upgrade:
         // if upgrade fail
