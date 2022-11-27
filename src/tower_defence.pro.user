@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
+<<<<<<< src/tower_defence.pro.user
 <!-- Written by QtCreator 8.0.2, 2022-11-26T13:21:18. -->
+=======
+<!-- Written by QtCreator 8.0.1, 2022-11-27T15:16:33. -->
+>>>>>>> src/tower_defence.pro.user
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
