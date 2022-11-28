@@ -16,60 +16,60 @@ In each meeting, you are required to discuss:
    4. Hung Vu - 1006058
 
 ## Summary of works
-   1. Individual work (Siim, Saku, Harvey, Hung)
-      - Mess around with Qt to get comfortable with Qt
-   2. Saku
+   1. Saku
       - Graphics for
-         - Path
+         - Rest of the towers
+         - Rest of enemies
+         - Game overlay
+         - Rest of CStudent upgrades’ projectiles
       - Graphics implementation for
-         - Tower
-            - Facing direction
-         - Regular tile
-            - Orientation randomization
-   3. Siim 
-      - Created Qt project
-      - Base class for Game
-         - QGraphicsGridLayout
-      - Base class for Square
-      - Base class for Projectile
-   4. Harvey
-      - Added enums for Square (Path, Tile, Blank)
-      - Added map value member to game
-   5. Hung
-      - Initial tower implementation
-      - Tower attack area
-
-   
+         - Main menu
+         - Basic game overlay
+      - Navigation between scenes (Game, Main menu, Leaderboard)
+   2. Siim
+      - Completed all enemy classes
+      - Implemented game mechanics to know when game/wave is won or lost
+      - Implemented scene switching functionality
+   3. Harvey
+      - Pathfinding implementation
+      - Very basic path implementation, not fully compatible yet
+   4. Hung
+      - Full base tower implementation
+      - Tower upgrading feature
+      - Partial enemy type targeting logic
+      - Some other types of tower
+      - Buttons for building towers in the game UI
 
 ## Challenges
-   1. Merging branches is challenging
+   1. Typecasting between Qt classes
 
 ## Actions
    1. Siim
-      - Basic code for audio
-      - High-score scene
-      - File generation for high-score
-      - Basic enemy
-      - Scene switching
-      - Further development of Game class
+      - Hotfixes
+      - Local leaderboard functionality
+      - Audio functionality
+      - Wave creating from local file
    2. Saku
-      - Main menu
-         - Graphics
-         - QScene
+      - Projectile graphics
       - Game overlay
+      - Level design
    3. Harvey
-      - Pathfinding method
-      - Change enum implementation of path to classes implementation
+      - Map loading/saving
+      - Documentation
+      - Complete path implementation
    4. Hung
-      - Basic tower implementation
-
+      - Implement other tower types
+      - Enemy type targeting logic
+      - Remove tower function
 
 ## Project status
-Development is ongoing. A basic implementation with one type of enemy, tower and path is scheduled to work by the end of the week. This leaves a full week to implement a working demo of the final game. This leaves us a little bit behind the original schedule but still on track for a fully working game.
+Most basic functionalities of the game are working. The most difficult challenges have been solved and the mechanics seem to work as intended at the moment. For the next week, there will be some bug fixing to do and finalize the rest of the planned features before releasing the demo. 
 
 ### TODOs
    1. Finish stage 1 implementations.
-   2. Start stage 2 implementations.
+   2. Finish stage 2 implementations.
+   3. Create an executable
+   4. More detailed todo-list: https://miro.com/app/board/uXjVPIee4qA=/?share_link_id=19406790451
 
 
 
