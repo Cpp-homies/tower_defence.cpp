@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    cs_student.cpp \
     enemy.cpp \
     button.cpp \
     game.cpp \
@@ -18,9 +19,11 @@ SOURCES += \
     menu.cpp \
     projectile.cpp \
     square.cpp \
+    ta.cpp \
     tower.cpp \
 
 HEADERS += \
+    cs_student.h \
     enemy.h \
     button.h \
     game.h \
@@ -29,6 +32,7 @@ HEADERS += \
     menu.h \
     projectile.h \
     square.h \
+    ta.h \
     tower.h
 
 # Default rules for deployment.
