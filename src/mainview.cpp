@@ -4,7 +4,6 @@
 MainView::MainView(QWidget *parent): QGraphicsView(parent)
 {
     setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-    game_= new Game(this);
     menu_ = new Menu(this);
     leaderboard_ = new Leaderboard(this);
     setFixedSize(1280,720);
@@ -35,6 +34,7 @@ Leaderboard* MainView::getLeaderboard()
 
 void MainView::showGame()
 {
+    game_= new Game(this);
     setScene(game_);
 
     // Set background image

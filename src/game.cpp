@@ -300,6 +300,7 @@ QPointF Game::getSquarePos(int row, int column){
 
 void Game::showMenu(){
     view->showMenu();
+    this->clear();
 }
 
 bool Game::buildTower(int row, int column) {
