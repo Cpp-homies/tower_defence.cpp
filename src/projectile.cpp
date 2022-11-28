@@ -1,11 +1,12 @@
 #include "projectile.h"
+#include "enemy.h"
 #include <QPixmap>
 #include <QTimer>
 #include <qmath.h>
 
 
-Projectile::Projectile(QGraphicsItem *parent)
-    : QObject(),QGraphicsPixmapItem(parent)
+Projectile::Projectile(int damage, QGraphicsItem *parent)
+    : QObject(),QGraphicsPixmapItem(parent), damage_(damage)
 {
     setPixmap(QPixmap(":/images/CStudent_projectile.png"));
     setTransformOriginPoint(pixmap().width()/2,pixmap().height()/2);
@@ -25,6 +26,19 @@ void Projectile::move(){
     double dx = STEP_SIZE * qCos(qDegreesToRadians(theta));
 
     setPos(x()+dx, y()+dy);
+    for (auto item : collidingItems())
+    {
+        Enemy* enemy = dynamic_cast<Enemy*>(item);
+        if(enemy)
+        {
+            enemy->takeDamage(damage_);
+            deleteLater();
+            return;
+        }
+
+    }
+
+
     setDistanceTravelled(distanceTravelled_+STEP_SIZE);
     if(distanceTravelled_>maxRange_) deleteLater();
 }
