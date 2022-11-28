@@ -32,6 +32,7 @@ public:
     void createGameControls();
     void createWave(QList<QPoint> path);
     QList<QPointF> convertCoordinates(QList<QPoint> path);
+    void readWaveFile();
 
     int getHealth() const;
     int getScore() const;
@@ -67,6 +68,8 @@ signals:
     void gameWon();
     void gameLost();
     void waveWon();
+    void fileError(QString);
+
 
 private:
 
@@ -76,7 +79,11 @@ private:
     int wavesCount_;
     int enemyCount_;
     int level_;
+    int finalLevel_;
     int score_;
+    QList<QPoint> path_;
+    QList<QStringList> waves_;
+
     Modes::MODES mode_;
     TowerTypes::TYPES buildType_;
     QList<QPoint> shortest_path_;

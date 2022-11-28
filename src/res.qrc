@@ -37,5 +37,7 @@
         <file>images/Stack_overflow4.png</file>
         <file>images/Stack_overflow5.png</file>
         <file>images/Stack_overflow6.png</file>
+        <file>files/README.txt</file>
+        <file>files/waves.txt</file>
     </qresource>
 </RCC>

@@ -23,6 +23,10 @@
 
 #include <QIcon>
 #include <QScrollBar>
+#include <QFile>
+#include <QTextStream>
+#include <QRegularExpression>
+
 #define BUILD_BUTTON_SIZE 80
 extern MainView * view;
 
@@ -31,7 +35,7 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     // set starting values of health, currency etc
     health_ = 10;
     currency_ = 100;
-    level_ = 1;
+    level_ = 0;
     score_ = 0;
     enemyCount_ = 0;
     wavesCount_ = 0;
@@ -195,10 +199,30 @@ void Game::createGameControls()
 
 void Game::createWave(QList<QPoint> path)
 {
+
+    QList<QPointF> convertedPath = convertCoordinates(path);
+    for (QString wave: waves_[level_])
+    {
+        QTextStream stream(&wave);
+        int amount;
+        int type;
+        int delay;
+        stream>>amount>>type>>delay;
+
+        if(type==1 || type==2)
+        {
+            CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), convertedPath, *this);
+            addItem(enemy);
+            enemy->startMove();
+
+        }
+    }
+    ++level_;
+
     //can create an enemy with these 3 lines
-    CompilerError* enemy = new CompilerError(CompilerErrorType::Exception, convertCoordinates(path), *this);
-    addItem(enemy);
-    enemy->startMove();
+
+
+
 }
 
 //converting grid matrix coordinates to scene coordinates for the enemie path
@@ -213,6 +237,35 @@ QList<QPointF> Game::convertCoordinates(QList<QPoint> path)
         i++;
     }
     return pathF;
+}
+
+void Game::readWaveFile()
+{
+    QFile file(":/files/waves.txt");
+    if(!file.exists())
+    {
+        emit fileError("wave.txt not found");
+        return;
+    }
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        emit fileError(file.errorString());
+        return;
+    }
+    QTextStream stream(&file);
+    if(stream.atEnd())
+    {
+        emit fileError("wave.exe is empty");
+        return;
+    }
+    while(!stream.atEnd())
+    {
+        QString line = stream.readLine();
+        QStringList wave = line.split(';', Qt::SkipEmptyParts);
+        waves_<<wave;
+    }
+    file.close();
+    finalLevel_=waves_.length();
 }
 
 
@@ -274,9 +327,9 @@ void Game::enemyDies()
 {
     if(--enemyCount_==0)
     {
-        if(level_<20)
+        if(level_!=finalLevel_)
         {
-            advanceLevel();
+            createWave(path_);
             emit waveWon();
 
         } else emit gameWon();
