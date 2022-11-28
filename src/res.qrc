@@ -26,5 +26,16 @@
         <file>images/Teacher.png</file>
         <file>images/Tree_sitter.png</file>
         <file>images/Valgrind.png</file>
+        <file>images/bytes_lost.png</file>
+        <file>images/Exception.png</file>
+        <file>images/Invalid_read.png</file>
+        <file>images/Invalid_write.png</file>
+        <file>images/Mismatched.png</file>
+        <file>images/Stack_overflow1.png</file>
+        <file>images/Stack_overflow2.png</file>
+        <file>images/Stack_overflow3.png</file>
+        <file>images/Stack_overflow4.png</file>
+        <file>images/Stack_overflow5.png</file>
+        <file>images/Stack_overflow6.png</file>
     </qresource>
 </RCC>

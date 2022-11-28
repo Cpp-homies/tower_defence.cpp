@@ -4,6 +4,16 @@
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
 
+// enumeration to keep track of the game's mode
+namespace Modes{
+    enum MODES{normal, build, upgrade};
+}
+
+// enumeration to keep track of tower types for build
+namespace TowerTypes{
+    enum TYPES{CS_Student, TA, SearchEngine, LanguageServer, Valgrind};
+}
+
 class Game: public QGraphicsScene
 {
     Q_OBJECT
@@ -14,6 +24,8 @@ public:
     QPointF getSquarePos(int row, int column);
     QWidget* getWidgetAt(int row, int column);
     bool buildTower(int row, int column);
+    bool buildTower(int row, int column, TowerTypes::TYPES type);
+    bool upgradeTower(int row, int column);
 
     bool isLost() const;
     void createMap();
@@ -26,10 +38,13 @@ public:
     int getLevel() const;
     int getCurrency() const;
     int getEnemyCount() const;
+    Modes::MODES getMode() const;
+    TowerTypes::TYPES getBuildType() const;
 
     void changeHealth(int dHealth);
     void changeScore(int points);
     void changeCurrency(int dCurrency);
+    void setMode(Modes::MODES m);
     void advanceLevel();
     void enemyDies();
     void keyPressEvent(QKeyEvent *keyEvent);
@@ -41,6 +56,12 @@ public:
     bool isTower(int row, int column);
 public slots:
     void showMenu();
+    void enterUpgradeMode();
+    void enterBuildCS();
+    void enterBuildTA();
+    void enterBuildSE();
+    void enterBuildLS();
+    void enterBuildVal();
 
 signals:
     void gameWon();
@@ -56,6 +77,8 @@ private:
     int enemyCount_;
     int level_;
     int score_;
+    Modes::MODES mode_;
+    TowerTypes::TYPES buildType_;
     QList<QPoint> shortest_path_;
 };
 

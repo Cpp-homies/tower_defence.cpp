@@ -21,16 +21,72 @@ Square::Square(int x, int y, QWidget *parent)
 }
 
 void Square::mousePressEvent(QMouseEvent* /* unused */){
-    // if the build fail
-    if (!view->getGame()->buildTower(this->x_, this->y_)) {
-        // do something
-    }
-    else {
-        // build successful, schedule to delete the square
-        deleteLater();
+    // switch case for handling interactions
+    // according to current mode of the game
+    switch (view->getGame()->getMode()) {
+    case Modes::build:
+        // build the tower according to the chosen type
+        switch (view->getGame()->getBuildType()) {
+        case TowerTypes::CS_Student:
+            // if the build fail
+            if (!view->getGame()->buildTower(this->x_, this->y_, TowerTypes::CS_Student)) {
+                // do something
+
+                // reset the mode of the game back to normal
+                view->getGame()->setMode(Modes::normal);
+            }
+            else {
+                // build successful, schedule to delete the square
+                deleteLater();
+                // reset the mode of the game back to normal
+                view->getGame()->setMode(Modes::normal);
+            }
+            break;
+        case TowerTypes::TA:
+            // if the build fail
+            if (!view->getGame()->buildTower(this->x_, this->y_, TowerTypes::TA)) {
+                // do something
+
+                // reset the mode of the game back to normal
+                view->getGame()->setMode(Modes::normal);
+            }
+            else {
+                // build successful, schedule to delete the square
+                deleteLater();
+                // reset the mode of the game back to normal
+                view->getGame()->setMode(Modes::normal);
+            }
+            break;
+        default:
+            break;
+        }
+
+        break;
+    case Modes::upgrade:
+        // if upgrade fail
+        if (!view->getGame()->upgradeTower(this->x_, this->y_)) {
+            // do something
+
+            // reset the state of the game back to normal
+            view->getGame()->setMode(Modes::normal);
+        }
+        else {
+            // upgrade successful, reset the mode of the game back to normal
+            view->getGame()->setMode(Modes::normal);
+        }
+        break;
+    default:
+//        // if the build fail
+//        if (!view->getGame()->buildTower(this->x_, this->y_)) {
+//            // do something
+//        }
+//        else {
+//            // build successful, schedule to delete the square
+//            deleteLater();
+//        }
+        break;
     }
 
-//    fire(view->getGame()->getSquarePos(2,2));
 }
 
 //Fires a projectile at the targetPos

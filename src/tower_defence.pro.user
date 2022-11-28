@@ -1,3 +1,4 @@
+<<<<<<< src/tower_defence.pro.user
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
 <!-- Written by QtCreator 8.0.84, 2022-11-27T19:59:08. -->
@@ -261,3 +262,5 @@
   <value type="int">22</value>
  </data>
 </qtcreator>
+=======
+>>>>>>> src/tower_defence.pro.user

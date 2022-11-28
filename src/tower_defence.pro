@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     compilererror.cpp \
+    cs_student.cpp \
     enemy.cpp \
     button.cpp \
     game.cpp \
@@ -21,10 +22,12 @@ SOURCES += \
     projectile.cpp \
     runtimeerror.cpp \
     square.cpp \
+    ta.cpp \
     tower.cpp \
 
 HEADERS += \
     compilererror.h \
+    cs_student.h \
     enemy.h \
     button.h \
     game.h \
@@ -35,6 +38,7 @@ HEADERS += \
     projectile.h \
     runtimeerror.h \
     square.h \
+    ta.h \
     tower.h
 
 # Default rules for deployment.
