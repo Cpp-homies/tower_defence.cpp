@@ -4,14 +4,18 @@
 #include "game.h"
 #include <QGraphicsPixmapItem>
 
-//subtypes of enemies, doubles as a stats multiplier?
+//enums of main and subtypes, they double as integers to create waves easier
+
+//main 3 types of enemies
+//is the type_ variable
 enum class EnemyType
 {
     CompilerError=1,
     MemoryError=2,
     RuntimeError=3
 };
-
+//subtypes of enemies
+//is the name_ variable of the enemies
 enum CompilerErrorType
 {
     SyntaxError=1,
@@ -29,6 +33,8 @@ enum RuntimeErrorType
     MemoryStackMinion=1,
     StackOverflow=2
 };
+
+
 class Enemy: public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT

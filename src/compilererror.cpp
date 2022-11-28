@@ -42,7 +42,8 @@ void CompilerError::die()
 
 void CompilerError::explodeException()
 {
-    for (int i = 1; i < 11; ++i)
+    int amount = 10;
+    for (int i = 1; i < amount+1; ++i)
     {
         QList<QPointF> path(path_);
         path.remove(0,point_index_);

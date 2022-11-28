@@ -52,6 +52,7 @@ void Enemy::move()
         point_index_++;
         // last point reached
         if (point_index_ >= path_.size()){
+
             game_.changeHealth(-damage_);
             deleteLater();
 

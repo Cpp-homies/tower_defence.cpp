@@ -103,11 +103,13 @@ void Game::createGameControls()
 
 void Game::createWave(QList<QPoint> path)
 {
-   RuntimeError* enemy = new RuntimeError(RuntimeErrorType::StackOverflow, convertCoordinates(path), *this);
+    //can create an enemy with these 3 lines
+    RuntimeError* enemy = new RuntimeError(RuntimeErrorType::StackOverflow, convertCoordinates(path), *this);
     addItem(enemy);
     enemy->startMove();
 }
 
+//converting grid matrix coordinates to scene coordinates for the enemie path
 QList<QPointF> Game::convertCoordinates(QList<QPoint> path)
 {
     QList<QPointF> pathF =  QList<QPointF>(path.length());
