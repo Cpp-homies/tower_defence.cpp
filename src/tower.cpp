@@ -107,12 +107,8 @@ void Tower::getTarget() {
 
     // find the closest enemy
     for (int i = 0, n = items_in_range.size(); i < n; i++) {
-<<<<<<< src/tower.cpp
-       RuntimeError* enemy = dynamic_cast<RuntimeError *>(items_in_range[i]);
-=======
         Enemy * enemy = dynamic_cast<Enemy *>(items_in_range[i]);
         // if this is an enemy
->>>>>>> src/tower.cpp
         if (enemy) {
             // check if the enemy is targetable or not
             if (isTargetable(enemy)) {
