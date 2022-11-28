@@ -37,7 +37,7 @@ void CompilerError::die()
         explodeException();
     }
     deleteLater();
-
+    game_.enemyDies();
 }
 
 void CompilerError::explodeException()

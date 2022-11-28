@@ -24,7 +24,7 @@ extern MainView * view;
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
     // set starting values of health, currency etc
-    health_ = 100;
+    health_ = 10;
     currency_ = 100;
     level_ = 1;
     score_ = 0;
@@ -42,7 +42,6 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     mapLayout->setSpacing(0);
     form->setLayout(gameLayout);
     addItem(form);
-
 }
 
 void Game::createMap(){
@@ -136,6 +135,11 @@ int Game::getCurrency() const {
     return currency_;
 }
 
+int Game::getEnemyCount() const
+{
+    return enemyCount_;
+}
+
 int Game::getLevel() const {
     return level_;
 }
@@ -158,6 +162,19 @@ void Game::changeScore (int dPoints) {
 
 void Game::advanceLevel () {
     level_++;
+}
+
+void Game::enemyDies()
+{
+    if(--enemyCount_==0)
+    {
+        if(level_<20)
+        {
+            advanceLevel();
+            emit waveWon();
+
+        } else emit gameWon();
+    }
 }
 
 //just testing scene changing

@@ -29,6 +29,7 @@ void Enemy::die()
     game_.changeScore(pointValue_);
     game_.changeCurrency(pointValue_);
     deleteLater();
+    game_.enemyDies();
 }
 
 void Enemy::setSpeed(int speed)
@@ -52,11 +53,13 @@ void Enemy::move()
         // last point reached
         if (point_index_ >= path_.size()){
             game_.changeHealth(-damage_);
+            deleteLater();
+
             if(game_.isLost())
             {
-                //game is lost here
+                emit game_.gameLost();
             }
-            deleteLater();
+
             return;
         }
         // last point not reached

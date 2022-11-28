@@ -25,11 +25,13 @@ public:
     int getScore() const;
     int getLevel() const;
     int getCurrency() const;
+    int getEnemyCount() const;
 
     void changeHealth(int dHealth);
     void changeScore(int points);
     void changeCurrency(int dCurrency);
     void advanceLevel();
+    void enemyDies();
     void keyPressEvent(QKeyEvent *keyEvent);
 
     QGraphicsGridLayout* mapLayout; //map area where the action is
@@ -39,6 +41,11 @@ public:
     bool isTower(int row, int column);
 public slots:
     void showMenu();
+
+signals:
+    void gameWon();
+    void gameLost();
+    void waveWon();
 
 private:
 
