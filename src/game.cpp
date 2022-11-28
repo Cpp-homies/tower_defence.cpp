@@ -196,7 +196,7 @@ void Game::createGameControls()
 void Game::createWave(QList<QPoint> path)
 {
     //can create an enemy with these 3 lines
-    RuntimeError* enemy = new RuntimeError(RuntimeErrorType::StackOverflow, convertCoordinates(path), *this);
+    CompilerError* enemy = new CompilerError(CompilerErrorType::Exception, convertCoordinates(path), *this);
     addItem(enemy);
     enemy->startMove();
 }

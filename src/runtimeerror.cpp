@@ -34,10 +34,9 @@ void RuntimeError::takeDamage(int damage)
         int stages = 6;
         int increments = pointValue_/stages;
 
-        if(health_/increments > (health_-damage)/increments )
+        if(health_/increments > (health_-damage)/increments && (health_-damage)/increments >=1)
         {
             int stage = (health_-damage)/increments-1;
-            if(stage<0) stage = 0;
             QList<QPixmap> stageImgs;
             stageImgs << QPixmap(":/images/Stack_overflow6.png") << QPixmap(":/images/Stack_overflow5.png")
                       << QPixmap(":/images/Stack_overflow4.png") << QPixmap(":/images/Stack_overflow3.png")
