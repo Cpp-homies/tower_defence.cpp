@@ -6,6 +6,11 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QTimer>
+#include <typeinfo>
+#include <iostream>
+#include "compilererror.h"
+#include "memoryerror.h"
+#include "runtimeerror.h"
 #include "mainview.h"
 
 extern MainView * view;
@@ -102,8 +107,12 @@ void Tower::getTarget() {
 
     // find the closest enemy
     for (int i = 0, n = items_in_range.size(); i < n; i++) {
+<<<<<<< src/tower.cpp
+       RuntimeError* enemy = dynamic_cast<RuntimeError *>(items_in_range[i]);
+=======
         Enemy * enemy = dynamic_cast<Enemy *>(items_in_range[i]);
         // if this is an enemy
+>>>>>>> src/tower.cpp
         if (enemy) {
             // check if the enemy is targetable or not
             if (isTargetable(enemy)) {
@@ -151,7 +160,7 @@ void Tower::setRange(int range) {
 //Fires a projectile at the targetPos
 void Tower::fire(QPointF targetPos) {
 
-    Projectile* projectile = new Projectile();
+    Projectile* projectile = new Projectile(damage_);
     projectile->setPos(view->getGame()->getSquarePos(x_,y_)); //takes the same coordinates as the tower
     QLineF ln(view->getGame()->getSquarePos(x_,y_),targetPos); //path of the projectile
     int angle = -1 * ln.angle(); //the angle from tower to target

@@ -37,6 +37,7 @@ public:
     int getScore() const;
     int getLevel() const;
     int getCurrency() const;
+    int getEnemyCount() const;
     Modes::MODES getMode() const;
     TowerTypes::TYPES getBuildType() const;
 
@@ -45,6 +46,7 @@ public:
     void changeCurrency(int dCurrency);
     void setMode(Modes::MODES m);
     void advanceLevel();
+    void enemyDies();
     void keyPressEvent(QKeyEvent *keyEvent);
 
     QGraphicsGridLayout* mapLayout; //map area where the action is
@@ -60,6 +62,11 @@ public slots:
     void enterBuildSE();
     void enterBuildLS();
     void enterBuildVal();
+
+signals:
+    void gameWon();
+    void gameLost();
+    void waveWon();
 
 private:
 

@@ -12,6 +12,10 @@
 #include <QToolButton>
 #include "square.h"
 #include "mainview.h"
+#include "tower.h"
+#include "compilererror.h"
+#include "memoryerror.h"
+#include "runtimeerror.h"
 #include "enemy.h"
 #include "tower.h"
 #include "cs_student.h"
@@ -25,10 +29,12 @@ extern MainView * view;
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
     // set starting values of health, currency etc
-    health_ = 100;
+    health_ = 10;
     currency_ = 100;
     level_ = 1;
     score_ = 0;
+    enemyCount_ = 0;
+    wavesCount_ = 0;
     mode_ = Modes::normal;
 
     // set size 1280x717 (use 717 height because we dont want scroll)
@@ -42,7 +48,6 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     mapLayout->setSpacing(0);
     form->setLayout(gameLayout);
     addItem(form);
-
 }
 
 void Game::createMap(){
@@ -190,10 +195,13 @@ void Game::createGameControls()
 
 void Game::createWave(QList<QPoint> path)
 {
-    Enemy* enemy = new Enemy(1,1,1, convertCoordinates(path), *this);
+    //can create an enemy with these 3 lines
+    RuntimeError* enemy = new RuntimeError(RuntimeErrorType::StackOverflow, convertCoordinates(path), *this);
     addItem(enemy);
+    enemy->startMove();
 }
 
+//converting grid matrix coordinates to scene coordinates for the enemie path
 QList<QPointF> Game::convertCoordinates(QList<QPoint> path)
 {
     QList<QPointF> pathF =  QList<QPointF>(path.length());
@@ -219,6 +227,11 @@ int Game::getHealth() const {
 
 int Game::getCurrency() const {
     return currency_;
+}
+
+int Game::getEnemyCount() const
+{
+    return enemyCount_;
 }
 
 int Game::getLevel() const {
@@ -257,13 +270,25 @@ void Game::advanceLevel () {
     level_++;
 }
 
+void Game::enemyDies()
+{
+    if(--enemyCount_==0)
+    {
+        if(level_<20)
+        {
+            advanceLevel();
+            emit waveWon();
+
+        } else emit gameWon();
+    }
+}
 
 //just testing scene changing
 //can be used for other purposes
 void Game::keyPressEvent(QKeyEvent* /* unused */)
 {
     QList<QPoint> path;
-    path << QPoint(7,0) << QPoint(7,1) << QPoint(6,1)<< QPoint(6,4);
+    path << QPoint(7,0) << QPoint(7,1) << QPoint(8,1)<< QPoint(8,5);
     createWave(path);
 
 }

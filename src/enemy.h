@@ -4,32 +4,65 @@
 #include "game.h"
 #include <QGraphicsPixmapItem>
 
+//enums of main and subtypes, they double as integers to create waves easier
+
+//main 3 types of enemies
+//is the type_ variable
+enum class EnemyType
+{
+    CompilerError=1,
+    MemoryError=2,
+    RuntimeError=3
+};
+//subtypes of enemies
+//is the name_ variable of the enemies
+enum CompilerErrorType
+{
+    SyntaxError=1,
+    Exception=2
+};
+enum MemoryErrorType
+{
+    InvalidRead=3,
+    InvalidWrite=4,
+    XBytesAreLost=5,
+    MismatchedDeleteFree=6
+};
+enum RuntimeErrorType
+{
+    MemoryStackMinion=1,
+    StackOverflow=2
+};
+
+
 class Enemy: public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Enemy(int health, int damage, int speed,QList<QPointF> path, Game& game, QGraphicsItem * parent=0);
+    Enemy(EnemyType type, QList<QPointF> path, Game& game, int health = 0, int damage = 0, int speed = 0, QGraphicsItem * parent=0);
 
     virtual void attack(){}
     virtual void die();
-    void takeDamage(int damage);
+    virtual void takeDamage(int damage);
+    void setSpeed(int speed);
+    void startMove();
 
 public slots:
 
     void move();
 
 
-private:
+protected:
 
     int health_;
     int damage_;
-    int speed_;
-
+    int speed_; // 0 to 70
+    int pointValue_;
     Game& game_;
-
     QList<QPointF> path_;
     QPointF dest_;
     int point_index_;
+    EnemyType type_;
 };
 
 #endif // ENEMY_H
