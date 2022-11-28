@@ -5,7 +5,7 @@ RuntimeError::RuntimeError(RuntimeErrorType subType, QList<QPointF> path, Game& 
     switch (subType) {
 
     case RuntimeErrorType::StackOverflow:
-        setPixmap(QPixmap(":/images/syntax_error1.png")); //TODO change image
+        setPixmap(QPixmap(":/images/Stack_overflow1.png"));
         setTransformOriginPoint(pixmap().height()/2, pixmap().width()/2);
         damage_ = 50;
         health_ = 100;
@@ -13,7 +13,7 @@ RuntimeError::RuntimeError(RuntimeErrorType subType, QList<QPointF> path, Game& 
         break;
 
     case RuntimeErrorType::MemoryStackMinion:
-        setPixmap(QPixmap(":/images/syntax_error3.png")); //TODO change image
+        setPixmap(QPixmap(":/images/Stack_overflow6.png"));
         setOffset(QPointF(16,16));
         setTransformOriginPoint(pixmap().height(), pixmap().width());
         damage_ = 10;
@@ -37,8 +37,12 @@ void RuntimeError::takeDamage(int damage)
 
         if((health_-1)/increments > (health_-damage)/increments)
         {
-            int stage = (health_-damage)/increments+1;
-//                setPixmap(QPixmap(":/images/syntax_error1.png")); //TODO change boss pixmap according to stage
+            int stage = (health_-damage)/increments;
+            QList<QPixmap> stageImgs;
+            stageImgs << QPixmap(":/images/Stack_overflow6.png") << QPixmap(":/images/Stack_overflow5.png")
+                      << QPixmap(":/images/Stack_overflow4.png") << QPixmap(":/images/Stack_overflow3.png")
+                      << QPixmap(":/images/Stack_overflow2.png") << QPixmap(":/images/Stack_overflow1.png");
+            setPixmap(stageImgs[stage]);
 //                setTransformOriginPoint(pixmap().height()/2, pixmap().width()/2);
             QList<QPointF> path(path_);
             path.remove(0,point_index_);
