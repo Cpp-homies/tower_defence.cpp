@@ -1,13 +1,13 @@
 #include "path.h"
 #include <QPixmap>
 
-Path::Path(int x, int y, PathType , PathConfig config, int rotation, QWidget* parent)
+Path::Path(int x, int y, PathType type, int rotation, QWidget* parent)
         : Square(x, y, parent) {
     // Set up rotation transform
     QTransform transform;
     transform.rotate(rotation);
 
-    switch (config) {
+    switch (type) {
     case Straight:
         setPixmap(QPixmap(":/images/Path_tile_vertical.png").transformed(transform));
         break;
@@ -19,6 +19,10 @@ Path::Path(int x, int y, PathType , PathConfig config, int rotation, QWidget* pa
         break;
     case XSplit:
         setPixmap(QPixmap(":/images/Path_tile_x-shape.png").transformed(transform));
+        break;
+    case Start:
+    case End:
+        setPixmap(QPixmap(":/images/Path_startend.png").transformed(transform));
         break;
     }
 };

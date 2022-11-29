@@ -69,6 +69,8 @@ signals:
     void waveWon();
 
 private:
+    QPoint start_;
+    QPoint end_;
 
     int health_;
     int currency_;
