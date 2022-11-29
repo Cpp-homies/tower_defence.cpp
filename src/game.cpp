@@ -21,6 +21,9 @@
 #include "cs_student.h"
 #include "ta.h"
 
+#include <QDataStream>
+#include <QFile>
+#include <iostream>
 #include <QIcon>
 #include <QScrollBar>
 #define BUILD_BUTTON_SIZE 80
@@ -51,23 +54,55 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
 }
 
 void Game::createMap(){
-
-
-
-
-
     mapLayout = new QGraphicsGridLayout();
 
-    for(int i = 0; i<11; ++i)
-    {
-        for (int j = 0; j < 11; ++j) {
+//    QFile test(":/files/testing.map");
+//    test.open(QIODevice::WriteOnly);
+//    QDataStream out(&test);
+//    out << (qint32)16;
+//    out << (qint32)9;
+//    test.close();
 
-                Square* tile = new Square(i,j,nullptr);
-                QGraphicsProxyWidget* backgroundTile = addWidget(tile);
-                mapLayout->addItem(backgroundTile,i,j);
+    QFile map(":/files/test.map");
+    if (map.exists() && map.open(QIODevice::ReadOnly)) {
+        std::cout << "Opened" << std::endl;
+        QTextStream data(&map);
+        int width;
+        int height;
 
+        data >> width >> height;
+
+        std::cout << "Width: " << width << ", Height: " << height << std::endl;
+
+        for (int i = 0; i < width; ++i) {
+            for (int j = 0; j < height; ++j) {
+                int value;
+                data >> value;
+                switch (value) {
+                case 1: {
+                    Square* tile = new Square(i, j, nullptr);
+                    QGraphicsProxyWidget* backgroundTile = addWidget(tile);
+                    mapLayout->addItem(backgroundTile, i, j);
+                    break;
+                }
+                default:
+                    break;
+                }
+            }
         }
     }
+    map.close();
+
+//    for(int i = 0; i<11; ++i)
+//    {
+//        for (int j = 0; j < 11; ++j) {
+
+//                Square* tile = new Square(i,j,nullptr);
+//                QGraphicsProxyWidget* backgroundTile = addWidget(tile);
+//                mapLayout->addItem(backgroundTile,i,j);
+
+//        }
+//    }
 
     // set margins to 0
     mapLayout->setContentsMargins(0,0,0,0);

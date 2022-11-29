@@ -35,6 +35,7 @@ HEADERS += \
     mainview.h \
     memoryerror.h \
     menu.h \
+    path.h \
     projectile.h \
     runtimeerror.h \
     square.h \
