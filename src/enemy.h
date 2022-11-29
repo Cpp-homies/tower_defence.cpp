@@ -4,7 +4,7 @@
 #include "game.h"
 #include <QGraphicsPixmapItem>
 
-//enums of main and subtypes, they double as integers to create waves easier
+//enums of main and subtypes, could help with scaling
 
 //main 3 types of enemies
 //is the type_ variable
@@ -30,8 +30,8 @@ enum MemoryErrorType
 };
 enum RuntimeErrorType
 {
-    MemoryStackMinion=1,
-    StackOverflow=2
+    MemoryStackMinion=8,
+    StackOverflow=7
 };
 
 
