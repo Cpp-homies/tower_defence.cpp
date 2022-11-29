@@ -33,6 +33,7 @@ public:
     void createMap();
     void createGameControls();
     void createWave();
+    void readWaveFile();
     QList<QPointF> convertCoordinates(QList<QPoint> path);
     QList<QPoint> getShortestPath(QPoint start);
 

@@ -450,7 +450,7 @@ void Game::createWave()
     //to mark a start of wave creation
     bool flag = true;
     //the path the enemies take
-    QList<QPointF> convertedPath = convertCoordinates(path_);
+    QList<QPointF> convertedPath = convertCoordinates(shortest_path_);
     // a buffer variable to hold a timer
     QPointer<QTimer> timerBuffer;
     //for every entry in one line from wave.txt
@@ -666,8 +666,7 @@ void Game::keyPressEvent(QKeyEvent* /* unused */)
 {
     if(enemyCount_==0 && !isWon() )
     {
-        //TODO delete this
-        path_ << QPoint(7,0) << QPoint(7,1) << QPoint(8,1)<< QPoint(8,5);
+
         createWave();
 
     }
