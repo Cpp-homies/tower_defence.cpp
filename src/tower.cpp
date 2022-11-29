@@ -12,6 +12,7 @@
 #include "memoryerror.h"
 #include "runtimeerror.h"
 #include "mainview.h"
+#include <QGraphicsPixmapItem>
 
 extern MainView * view;
 
@@ -39,11 +40,9 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
     targetAble_[EnemyTypes::normal] = true;
 
     // set tower graphics
-    QTransform rm;
-    rm.rotate(90);
     ogImagePath_ = ":/images/CStudent1.png";
-    setPixmap(QPixmap(ogImagePath_).transformed(rm));
-
+    towerImg = view->getGame()->addPixmap(QPixmap(ogImagePath_));
+    towerImg->setPos(towerCenter() - QPoint(towerImg->boundingRect().width()/2, towerImg->boundingRect().height()/2) );
 
     // create the attack circle
     attack_area_ = new QGraphicsEllipseItem(QRect(QPoint(0,0),
@@ -177,7 +176,10 @@ void Tower::fire(QPointF targetPos) {
         // the original image rotate by the new angle
         QTransform transform;
         transform.rotate(angle);
-        Square::setPixmap(QPixmap(ogImagePath_).transformed(transform).scaled(pixmap().size(), Qt::KeepAspectRatioByExpanding));
+        towerImg->setTransformOriginPoint(QPoint(towerImg->boundingRect().width()/2, towerImg->boundingRect().height()/2));
+        //towerImg->setTransform(transform);
+        towerImg->setRotation(angle);
+        //Square::setPixmap(QPixmap(ogImagePath_).transformed(transform).scaled(pixmap().size(), Qt::KeepAspectRatioByExpanding));
         rotationAngle_ = angle;// update the rotation angle
     }
 
@@ -244,8 +246,6 @@ bool Tower::upgrade() {
     else {
         // upgrade the tower according to its level
         upgradeLevel_ += 1;
-        QTransform rm;
-        rm.rotate(90);
 
         switch (upgradeLevel_) {
         case 2:
@@ -255,7 +255,7 @@ bool Tower::upgrade() {
 
             // update tower graphics
             ogImagePath_ = ":/images/CStudent2.png";
-            setPixmap(QPixmap(ogImagePath_).transformed(rm));
+            towerImg->setPixmap(QPixmap(ogImagePath_));
 
             break;
         case 3:
@@ -267,7 +267,7 @@ TODO : Add other changes to tower characteristic beside damage
 
             // update tower graphics
             ogImagePath_ = ":/images/CStudent3.png";
-            setPixmap(QPixmap(ogImagePath_).transformed(rm));
+            towerImg->setPixmap(QPixmap(ogImagePath_));
 
             break;
         case 4:
@@ -276,7 +276,7 @@ TODO : Add other changes to tower characteristic beside damage
 
             // update tower graphics
             ogImagePath_ = ":/images/CStudent4.png";
-            setPixmap(QPixmap(ogImagePath_).transformed(rm));
+            towerImg->setPixmap(QPixmap(ogImagePath_));
 
             break;
         }

@@ -47,36 +47,31 @@ void Enemy::startMove()
 void Enemy::move()
 {
     QLineF ln(pos(),dest_);
+
     if (ln.length() == 0)
     {
         point_index_++;
         // last point reached
         if (point_index_ >= path_.size()){
 
-            game_.changeHealth(-damage_);
+            game_.takeDamage(damage_);
             deleteLater();
-
-            if(game_.isLost())
-            {
-                emit game_.gameLost();
-            }
 
             return;
         }
-        // last point not reached
+        // last point not reached, get new destination
         dest_ = path_[point_index_];
         ln = QLineF (pos(),dest_);
-        setRotation(-1 * ln.angle());
+
 
 
     }
 
-    // move enemy forward at current angle
+    // move enemy forward
     int STEP_SIZE = 2;
-    double theta = rotation(); // degrees
-
-    double dy = STEP_SIZE * qSin(qDegreesToRadians(theta));
-    double dx = STEP_SIZE * qCos(qDegreesToRadians(theta));
+    double angle = -1 * ln.angle();
+    double dy = STEP_SIZE * qSin(qDegreesToRadians(angle));
+    double dx = STEP_SIZE * qCos(qDegreesToRadians(angle));
 
     setPos(x()+dx, y()+dy);
 }
