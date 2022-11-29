@@ -15,10 +15,9 @@ TA::TA(int row, int column, QWidget *parent) : Tower(row, column, 4, 10, 3000) {
     maxLevel_ = 2;
 
     // set TA graphics
-    QTransform rm;
-    rm.rotate(90);
     ogImagePath_ = ":/images/TA.png";
-    setPixmap(QPixmap(ogImagePath_).transformed(rm));
+    towerImg = view->getGame()->addPixmap(QPixmap(ogImagePath_));
+    towerImg->setPos(towerCenter() - QPoint(towerImg->boundingRect().width()/2, towerImg->boundingRect().height()/2) );
 
     // get all the items in the tower's range
     QList <QGraphicsItem*> items_in_range = getItemInRange();
@@ -40,8 +39,6 @@ bool TA::upgrade() {
     else {
         // upgrade the tower according to its level
         upgradeLevel_ += 1;
-        QTransform rm;
-        rm.rotate(90);
 
         switch (upgradeLevel_) {
         case 2:
@@ -50,7 +47,7 @@ bool TA::upgrade() {
 
             // update tower graphics
             ogImagePath_ = ":/images/Teacher.png";
-            setPixmap(QPixmap(ogImagePath_).transformed(rm));
+            towerImg->setPixmap(QPixmap(ogImagePath_));
 
             break;
         }
