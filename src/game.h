@@ -1,5 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
+
 #include <QGraphicsView>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
@@ -28,9 +29,10 @@ public:
     bool upgradeTower(int row, int column);
 
     bool isLost() const;
+    bool isWon() const;
     void createMap();
     void createGameControls();
-    void createWave(QList<QPoint> path);
+    void createWave();
     QList<QPointF> convertCoordinates(QList<QPoint> path);
     void readWaveFile();
 
@@ -42,7 +44,7 @@ public:
     Modes::MODES getMode() const;
     TowerTypes::TYPES getBuildType() const;
 
-    void changeHealth(int dHealth);
+    void takeDamage(int dHealth);
     void changeScore(int points);
     void changeCurrency(int dCurrency);
     void setMode(Modes::MODES m);
@@ -63,6 +65,7 @@ public slots:
     void enterBuildSE();
     void enterBuildLS();
     void enterBuildVal();
+    void spawnEnemy(int type, QList<QPointF> path);
 
 signals:
     void gameWon();
