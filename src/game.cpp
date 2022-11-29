@@ -208,37 +208,41 @@ void Game::createWave()
     for (QString typeOfEnemy: waves_[level_])
     {
         QTextStream stream(&typeOfEnemy);
-        int amount;
-        int type;
-        int delay;
+        int amount=0;
+        int type=0;
+        int delay=0;
         stream>>amount>>type>>delay;
-        //timer for this enemy type
-        QTimer* timer = new QTimer(this);
-        //timer to initiate the next enemy type after the current ones have spawned
-        QTimer* nextEnemiesTimer = new QTimer(this);
-        nextEnemiesTimer->setSingleShot(true);
-        nextEnemiesTimer->setInterval((amount+1)*delay);
-        //after every timeout spawn an enemy
-        timer->callOnTimeout([this, type, convertedPath](){this->spawnEnemy(type, convertedPath);});
-        timer->setInterval(delay);
-        //stop current timer when all enemies are spawned
-        connect(nextEnemiesTimer, SIGNAL(timeout()), timer, SLOT(stop()));
-        if(enemyCount_==0)
+        if (stream.status()==QTextStream::Ok && delay>=0)
         {
-            //start both immediately since there are no enemies
-            timer->start();
-            nextEnemiesTimer->start((amount+1)*delay);
-        } else
-        {
-            //wait till the last enemy type has stopped spawning
-            connect(timerBuffer, SIGNAL(timeout()),timer, SLOT(start()));
-            connect(timerBuffer, SIGNAL(timeout()),nextEnemiesTimer, SLOT(start()) );
+            //timer for this enemy type
+            QTimer* timer = new QTimer(this);
+            //timer to initiate the next enemy type after the current ones have spawned
+            QTimer* nextEnemiesTimer = new QTimer(this);
+            nextEnemiesTimer->setSingleShot(true);
+            nextEnemiesTimer->setInterval((amount+1)*delay);
+            //after every timeout spawn an enemy
+            timer->callOnTimeout([this, type, convertedPath](){this->spawnEnemy(type, convertedPath);});
+            timer->setInterval(delay);
+            //stop current timer when all enemies are spawned
+            connect(nextEnemiesTimer, SIGNAL(timeout()), timer, SLOT(stop()));
+            if(enemyCount_==0)
+            {
+                //start both immediately since there are no enemies
+                timer->start();
+                nextEnemiesTimer->start((amount+1)*delay);
+            } else
+            {
+                //wait till the last enemy type has stopped spawning
+                connect(timerBuffer, SIGNAL(timeout()),timer, SLOT(start()));
+                connect(timerBuffer, SIGNAL(timeout()),nextEnemiesTimer, SLOT(start()) );
+            }
+
+            //save a timer to the buffer to connect it during the next loop
+            timerBuffer = nextEnemiesTimer;
+            //how many enemies will be created in this loop
+            enemyCount_+=amount;
         }
 
-        //save a timer to the buffer to connect it during the next loop
-        timerBuffer = nextEnemiesTimer;
-        //how many enemies will be created in this loop
-        enemyCount_+=amount;
     }
     ++level_;
 
