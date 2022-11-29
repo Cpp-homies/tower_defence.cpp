@@ -66,18 +66,16 @@ void Game::createMap(){
     QFile map(":/files/test.map");
     // TODO: Handle invalid map (either doesn't exist or wrong format)
     if (map.exists() && map.open(QIODevice::ReadOnly)) {
-        qInfo() << "Opened" << "\n";
         QTextStream data(&map);
         int width;
         int height;
 
         data >> width >> height;
 
-        qInfo() << "Width: " << width << ", Height: " << height << "\n";
         QList<QList<QString>> matrix;
-        for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < height; ++j) {
             QList<QString> row;
-            for (int j = 0; j < width; ++j) {
+            for (int i = 0; i < width; ++i) {
                 QString value;
                 data >> value;
                 row.push_back(value);
@@ -88,7 +86,6 @@ void Game::createMap(){
         for (int j = 0; j < height; ++j) {
             for (int i = 0; i < width; ++i) {
                 QString value = matrix[j][i];
-                qInfo() << "[" << value << "] ";
                 if (value == "1") {
                     Square* tile = new Square(j,i,nullptr);
                     QGraphicsProxyWidget* backgroundTile = addWidget(tile);
@@ -121,16 +118,12 @@ void Game::createMap(){
                     } else if (neighbors == 3) { // T-split cases
                         if (up == false) {
                             tile = new Path(i, j, Middle, TSplit, 0, nullptr);
-                            qInfo() << "up";
                         } else if (right == false) {
                             tile = new Path(i, j, Middle, TSplit, 0, nullptr);
-                            qInfo() << "right";
                         } else if (down == false) {
                             tile = new Path(i, j, Middle, TSplit, 180, nullptr);
-                            qInfo() << "down";
                         } else {
                             tile = new Path(i, j, Middle, TSplit, 0, nullptr);
-                            qInfo() << "left";
                         }
                     } else if (neighbors == 2) {
                         // Straight Cases
@@ -158,7 +151,6 @@ void Game::createMap(){
                     mapLayout->addItem(pathTile, j, i);
                 }
             }
-            qInfo() << "\n";
         }
     }
 
