@@ -22,6 +22,8 @@
 #include "ta.h"
 #include "path.h"
 
+#include <QQueue>
+#include <QSet>
 #include <QDataStream>
 #include <QFile>
 #include <QIcon>
@@ -83,6 +85,7 @@ void Game::createMap(){
             matrix.push_back(row);
         }
         map.close();
+        map_ = matrix;
         for (int j = 0; j < height; ++j) {
             for (int i = 0; i < width; ++i) {
                 QString value = matrix[j][i];
@@ -154,7 +157,6 @@ void Game::createMap(){
         }
     }
 
-
 //    for(int i = 0; i<11; ++i)
 //    {
 //        for (int j = 0; j < 11; ++j) {
@@ -173,6 +175,27 @@ void Game::createMap(){
     form->setLayout(mapLayout);
     gameLayout->addItem(form);
 
+}
+
+QList<QPoint> Game::getShortestPath() {
+    if (map_.empty()) {
+        return QList<QPoint>();
+    }
+    QQueue<QList<QPoint>> to_visit;
+    QList<QPoint> initial;
+    initial.push_back(start_);
+    to_visit.enqueue(initial);
+    QSet<QPoint> visited;
+    visited.insert(start_);
+
+    while (!to_visit.isEmpty()) {
+        // Get the element on the top of the queue
+        QList<QPoint> top = to_visit.dequeue();
+        QPoint cursor = top.last(); // Get the last element of the list
+
+    }
+
+   return QList<QPoint>();
 }
 
 void Game::createGameControls()

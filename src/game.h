@@ -32,7 +32,7 @@ public:
     void createGameControls();
     void createWave(QList<QPoint> path);
     QList<QPointF> convertCoordinates(QList<QPoint> path);
-
+    QList<QPoint> getShortestPath();
     int getHealth() const;
     int getScore() const;
     int getLevel() const;
@@ -69,6 +69,10 @@ signals:
     void waveWon();
 
 private:
+    // For pathfinding
+    QList<QList<QString>> map_;
+    QPoint start_;
+    QPoint end_;
 
     int health_;
     int currency_;
