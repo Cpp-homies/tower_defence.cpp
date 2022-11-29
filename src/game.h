@@ -66,12 +66,14 @@ public slots:
     void enterBuildLS();
     void enterBuildVal();
     void spawnEnemy(int type, QList<QPointF> path);
+    void updateLeadrboard();
+    void showError(QString message);
 
 signals:
     void gameWon();
     void gameLost();
     void waveWon();
-    void fileError(QString);
+    void error(QString);
 
 
 private:

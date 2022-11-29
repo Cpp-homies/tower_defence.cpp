@@ -26,6 +26,7 @@
 #include <QTextStream>
 #include <QRegularExpression>
 #include <QTimer>
+#include <QMessageBox>
 
 #define BUILD_BUTTON_SIZE 80
 extern MainView * view;
@@ -52,6 +53,8 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     mapLayout->setSpacing(0);
     form->setLayout(gameLayout);
     addItem(form);
+    //connects error signal with a message box
+    connect(this,SIGNAL(error(QString)),this, SLOT(showError(QString)));
 }
 
 void Game::createMap(){
@@ -200,6 +203,9 @@ void Game::createGameControls()
 //creates a wave of enemies for one level according to the description in wave.txt
 void Game::createWave()
 {
+
+    //to mark a start of wave creation
+    bool flag = true;
     //the path the enemies take
     QList<QPointF> convertedPath = convertCoordinates(path_);
     // a buffer variable to hold a timer
@@ -225,8 +231,9 @@ void Game::createWave()
             timer->setInterval(delay);
             //stop current timer when all enemies are spawned
             connect(nextEnemiesTimer, SIGNAL(timeout()), timer, SLOT(stop()));
-            if(enemyCount_==0)
+            if(flag)
             {
+                flag = false;
                 //start both immediately since there are no enemies
                 timer->start();
                 nextEnemiesTimer->start((amount+1)*delay);
@@ -245,6 +252,8 @@ void Game::createWave()
 
     }
     ++level_;
+
+
 
 
 
@@ -278,6 +287,18 @@ void Game::spawnEnemy(int type,QList<QPointF> path)
 
 }
 
+void Game::updateLeadrboard()
+{
+
+}
+
+void Game::showError(QString message)
+{
+    QMessageBox::information(qobject_cast<QWidget*>(this), tr("Error"),
+                 message);
+
+}
+
 //converting grid matrix coordinates to scene coordinates for the enemie path
 QList<QPointF> Game::convertCoordinates(QList<QPoint> path)
 {
@@ -297,18 +318,20 @@ void Game::readWaveFile()
     QFile file(":/files/waves.txt");
     if(!file.exists())
     {
-        emit fileError("wave.txt not found");
+        emit error("wave.txt not found");
         return;
+
     }
     if(!file.open(QIODevice::ReadOnly))
     {
-        emit fileError(file.errorString());
+        emit error(file.errorString());
         return;
     }
     QTextStream stream(&file);
     if(stream.atEnd())
     {
-        emit fileError("wave.exe is empty");
+
+        emit error("wave.txt is empty");
         return;
     }
     while(!stream.atEnd())
@@ -363,7 +386,7 @@ TowerTypes::TYPES Game::getBuildType() const {
 
 void Game::takeDamage (int dHealth) {
     health_-=dHealth;
-    if(--enemyCount_==0)
+    if(--enemyCount_==0 )
     {
         isLost() ? emit gameLost() : (isWon() ? emit gameWon() : createWave());
 
@@ -398,7 +421,7 @@ void Game::enemyDies()
 //can be used for other purposes
 void Game::keyPressEvent(QKeyEvent* /* unused */)
 {
-    if(enemyCount_==0 && !isWon())
+    if(enemyCount_==0 && !isWon() )
     {
         //TODO delete this
         path_ << QPoint(7,0) << QPoint(7,1) << QPoint(8,1)<< QPoint(8,5);
