@@ -13,7 +13,7 @@ CompilerError::CompilerError(CompilerErrorType subType, QList<QPointF> path, Gam
             break;
 
         case CompilerErrorType::Exception:
-            setPixmap(QPixmap(":/images/syntax_error3.png")); //TODO change image
+            setPixmap(QPixmap(":/images/Exception.png"));
             setOffset(QPointF(16,16));
             setTransformOriginPoint(pixmap().height(), pixmap().width());
             damage_ = 10;
@@ -49,7 +49,7 @@ void CompilerError::explodeException()
         path.remove(0,point_index_);
         path.push_front(scenePos());
         CompilerError* enemy = new CompilerError(CompilerErrorType::SyntaxError,path,  game_);
-        enemy->setSpeed(speed_*i);
+        enemy->setSpeed(speed_+i*3);
         enemy->startMove();
         game_.addItem(enemy);
     }
