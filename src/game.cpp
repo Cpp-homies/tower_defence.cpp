@@ -22,6 +22,9 @@
 #include "ta.h"
 #include "path.h"
 
+#include <QQueue>
+#include <QSet>
+#include <QPoint>
 #include <QDataStream>
 #include <QFile>
 #include <QIcon>
@@ -83,6 +86,7 @@ void Game::createMap(){
             matrix.push_back(row);
         }
         map.close();
+        map_ = matrix;
         for (int j = 0; j < height; ++j) {
             for (int i = 0; i < width; ++i) {
                 QString value = matrix[j][i];
@@ -186,7 +190,47 @@ void Game::createMap(){
     QGraphicsWidget *form = new QGraphicsWidget;
     form->setLayout(mapLayout);
     gameLayout->addItem(form);
+    shortest_path_ = getShortestPath(start_);
+    qInfo() << shortest_path_;
+}
 
+QList<QPoint> Game::getShortestPath(QPoint start) {
+    QQueue<QList<QPoint>> to_visit;
+    QList<QPoint> initial;
+    initial.push_back(start);
+    to_visit.enqueue(initial);
+    QSet<QPoint> visited;
+
+    int total_rows = map_.size();
+    int total_cols = map_[0].size();
+
+    while (!to_visit.empty()) {
+        auto top = to_visit.dequeue();
+        QPoint cursor = top.last();
+        visited.insert(cursor);
+        QList<QPoint> all_neighbors;
+        all_neighbors.append(cursor + QPoint(0, 1));
+        all_neighbors.append(cursor + QPoint(0, -1));
+        all_neighbors.append(cursor + QPoint(1, 0));
+        all_neighbors.append(cursor + QPoint(-1, 0));
+        QList<QPoint> neighbors;
+        // Get in-bound neighbors that have not been visited yet
+        for (auto i : all_neighbors) {
+            if (i.x() < total_cols && i.x() >= 0 && i.y() < total_rows && i.y() >= 0 && isPath(i.x(), i.y()) && !visited.contains(i)) {
+                neighbors.append(i);
+            }
+        }
+        // Queue new elements
+        for (auto i : neighbors) {
+            QList<QPoint> new_elem;
+            new_elem.append(i);
+            if (i == end_) {
+                return top + new_elem;
+            }
+            to_visit.append(top + new_elem);
+        }
+    }
+    return QList<QPoint>();
 }
 
 void Game::createGameControls()
@@ -490,6 +534,10 @@ QWidget* Game::getWidgetAt(int row, int column) {
 
 bool Game::isTower(int row, int column) {
     return dynamic_cast<Tower*>(getWidgetAt(row, column));
+}
+
+bool Game::isPath(int row, int column) {
+    return dynamic_cast<Path*>(getWidgetAt(row, column));
 }
 
 void Game::enterUpgradeMode() {

@@ -32,6 +32,7 @@ public:
     void createGameControls();
     void createWave(QList<QPoint> path);
     QList<QPointF> convertCoordinates(QList<QPoint> path);
+    QList<QPoint> getShortestPath(QPoint start);
 
     int getHealth() const;
     int getScore() const;
@@ -54,6 +55,7 @@ public:
     QGraphicsLinearLayout* controlsLayout;//change this to your liking
 
     bool isTower(int row, int column);
+    bool isPath(int row, int column);
 public slots:
     void showMenu();
     void enterUpgradeMode();
@@ -71,6 +73,7 @@ signals:
 private:
     QPoint start_;
     QPoint end_;
+    QList<QList<QString>> map_;
 
     int health_;
     int currency_;
