@@ -19,6 +19,7 @@ SOURCES += \
     mainview.cpp \
     memoryerror.cpp \
     menu.cpp \
+    path.cpp \
     projectile.cpp \
     runtimeerror.cpp \
     square.cpp \

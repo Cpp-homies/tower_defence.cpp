@@ -20,10 +20,10 @@
 #include "tower.h"
 #include "cs_student.h"
 #include "ta.h"
+#include "path.h"
 
 #include <QDataStream>
 #include <QFile>
-#include <iostream>
 #include <QIcon>
 #include <QScrollBar>
 #define BUILD_BUTTON_SIZE 80
@@ -64,34 +64,104 @@ void Game::createMap(){
 //    test.close();
 
     QFile map(":/files/test.map");
+    // TODO: Handle invalid map (either doesn't exist or wrong format)
     if (map.exists() && map.open(QIODevice::ReadOnly)) {
-        std::cout << "Opened" << std::endl;
+        qInfo() << "Opened" << "\n";
         QTextStream data(&map);
         int width;
         int height;
 
         data >> width >> height;
 
-        std::cout << "Width: " << width << ", Height: " << height << std::endl;
-
-        for (int i = 0; i < width; ++i) {
-            for (int j = 0; j < height; ++j) {
-                int value;
+        qInfo() << "Width: " << width << ", Height: " << height << "\n";
+        QList<QList<QString>> matrix;
+        for (int i = 0; i < height; ++i) {
+            QList<QString> row;
+            for (int j = 0; j < width; ++j) {
+                QString value;
                 data >> value;
-                switch (value) {
-                case 1: {
-                    Square* tile = new Square(i, j, nullptr);
+                row.push_back(value);
+            }
+            matrix.push_back(row);
+        }
+        map.close();
+        for (int j = 0; j < height; ++j) {
+            for (int i = 0; i < width; ++i) {
+                QString value = matrix[j][i];
+                qInfo() << "[" << value << "] ";
+                if (value == "1") {
+                    Square* tile = new Square(j,i,nullptr);
                     QGraphicsProxyWidget* backgroundTile = addWidget(tile);
-                    mapLayout->addItem(backgroundTile, i, j);
-                    break;
-                }
-                default:
-                    break;
+                    mapLayout->addItem(backgroundTile,j,i);
+                } else if (value == "2") {
+                    Path* tile;
+                    bool up = false, right = false, down = false, left = false;
+                    int neighbors = 0; // Number of neighbors
+                    // Checking for adjacent paths
+                    if (j > 0 && matrix[j-1][i] == "2") {
+                        up = true;
+                        neighbors++;
+                    }
+                    if (j < height - 1 && matrix[j+1][i] == "2") {
+                        down = true;
+                        neighbors++;
+                    }
+                    if (i > 0 && matrix[j][i-1] == "2") {
+                        left = true;
+                        neighbors++;
+                    }
+                    if (i < width - 1 && matrix[j][i+1] == "2") {
+                        right = true;
+                        neighbors++;
+                    }
+                    // Select correct configuration
+                    // X-split case
+                    if (neighbors == 4) {
+                        tile = new Path(i, j, Middle, XSplit, 0, nullptr);
+                    } else if (neighbors == 3) { // T-split cases
+                        if (up == false) {
+                            tile = new Path(i, j, Middle, TSplit, 0, nullptr);
+                            qInfo() << "up";
+                        } else if (right == false) {
+                            tile = new Path(i, j, Middle, TSplit, 0, nullptr);
+                            qInfo() << "right";
+                        } else if (down == false) {
+                            tile = new Path(i, j, Middle, TSplit, 180, nullptr);
+                            qInfo() << "down";
+                        } else {
+                            tile = new Path(i, j, Middle, TSplit, 0, nullptr);
+                            qInfo() << "left";
+                        }
+                    } else if (neighbors == 2) {
+                        // Straight Cases
+                        if (left == true && right == true) {
+                            tile = new Path(i, j, Middle, Straight, 90, nullptr);
+                        } else if (up == true && down == true) {
+                            tile = new Path(i, j, Middle, Straight, 0, nullptr);
+                        } else if (up == true && right == true) { // Turn cases
+                            tile = new Path(i, j, Middle, Turn, 0, nullptr);
+                        } else if (right == true && down == true) {
+                            tile = new Path(i, j, Middle, Turn, 90, nullptr);
+                        } else if (down == true && left == true) {
+                            tile = new Path(i, j, Middle, Turn, 180, nullptr);
+                        } else {
+                            tile = new Path(i, j, Middle, Turn, 270, nullptr);
+                        }
+                    } else {
+                        if (left == true || right == true) {
+                            tile = new Path(j, i, Middle, Straight, 90, nullptr);
+                        } else {
+                            tile = new Path(j, i, Middle, Straight, 0, nullptr);
+                        }
+                    }
+                    QGraphicsProxyWidget* pathTile = addWidget(tile);
+                    mapLayout->addItem(pathTile, j, i);
                 }
             }
+            qInfo() << "\n";
         }
     }
-    map.close();
+
 
 //    for(int i = 0; i<11; ++i)
 //    {
