@@ -4,7 +4,7 @@ MemoryError::MemoryError(MemoryErrorType subType, QList<QPointF> path, Game& gam
 {
     switch (subType) {
     case MemoryErrorType::InvalidRead:
-        setPixmap(QPixmap(":/images/syntax_error3.png")); //TODO change image
+        setPixmap(QPixmap(":/images/Invalid_read.png"));
         setOffset(QPointF(16,16));
         setTransformOriginPoint(pixmap().height(), pixmap().width());
         damage_ = 10;
@@ -14,7 +14,7 @@ MemoryError::MemoryError(MemoryErrorType subType, QList<QPointF> path, Game& gam
         break;
 
     case MemoryErrorType::InvalidWrite:
-        setPixmap(QPixmap(":/images/syntax_error3.png")); //TODO change image
+        setPixmap(QPixmap(":/images/Invalid_write.png"));
         setOffset(QPointF(16,16));
         setTransformOriginPoint(pixmap().height(), pixmap().width());
         damage_ = 10;
@@ -23,7 +23,7 @@ MemoryError::MemoryError(MemoryErrorType subType, QList<QPointF> path, Game& gam
         break;
 
     case MemoryErrorType::XBytesAreLost:
-        setPixmap(QPixmap(":/images/syntax_error3.png")); //TODO change image
+        setPixmap(QPixmap(":/images/bytes_lost.png"));
         setOffset(QPointF(16,16));
         setTransformOriginPoint(pixmap().height(), pixmap().width());
         damage_ = 20;
@@ -32,7 +32,7 @@ MemoryError::MemoryError(MemoryErrorType subType, QList<QPointF> path, Game& gam
         break;
 
     case MemoryErrorType::MismatchedDeleteFree:
-        setPixmap(QPixmap(":/images/syntax_error3.png")); //TODO change image
+        setPixmap(QPixmap(":/images/Mismatched.png"));
         setOffset(QPointF(16,16));
         setTransformOriginPoint(pixmap().height(), pixmap().width());
         damage_ = 20;

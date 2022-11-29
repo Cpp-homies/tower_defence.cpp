@@ -1,5 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
+
 #include <QGraphicsView>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
@@ -28,10 +29,12 @@ public:
     bool upgradeTower(int row, int column);
 
     bool isLost() const;
+    bool isWon() const;
     void createMap();
     void createGameControls();
-    void createWave(QList<QPoint> path);
+    void createWave();
     QList<QPointF> convertCoordinates(QList<QPoint> path);
+    void readWaveFile();
 
     int getHealth() const;
     int getScore() const;
@@ -41,7 +44,7 @@ public:
     Modes::MODES getMode() const;
     TowerTypes::TYPES getBuildType() const;
 
-    void changeHealth(int dHealth);
+    void takeDamage(int dHealth);
     void changeScore(int points);
     void changeCurrency(int dCurrency);
     void setMode(Modes::MODES m);
@@ -62,12 +65,20 @@ public slots:
     void enterBuildSE();
     void enterBuildLS();
     void enterBuildVal();
+
+    void spawnEnemy(int type, QList<QPointF> path);
+    void updateLeadrboard();
+    void showError(QString message);
+
     void enterBuildCom();
+
 
 signals:
     void gameWon();
     void gameLost();
     void waveWon();
+    void error(QString);
+
 
 private:
 
@@ -77,7 +88,11 @@ private:
     int wavesCount_;
     int enemyCount_;
     int level_;
+    int finalLevel_;
     int score_;
+    QList<QPoint> path_;
+    QList<QStringList> waves_;
+
     Modes::MODES mode_;
     TowerTypes::TYPES buildType_;
     QList<QPoint> shortest_path_;

@@ -36,7 +36,7 @@ void MainView::showGame()
 {
     game_= new Game(this);
     setScene(game_);
-
+    game_->readWaveFile();
     // Set background image
     QBrush brush;
     brush.setTexture(QPixmap(":/images/Game_controls.png"));

@@ -16,22 +16,27 @@
 #include "compilererror.h"
 #include "memoryerror.h"
 #include "runtimeerror.h"
-#include "enemy.h"
 #include "tower.h"
 #include "cs_student.h"
 #include "ta.h"
 
 #include <QIcon>
 #include <QScrollBar>
-#define BUILD_BUTTON_SIZE 100
+#include <QFile>
+#include <QTextStream>
+#include <QRegularExpression>
+#include <QTimer>
+#include <QMessageBox>
+
+#define BUILD_BUTTON_SIZE 80
 extern MainView * view;
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
     // set starting values of health, currency etc
-    health_ = 10;
+    health_ = 10000;
     currency_ = 100;
-    level_ = 1;
+    level_ = 0;
     score_ = 0;
     enemyCount_ = 0;
     wavesCount_ = 0;
@@ -48,6 +53,8 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     mapLayout->setSpacing(0);
     form->setLayout(gameLayout);
     addItem(form);
+    //connects error signal with a message box
+    connect(this,SIGNAL(error(QString)),this, SLOT(showError(QString)));
 }
 
 void Game::createMap(){
@@ -281,12 +288,103 @@ void Game::createGameControls()
     gameLayout->addItem(form);
 }
 
-void Game::createWave(QList<QPoint> path)
+//creates a wave of enemies for one level according to the description in wave.txt
+void Game::createWave()
 {
-    //can create an enemy with these 3 lines
-    CompilerError* enemy = new CompilerError(CompilerErrorType::Exception, convertCoordinates(path), *this);
-    addItem(enemy);
-    enemy->startMove();
+
+    //to mark a start of wave creation
+    bool flag = true;
+    //the path the enemies take
+    QList<QPointF> convertedPath = convertCoordinates(path_);
+    // a buffer variable to hold a timer
+    QPointer<QTimer> timerBuffer;
+    //for every entry in one line from wave.txt
+    for (QString typeOfEnemy: waves_[level_])
+    {
+        QTextStream stream(&typeOfEnemy);
+        int amount=0;
+        int type=0;
+        int delay=0;
+        stream>>amount>>type>>delay;
+        if (stream.status()==QTextStream::Ok && delay>=0)
+        {
+            //timer for this enemy type
+            QTimer* timer = new QTimer(this);
+            //timer to initiate the next enemy type after the current ones have spawned
+            QTimer* nextEnemiesTimer = new QTimer(this);
+            nextEnemiesTimer->setSingleShot(true);
+            nextEnemiesTimer->setInterval((amount+1)*delay);
+            //after every timeout spawn an enemy
+            timer->callOnTimeout([this, type, convertedPath](){this->spawnEnemy(type, convertedPath);});
+            timer->setInterval(delay);
+            //stop current timer when all enemies are spawned
+            connect(nextEnemiesTimer, SIGNAL(timeout()), timer, SLOT(stop()));
+            if(flag)
+            {
+                flag = false;
+                //start both immediately since there are no enemies
+                timer->start();
+                nextEnemiesTimer->start((amount+1)*delay);
+            } else
+            {
+                //wait till the last enemy type has stopped spawning
+                connect(timerBuffer, SIGNAL(timeout()),timer, SLOT(start()));
+                connect(timerBuffer, SIGNAL(timeout()),nextEnemiesTimer, SLOT(start()) );
+            }
+
+            //save a timer to the buffer to connect it during the next loop
+            timerBuffer = nextEnemiesTimer;
+            //how many enemies will be created in this loop
+            enemyCount_+=amount;
+        }
+
+    }
+    ++level_;
+
+
+
+
+
+
+
+}
+
+void Game::spawnEnemy(int type,QList<QPointF> path)
+{
+    if(type==1 || type==2)
+    {
+        CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), path, *this);
+        addItem(enemy);
+        enemy->startMove();
+
+    }
+    else if(type==3 || type==4 || type==5 || type==6)
+    {
+        MemoryError* enemy = new MemoryError(static_cast<MemoryErrorType>(type), path, *this);
+        addItem(enemy);
+        enemy->startMove();
+
+    }
+    else if(type==7)
+    {
+        RuntimeError* enemy = new RuntimeError(static_cast<RuntimeErrorType>(type), path, *this);
+        addItem(enemy);
+        enemy->startMove();
+
+    }
+
+}
+
+void Game::updateLeadrboard()
+{
+
+}
+
+void Game::showError(QString message)
+{
+    QMessageBox::information(qobject_cast<QWidget*>(this), tr("Error"),
+                 message);
+
 }
 
 //converting grid matrix coordinates to scene coordinates for the enemie path
@@ -303,10 +401,46 @@ QList<QPointF> Game::convertCoordinates(QList<QPoint> path)
     return pathF;
 }
 
+void Game::readWaveFile()
+{
+    QFile file(":/files/waves.txt");
+    if(!file.exists())
+    {
+        emit error("wave.txt not found");
+        return;
+
+    }
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        emit error(file.errorString());
+        return;
+    }
+    QTextStream stream(&file);
+    if(stream.atEnd())
+    {
+
+        emit error("wave.txt is empty");
+        return;
+    }
+    while(!stream.atEnd())
+    {
+        QString line = stream.readLine();
+        QStringList wave = line.split(';', Qt::SkipEmptyParts);
+        waves_<<wave;
+    }
+    file.close();
+    finalLevel_=waves_.length();
+}
+
 
 
 bool Game::isLost() const{
     return health_<=0;
+}
+
+bool Game::isWon() const
+{
+    return enemyCount_==0 && health_>0 && level_==finalLevel_;
 }
 
 int Game::getHealth() const {
@@ -338,8 +472,13 @@ TowerTypes::TYPES Game::getBuildType() const {
     return buildType_;
 }
 
-void Game::changeHealth (int dHealth) {
-    health_+=dHealth;
+void Game::takeDamage (int dHealth) {
+    health_-=dHealth;
+    if(--enemyCount_==0 )
+    {
+        isLost() ? emit gameLost() : (isWon() ? emit gameWon() : createWave());
+
+    }
 }
 
 void Game::changeCurrency (int dCurrency) {
@@ -362,12 +501,7 @@ void Game::enemyDies()
 {
     if(--enemyCount_==0)
     {
-        if(level_<20)
-        {
-            advanceLevel();
-            emit waveWon();
-
-        } else emit gameWon();
+        isWon() ? emit gameWon() : createWave();
     }
 }
 
@@ -375,9 +509,13 @@ void Game::enemyDies()
 //can be used for other purposes
 void Game::keyPressEvent(QKeyEvent* /* unused */)
 {
-    QList<QPoint> path;
-    path << QPoint(7,0) << QPoint(7,1) << QPoint(8,1)<< QPoint(8,5);
-    createWave(path);
+    if(enemyCount_==0 && !isWon() )
+    {
+        //TODO delete this
+        path_ << QPoint(7,0) << QPoint(7,1) << QPoint(8,1)<< QPoint(8,5);
+        createWave();
+
+    }
 
 }
 

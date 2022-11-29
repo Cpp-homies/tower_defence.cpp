@@ -54,13 +54,8 @@ void Enemy::move()
         // last point reached
         if (point_index_ >= path_.size()){
 
-            game_.changeHealth(-damage_);
+            game_.takeDamage(damage_);
             deleteLater();
-
-            if(game_.isLost())
-            {
-                emit game_.gameLost();
-            }
 
             return;
         }
