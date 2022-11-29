@@ -12,7 +12,7 @@ namespace Modes{
 
 // enumeration to keep track of tower types for build
 namespace TowerTypes{
-    enum TYPES{CS_Student, TA, SearchEngine, LanguageServer, Valgrind};
+    enum TYPES{CS_Student, TA, SearchEngine, LanguageServer, Valgrind, Comment};
 }
 
 class Game: public QGraphicsScene
@@ -54,7 +54,7 @@ public:
 
     QGraphicsGridLayout* mapLayout; //map area where the action is
     QGraphicsLinearLayout* gameLayout; //the whole are of the game, including the controls
-    QGraphicsLinearLayout* controlsLayout;//change this to your liking
+    QGraphicsGridLayout* controlsLayout;//change this to your liking
 
     bool isTower(int row, int column);
 public slots:
@@ -65,9 +65,13 @@ public slots:
     void enterBuildSE();
     void enterBuildLS();
     void enterBuildVal();
+
     void spawnEnemy(int type, QList<QPointF> path);
     void updateLeadrboard();
     void showError(QString message);
+
+    void enterBuildCom();
+
 
 signals:
     void gameWon();

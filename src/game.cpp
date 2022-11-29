@@ -88,22 +88,98 @@ void Game::createMap(){
 void Game::createGameControls()
 {
     //for testing purposes, all Layouts will auto adjust the size
-    controlsLayout = new QGraphicsLinearLayout(Qt::Vertical);
-//    for(int i = 0; i<5; ++i)
-//    {
-//        QLabel* test = new QLabel();
-//        test->setText(QString("success!!"));
-//        QGraphicsProxyWidget* player = addWidget(test);
-//        controlsLayout->addItem(player);
-//    }
+    controlsLayout = new QGraphicsGridLayout();
 
-    // set margins to 0
-    controlsLayout->setContentsMargins(0,0,0,0);
+    // set spacings
+    controlsLayout->setContentsMargins(130,130,120,120);
+    controlsLayout->setSpacing(60);
+
+    // Font for displaying round, health and wealth
+    QFont statsFont("Roboto", 32);
+
+        // display round number
+    // Create the roundnumber indicator
+    QGraphicsTextItem * roundIndicator = new QGraphicsTextItem(QString("round"));
+    // set font
+    QFont roundIndicatorFont("Roboto", 32, 900);
+    roundIndicator->setDefaultTextColor(Qt::white);
+    roundIndicator->setFont(roundIndicatorFont);
+    // set position
+    int RIxPos = 744;
+    int RIyPos = 40;
+    roundIndicator->setPos(RIxPos,RIyPos);
+    // add indicator to the scene
+    addItem(roundIndicator);
+    // Create the round number
+    QGraphicsTextItem * roundNumber = new QGraphicsTextItem(QString::number(level_));
+    // set font
+    roundNumber->setDefaultTextColor(Qt::white);
+    roundNumber->setFont(statsFont);
+    // set position
+    int RNxPos = 860;
+    int RNyPos = 40;
+    roundNumber->setPos(RNxPos,RNyPos);
+    // add to the scene
+    addItem(roundNumber);
+
+        // display health
+    // Create the health indicator
+    QGraphicsRectItem * healthIndicator = new QGraphicsRectItem();
+    healthIndicator->setPen(QPen(Qt::transparent));
+    healthIndicator->setRect(0,0,64,64);
+    QBrush healthIndicatorB;
+    healthIndicatorB.setTexture(QPixmap(":/images/hp_icon.png"));
+    healthIndicator->setBrush(healthIndicatorB);
+    // set position
+    int HIxPos = 920;
+    int HIyPos = 40;
+    // QGraphicsProxyWidget* healthIndicatorWidget = addWidget(healthIndicator);
+    healthIndicator->setPos(HIxPos,HIyPos);
+    // add indicator to the scene
+    addItem(healthIndicator);
+    // Create the round number
+    QGraphicsTextItem * healthNumber = new QGraphicsTextItem(QString::number(health_));
+    // set font
+    healthNumber->setDefaultTextColor(Qt::white);
+    healthNumber->setFont(statsFont);
+    // set position
+    int HNxPos = HIxPos + 64;
+    int HNyPos = 40;
+    healthNumber->setPos(HNxPos,HNyPos);
+    // add to the scene
+    addItem(healthNumber);
+
+        // display wealth
+    // Create the wealth indicator
+    QGraphicsRectItem * wealthIndicator = new QGraphicsRectItem();
+    wealthIndicator->setPen(QPen(Qt::transparent));
+    wealthIndicator->setRect(0,0,64,64);
+    QBrush wealthIndicatorB;
+    wealthIndicatorB.setTexture(QPixmap(":/images/Currency.png"));
+    wealthIndicator->setBrush(wealthIndicatorB);
+    // set position
+    int WIxPos = 1064;
+    int WIyPos = 40;
+    wealthIndicator->setPos(WIxPos,WIyPos);
+    // add indicator to the scene
+    addItem(wealthIndicator);
+    // Create the round number
+    QGraphicsTextItem * wealthNumber = new QGraphicsTextItem(QString::number(currency_));
+    // set font
+    wealthNumber->setDefaultTextColor(Qt::white);
+    wealthNumber->setFont(statsFont);
+    // set position
+    int WNxPos = WIxPos + 64;
+    int WNyPos = 40;
+    wealthNumber->setPos(WNxPos,WNyPos);
+    // add to the scene
+    addItem(wealthNumber);
+
 
     // main menu button
     Button * menuButton = new Button(QString("Main menu"), 200, 50);
     int lxPos = this->width() - menuButton->boundingRect().width() - 40;
-    int lyPos = 40;
+    int lyPos = this->height() - menuButton->boundingRect().height() - 40;
     menuButton->setPos(lxPos, lyPos);
     connect(menuButton, SIGNAL(clicked()), this, SLOT(showMenu()));
     menuButton->setZValue(10);
@@ -114,8 +190,8 @@ void Game::createGameControls()
 //    upgradeButton->setRect(QRectF(upgradeButton->boundingRect().topLeft(),
 //                            QSizeF(upgradeButton->boundingRect().width() + 20, upgradeButton->boundingRect().height())));
 
-    int uxPos = this->width() - upgradeButton->boundingRect().width() - 40;
-    int uyPos = this->height() - upgradeButton->boundingRect().height() - 20;
+    int uxPos = this->width() - upgradeButton->boundingRect().width() - menuButton->boundingRect().width() - 80;
+    int uyPos = this->height() - upgradeButton->boundingRect().height() - 40;
     upgradeButton->setPos(uxPos, uyPos);
     connect(upgradeButton, SIGNAL(clicked()), this, SLOT(enterUpgradeMode()));
     upgradeButton->setZValue(10);
@@ -125,9 +201,7 @@ void Game::createGameControls()
         // create CSstudent button
     QToolButton* build_CSstudent = new QToolButton();
     // create the icon for the button
-    QTransform tr;
-    tr.rotate(90);
-    build_CSstudent->setIcon(QIcon(QPixmap(":/images/CStudent1.png").transformed(tr)));
+    build_CSstudent->setIcon(QIcon(QPixmap(":/images/CStudent1.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_CSstudent->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
 
     // connect the button with the enterBuildMode function
@@ -135,13 +209,13 @@ void Game::createGameControls()
 
     // add the button to the control layout
     QGraphicsProxyWidget* CSstudentWidget = addWidget(build_CSstudent);
-    controlsLayout->addItem(CSstudentWidget);
+    controlsLayout->addItem(CSstudentWidget, 1, 1);
 
 
         // create TA button
     QToolButton* build_TA = new QToolButton();
     // create the icon for the button
-    build_TA->setIcon(QIcon(QPixmap(":/images/TA.png").transformed(tr)));
+    build_TA->setIcon(QIcon(QPixmap(":/images/TA.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_TA->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
 
     // connect the button with the enterBuildMode function
@@ -149,13 +223,13 @@ void Game::createGameControls()
 
     // add the button to the control layout
     QGraphicsProxyWidget* TAWidget = addWidget(build_TA);
-    controlsLayout->addItem(TAWidget);
+    controlsLayout->addItem(TAWidget, 1, 2);
 
 
         // create Search Engine button
     QToolButton* build_SE = new QToolButton();
     // create the icon for the button
-    build_SE->setIcon(QIcon(QPixmap(":/images/Bing.png").transformed(tr)));
+    build_SE->setIcon(QIcon(QPixmap(":/images/Bing.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_SE->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
 
     // connect the button with the enterBuildMode function
@@ -163,13 +237,13 @@ void Game::createGameControls()
 
     // add the button to the control layout
     QGraphicsProxyWidget* SEWidget = addWidget(build_SE);
-    controlsLayout->addItem(SEWidget);
+    controlsLayout->addItem(SEWidget, 2, 1);
 
 
         // create Language server button
     QToolButton* build_LS = new QToolButton();
     // create the icon for the button
-    build_LS->setIcon(QIcon(QPixmap(":/images/Language_server.png").transformed(tr)));
+    build_LS->setIcon(QIcon(QPixmap(":/images/Language_server.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_LS->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
 
     // connect the button with the enterBuildMode function
@@ -177,13 +251,13 @@ void Game::createGameControls()
 
     // add the button to the control layout
     QGraphicsProxyWidget* LSWidget = addWidget(build_LS);
-    controlsLayout->addItem(LSWidget);
+    controlsLayout->addItem(LSWidget, 2, 2);
 
 
         // create Valgrind button
     QToolButton* build_Valgrind = new QToolButton();
     // create the icon for the button
-    build_Valgrind->setIcon(QIcon(QPixmap(":/images/Valgrind.png").transformed(tr)));
+    build_Valgrind->setIcon(QIcon(QPixmap(":/images/Valgrind.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_Valgrind->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
 
     // connect the button with the enterBuildMode function
@@ -191,7 +265,21 @@ void Game::createGameControls()
 
     // add the button to the control layout
     QGraphicsProxyWidget* ValWidget = addWidget(build_Valgrind);
-    controlsLayout->addItem(ValWidget);
+    controlsLayout->addItem(ValWidget, 3, 1);
+
+
+        // create Comment button
+    QToolButton* build_Comment = new QToolButton();
+    // create the icon for the button
+    build_Comment->setIcon(QIcon(QPixmap(":/images/Comment.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
+    build_Comment->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+
+    // connect the button with the enterBuildMode function
+    connect(build_Comment, SIGNAL(clicked()), this, SLOT(enterBuildCom()));
+
+    // add the button to the control layout
+    QGraphicsProxyWidget* ComWidget = addWidget(build_Comment);
+    controlsLayout->addItem(ComWidget, 3, 2);
 
 
     // add the control layout to the game layout
@@ -547,6 +635,11 @@ void Game::enterBuildLS() {
 void Game::enterBuildVal() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::Valgrind;
+}
+
+void Game::enterBuildCom() {
+    mode_ = Modes::build;
+    buildType_ = TowerTypes::Comment;
 }
 
 bool Game::upgradeTower(int row, int column) {
