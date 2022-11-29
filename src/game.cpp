@@ -63,7 +63,7 @@ void Game::createMap(){
 //    out << (qint32)9;
 //    test.close();
 
-    QFile map(":/files/test.map");
+    QFile map(":/files/test.tdmap");
     // TODO: Handle invalid map (either doesn't exist or wrong format)
     if (map.exists() && map.open(QIODevice::ReadOnly)) {
         QTextStream data(&map);
