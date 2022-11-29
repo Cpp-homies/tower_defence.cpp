@@ -19,7 +19,13 @@
 #include "tower.h"
 #include "cs_student.h"
 #include "ta.h"
+#include "path.h"
 
+#include <QQueue>
+#include <QSet>
+#include <QPoint>
+#include <QDataStream>
+#include <QFile>
 #include <QIcon>
 #include <QScrollBar>
 #include <QFile>
@@ -58,21 +64,130 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
 }
 
 void Game::createMap(){
-
-
-
-
-
     mapLayout = new QGraphicsGridLayout();
 
-    for(int i = 0; i<11; ++i)
-    {
-        for (int j = 0; j < 11; ++j) {
+//    QFile test(":/files/testing.map");
+//    test.open(QIODevice::WriteOnly);
+//    QDataStream out(&test);
+//    out << (qint32)16;
+//    out << (qint32)9;
+//    test.close();
 
-                Square* tile = new Square(i,j,nullptr);
-                QGraphicsProxyWidget* backgroundTile = addWidget(tile);
-                mapLayout->addItem(backgroundTile,i,j);
+    QFile map(":/files/test.tdmap");
+    // TODO: Handle invalid map (either doesn't exist or wrong format)
+    if (map.exists() && map.open(QIODevice::ReadOnly)) {
+        QTextStream data(&map);
+        int width;
+        int height;
 
+        data >> width >> height;
+
+        QList<QList<QString>> matrix;
+        for (int j = 0; j < height; ++j) {
+            QList<QString> row;
+            for (int i = 0; i < width; ++i) {
+                QString value;
+                data >> value;
+                row.push_back(value);
+            }
+            matrix.push_back(row);
+        }
+        map.close();
+        map_ = matrix;
+        for (int j = 0; j < height; ++j) {
+            for (int i = 0; i < width; ++i) {
+                QString value = matrix[j][i];
+                if (value == "1") { // Tile for towers
+                    Square* tile = new Square(j,i,nullptr);
+                    QGraphicsProxyWidget* backgroundTile = addWidget(tile);
+                    mapLayout->addItem(backgroundTile,j,i);
+                } else if (value == "2" || value == "A" || value == "B") { // Normal Path
+                    Path* tile;
+                    bool up = false, right = false, down = false, left = false;
+                    int neighbors = 0; // Number of neighbors
+                    // Checking for adjacent paths
+                    auto check = [](QString a) -> bool {return a == "2" || a == "A" || a == "B";};
+                    if (j > 0 && check(matrix[j-1][i])) {
+                        up = true;
+                        neighbors++;
+                    }
+                    if (j < height - 1 && check(matrix[j+1][i])) {
+                        down = true;
+                        neighbors++;
+                    }
+                    if (i > 0 && check(matrix[j][i-1])) {
+                        left = true;
+                        neighbors++;
+                    }
+                    if (i < width - 1 && check(matrix[j][i+1])) {
+                        right = true;
+                        neighbors++;
+                    }
+                    // Select correct configuration
+                    if (value == "2") {
+                        // X-split case
+                        if (neighbors == 4) {
+                            tile = new Path(i, j, XSplit, 0, nullptr);
+                        } else if (neighbors == 3) { // T-split cases
+                            if (up == false) {
+                                tile = new Path(i, j, TSplit, 0, nullptr);
+                            } else if (right == false) {
+                                tile = new Path(i, j, TSplit, 0, nullptr);
+                            } else if (down == false) {
+                                tile = new Path(i, j, TSplit, 180, nullptr);
+                            } else {
+                                tile = new Path(i, j, TSplit, 0, nullptr);
+                            }
+                        } else if (neighbors == 2) {
+                            // Straight Cases
+                            if (left == true && right == true) {
+                                tile = new Path(i, j, Straight, 90, nullptr);
+                            } else if (up == true && down == true) {
+                                tile = new Path(i, j, Straight, 0, nullptr);
+                            } else if (up == true && right == true) { // Turn cases
+                                tile = new Path(i, j, Turn, 0, nullptr);
+                            } else if (right == true && down == true) {
+                                tile = new Path(i, j, Turn, 90, nullptr);
+                            } else if (down == true && left == true) {
+                                tile = new Path(i, j, Turn, 180, nullptr);
+                            } else {
+                                tile = new Path(i, j, Turn, 270, nullptr);
+                            }
+                        } else {
+                            if (left == true || right == true) {
+                                tile = new Path(j, i, Straight, 90, nullptr);
+                            } else {
+                                tile = new Path(j, i, Straight, 0, nullptr);
+                            }
+                        }
+
+                    } else if (value == "A") {
+                        start_ = QPoint(j, i);
+                        if (left) {
+                            tile = new Path(j, i, Start, 0, nullptr);
+                        } else if (up) {
+                            tile = new Path(j, i, Start, 90, nullptr);
+                        } else if (right) {
+                            tile = new Path(j, i, Start, 180, nullptr);
+                        } else {
+                            tile = new Path(j, i, Start, 270, nullptr);
+                        }
+                    } else {
+                        end_ = QPoint(j, i);
+                        if (left) {
+                            tile = new Path(j, i, End, 0, nullptr);
+                        } else if (up) {
+                            tile = new Path(j, i, End, 90, nullptr);
+                        } else if (right) {
+                            tile = new Path(j, i, End, 180, nullptr);
+                        } else {
+                            tile = new Path(j, i, End, 270, nullptr);
+                        }
+                    }
+                    QGraphicsProxyWidget* pathTile = addWidget(tile);
+                    mapLayout->addItem(pathTile, j, i);
+                }
+            }
         }
     }
 
@@ -82,7 +197,47 @@ void Game::createMap(){
     QGraphicsWidget *form = new QGraphicsWidget;
     form->setLayout(mapLayout);
     gameLayout->addItem(form);
+    shortest_path_ = getShortestPath(start_);
+    qInfo() << shortest_path_;
+}
 
+QList<QPoint> Game::getShortestPath(QPoint start) {
+    QQueue<QList<QPoint>> to_visit;
+    QList<QPoint> initial;
+    initial.push_back(start);
+    to_visit.enqueue(initial);
+    QSet<QPoint> visited;
+
+    int total_rows = map_.size();
+    int total_cols = map_[0].size();
+
+    while (!to_visit.empty()) {
+        auto top = to_visit.dequeue();
+        QPoint cursor = top.last();
+        visited.insert(cursor);
+        QList<QPoint> all_neighbors;
+        all_neighbors.append(cursor + QPoint(0, 1));
+        all_neighbors.append(cursor + QPoint(0, -1));
+        all_neighbors.append(cursor + QPoint(1, 0));
+        all_neighbors.append(cursor + QPoint(-1, 0));
+        QList<QPoint> neighbors;
+        // Get in-bound neighbors that have not been visited yet
+        for (auto i : all_neighbors) {
+            if (i.x() < total_cols && i.x() >= 0 && i.y() < total_rows && i.y() >= 0 && isPath(i.x(), i.y()) && !visited.contains(i)) {
+                neighbors.append(i);
+            }
+        }
+        // Queue new elements
+        for (auto i : neighbors) {
+            QList<QPoint> new_elem;
+            new_elem.append(i);
+            if (i == end_) {
+                return top + new_elem;
+            }
+            to_visit.append(top + new_elem);
+        }
+    }
+    return QList<QPoint>();
 }
 
 void Game::createGameControls()
@@ -606,6 +761,10 @@ QWidget* Game::getWidgetAt(int row, int column) {
 
 bool Game::isTower(int row, int column) {
     return dynamic_cast<Tower*>(getWidgetAt(row, column));
+}
+
+bool Game::isPath(int row, int column) {
+    return dynamic_cast<Path*>(getWidgetAt(row, column));
 }
 
 void Game::enterUpgradeMode() {

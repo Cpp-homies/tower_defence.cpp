@@ -19,6 +19,7 @@ SOURCES += \
     mainview.cpp \
     memoryerror.cpp \
     menu.cpp \
+    path.cpp \
     projectile.cpp \
     runtimeerror.cpp \
     square.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
     mainview.h \
     memoryerror.h \
     menu.h \
+    path.h \
     projectile.h \
     runtimeerror.h \
     square.h \
