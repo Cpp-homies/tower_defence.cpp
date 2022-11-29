@@ -21,6 +21,7 @@ Menu::Menu(QObject *parent): QGraphicsScene(parent)
     QGraphicsTextItem * titleText = new QGraphicsTextItem(QString("tower_defence.cpp"));
     // set font for titletext
     QFont titleFont("Roboto", 50, 900);
+    titleText->setDefaultTextColor(Qt::green);
     titleText->setFont(titleFont);
     // set position for titletext
     int txPos = this->width()/2 - titleText->boundingRect().width()/2;
