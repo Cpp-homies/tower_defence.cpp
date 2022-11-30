@@ -1,6 +1,6 @@
 #include "memoryerror.h"
 
-MemoryError::MemoryError(MemoryErrorType subType, QList<QPointF> path, Game& game): Enemy(EnemyType::MemoryError,path, game), name_(subType)
+MemoryError::MemoryError(MemoryErrorType subType, QList<QPointF> path): Enemy(EnemyType::MemoryError,path), name_(subType)
 {
     switch (subType) {
     case MemoryErrorType::InvalidRead:

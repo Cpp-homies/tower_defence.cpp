@@ -2,15 +2,15 @@
 
 #include <QTimer>
 
-Enemy::Enemy(EnemyType type, QList<QPointF> path, Game& game, int health , int damage , int speed , QGraphicsItem * parent):
-     QGraphicsPixmapItem(parent), health_(health), damage_(damage), speed_(speed), game_(game),path_(path), type_(type)
+Enemy::Enemy(EnemyType type, QList<QPointF> path, int health , int damage , int speed , QGraphicsItem * parent):
+     QGraphicsPixmapItem(parent), health_(health), damage_(damage), speed_(speed),path_(path), type_(type)
 {
 
 
     setPos(path_[0]);
     point_index_ = 0;
     dest_ = path_[0];
-
+//    game_ = qobject_cast<Game*>(scene());
 
 }
 
@@ -26,10 +26,12 @@ void Enemy::takeDamage(int damage)
 
 void Enemy::die()
 {
-    game_.changeScore(pointValue_);
-    game_.changeCurrency(pointValue_);
+//    game_->changeScore(pointValue_);
+//    game_->changeCurrency(pointValue_);
+    emit enemyDies(pointValue_);
     deleteLater();
-    game_.enemyDies();
+
+//    game_->enemyDies();
 }
 
 void Enemy::setSpeed(int speed)
@@ -54,7 +56,7 @@ void Enemy::move()
         // last point reached
         if (point_index_ >= path_.size()){
 
-            game_.takeDamage(damage_);
+           emit dealsDamage(damage_);
             deleteLater();
 
             return;

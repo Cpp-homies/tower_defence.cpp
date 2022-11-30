@@ -1,6 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "enemy.h"
 #include <QGraphicsView>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
@@ -45,12 +46,13 @@ public:
     Modes::MODES getMode() const;
     TowerTypes::TYPES getBuildType() const;
 
-    void takeDamage(int dHealth);
+
     void changeScore(int points);
     void changeCurrency(int dCurrency);
     void setMode(Modes::MODES m);
     void advanceLevel();
-    void enemyDies();
+
+
     void keyPressEvent(QKeyEvent *keyEvent);
 
     QGraphicsGridLayout* mapLayout; //map area where the action is
@@ -67,11 +69,12 @@ public slots:
     void enterBuildSE();
     void enterBuildLS();
     void enterBuildVal();
-
+    void enemyDies(int value);
     void spawnEnemy(int type, QList<QPointF> path);
     void updateLeadrboard();
     void showError(QString message);
-
+    void addEnemies(Enemy*);
+    void takeDamage(int dHealth);
     void enterBuildCom();
 
 

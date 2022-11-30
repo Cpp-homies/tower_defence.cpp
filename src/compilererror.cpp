@@ -1,6 +1,7 @@
 #include "compilererror.h"
+#include <QGraphicsScene>
 
-CompilerError::CompilerError(CompilerErrorType subType, QList<QPointF> path, Game& game): Enemy(EnemyType::CompilerError,path,game), name_(subType)
+CompilerError::CompilerError(CompilerErrorType subType, QList<QPointF> path): Enemy(EnemyType::CompilerError,path), name_(subType)
 {
     switch (subType) {
         case CompilerErrorType::SyntaxError:
@@ -30,28 +31,32 @@ CompilerError::CompilerError(CompilerErrorType subType, QList<QPointF> path, Gam
 
 void CompilerError::die()
 {
-    game_.changeScore(pointValue_);
-    game_.changeCurrency(pointValue_);
+//    game_->changeScore(pointValue_);
+//    game_->changeCurrency(pointValue_);
     if(name_==CompilerErrorType::Exception)
     {
         explodeException();
     }
+    emit enemyDies(pointValue_);
     deleteLater();
-    game_.enemyDies();
+
 }
 
 void CompilerError::explodeException()
 {
+
     int amount = 10;
+
     for (int i = 1; i < amount+1; ++i)
     {
         QList<QPointF> path(path_);
         path.remove(0,point_index_);
         path.push_front(scenePos());
-        CompilerError* enemy = new CompilerError(CompilerErrorType::SyntaxError,path,  game_);
+        CompilerError* enemy = new CompilerError(CompilerErrorType::SyntaxError,path);
         enemy->setSpeed(speed_+i*3);
         enemy->startMove();
-        game_.addItem(enemy);
+        scene()->addItem(enemy);
+        emit addedEnemy(enemy);
     }
 }
 

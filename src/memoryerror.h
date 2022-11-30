@@ -8,7 +8,7 @@ class MemoryError :public Enemy
     Q_OBJECT
 public:
 
-    MemoryError(MemoryErrorType subType, QList<QPointF> path, Game& game);
+    MemoryError(MemoryErrorType subType, QList<QPointF> path);
 
 private:
     MemoryErrorType name_;

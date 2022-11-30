@@ -508,24 +508,30 @@ void Game::spawnEnemy(int type,QList<QPointF> path)
 {
     if(type==1 || type==2)
     {
-        CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), path, *this);
+        CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), path);
         addItem(enemy);
         enemy->startMove();
-
+        connect(enemy,SIGNAL(enemyDies(int)),this,SLOT(enemyDies(int)));
+        connect(enemy,SIGNAL(addedEnemy(Enemy*)),this,SLOT(addEnemies(Enemy*)));
+        connect(enemy,SIGNAL(dealsDamage(int)),this,SLOT(takeDamage(int)));
     }
     else if(type==3 || type==4 || type==5 || type==6)
     {
-        MemoryError* enemy = new MemoryError(static_cast<MemoryErrorType>(type), path, *this);
+        MemoryError* enemy = new MemoryError(static_cast<MemoryErrorType>(type), path);
         addItem(enemy);
         enemy->startMove();
-
+        connect(enemy,SIGNAL(enemyDies(int)),this,SLOT(enemyDies(int)));
+        connect(enemy,SIGNAL(addedEnemy(Enemy*)),this,SLOT(addEnemies(Enemy*)));
+        connect(enemy,SIGNAL(dealsDamage(int)),this,SLOT(takeDamage(int)));
     }
     else if(type==7)
     {
-        RuntimeError* enemy = new RuntimeError(static_cast<RuntimeErrorType>(type), path, *this);
+        RuntimeError* enemy = new RuntimeError(static_cast<RuntimeErrorType>(type), path);
         addItem(enemy);
         enemy->startMove();
-
+        connect(enemy,SIGNAL(enemyDies(int)),this,SLOT(enemyDies(int)));
+        connect(enemy,SIGNAL(addedEnemy(Enemy*)),this,SLOT(addEnemies(Enemy*)));
+        connect(enemy,SIGNAL(dealsDamage(int)),this,SLOT(takeDamage(int)));
     }
 
 }
@@ -652,12 +658,22 @@ void Game::advanceLevel () {
     level_++;
 }
 
-void Game::enemyDies()
+void Game::enemyDies(int value)
 {
+    changeScore(value);
+    changeCurrency(value);
     if(--enemyCount_==0)
     {
         isWon() ? emit gameWon() : createWave();
     }
+}
+
+void Game::addEnemies(Enemy* enemy)
+{
+    enemyCount_++;
+    connect(enemy,SIGNAL(enemyDies(int)),this,SLOT(enemyDies(int)));
+    connect(enemy,SIGNAL(addedEnemy(Enemy*)),this,SLOT(addEnemies(Enemy*)));
+    connect(enemy,SIGNAL(dealsDamage(int)),this,SLOT(takeDamage(int)));
 }
 
 //just testing scene changing

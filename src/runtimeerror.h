@@ -8,7 +8,7 @@ class RuntimeError: public Enemy
     Q_OBJECT
 public:
 
-    RuntimeError(RuntimeErrorType subType, QList<QPointF> path, Game& game);
+    RuntimeError(RuntimeErrorType subType, QList<QPointF> path);
     void takeDamage(int damage);
 
 private:

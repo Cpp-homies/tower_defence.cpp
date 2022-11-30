@@ -1,7 +1,7 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-#include "game.h"
+
 #include <QGraphicsPixmapItem>
 
 //enums of main and subtypes, could help with scaling
@@ -39,7 +39,7 @@ class Enemy: public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Enemy(EnemyType type, QList<QPointF> path, Game& game, int health = 0, int damage = 0, int speed = 0, QGraphicsItem * parent=0);
+    Enemy(EnemyType type, QList<QPointF> path, int health = 0, int damage = 0, int speed = 0, QGraphicsItem * parent=0);
 
     virtual void attack(){}
     virtual void die();
@@ -51,6 +51,11 @@ public slots:
 
     void move();
 
+signals:
+
+    void enemyDies(int);
+    void dealsDamage(int);
+    void addedEnemy(Enemy*);
 
 protected:
 
@@ -58,7 +63,7 @@ protected:
     int damage_;
     int speed_; // 0 to 70
     int pointValue_;
-    Game& game_;
+//    Game game_;
     QList<QPointF> path_;
     QPointF dest_;
     int point_index_;
