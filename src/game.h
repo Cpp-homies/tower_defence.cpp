@@ -107,6 +107,11 @@ private:
     Modes::MODES mode_;
     TowerTypes::TYPES buildType_;
     QList<QPoint> shortest_path_;
+
+    QGraphicsTextItem * roundDisplay;
+    QGraphicsTextItem * scoreDisplay;
+    QGraphicsTextItem * healthDisplay;
+    QGraphicsTextItem * wealthDisplay;
 };
 
 #endif // GAME_H

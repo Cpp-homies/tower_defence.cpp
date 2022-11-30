@@ -34,7 +34,7 @@
 #include <QTimer>
 #include <QMessageBox>
 
-#define BUILD_BUTTON_SIZE 80
+#define BUILD_BUTTON_SIZE 90
 extern MainView * view;
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
@@ -247,7 +247,7 @@ void Game::createGameControls()
     controlsLayout = new QGraphicsGridLayout();
 
     // set spacings
-    controlsLayout->setContentsMargins(130,130,120,120);
+    controlsLayout->setContentsMargins(80,300,0,0);
     controlsLayout->setSpacing(60);
 
     // Font for displaying round, health and wealth
@@ -267,16 +267,40 @@ void Game::createGameControls()
     // add indicator to the scene
     addItem(roundIndicator);
     // Create the round number
-    QGraphicsTextItem * roundNumber = new QGraphicsTextItem(QString::number(level_));
+    roundDisplay = new QGraphicsTextItem(QString::number(level_));
     // set font
-    roundNumber->setDefaultTextColor(Qt::white);
-    roundNumber->setFont(statsFont);
+    roundDisplay->setDefaultTextColor(Qt::white);
+    roundDisplay->setFont(statsFont);
     // set position
-    int RNxPos = 860;
-    int RNyPos = 40;
-    roundNumber->setPos(RNxPos,RNyPos);
+    int RNxPos = RIxPos + roundIndicator->boundingRect().width();
+    int RNyPos = RIyPos;
+    roundDisplay->setPos(RNxPos,RNyPos);
     // add to the scene
-    addItem(roundNumber);
+    addItem(roundDisplay);
+
+        // display score
+    // Create the roundnumber indicator
+    QGraphicsTextItem * scoreIndicator = new QGraphicsTextItem(QString("score"));
+    // set font
+    scoreIndicator->setDefaultTextColor(Qt::white);
+    scoreIndicator->setFont(roundIndicatorFont);
+    // set position
+    int SIxPos = 1000;
+    int SIyPos = 40;
+    scoreIndicator->setPos(SIxPos,SIyPos);
+    // add indicator to the scene
+    addItem(scoreIndicator);
+    // Create the round number
+    scoreDisplay = new QGraphicsTextItem(QString::number(score_));
+    // set font
+    scoreDisplay->setDefaultTextColor(Qt::white);
+    scoreDisplay->setFont(statsFont);
+    // set position
+    int SNxPos = SIxPos + scoreIndicator->boundingRect().width();
+    int SNyPos = SIyPos;
+    scoreDisplay->setPos(SNxPos,SNyPos);
+    // add to the scene
+    addItem(scoreDisplay);
 
         // display health
     // Create the health indicator
@@ -287,23 +311,23 @@ void Game::createGameControls()
     healthIndicatorB.setTexture(QPixmap(":/images/hp_icon.png"));
     healthIndicator->setBrush(healthIndicatorB);
     // set position
-    int HIxPos = 920;
-    int HIyPos = 40;
+    int HIxPos = 744;
+    int HIyPos = 140;
     // QGraphicsProxyWidget* healthIndicatorWidget = addWidget(healthIndicator);
     healthIndicator->setPos(HIxPos,HIyPos);
     // add indicator to the scene
     addItem(healthIndicator);
     // Create the round number
-    QGraphicsTextItem * healthNumber = new QGraphicsTextItem(QString::number(health_));
+    healthDisplay = new QGraphicsTextItem(QString::number(health_));
     // set font
-    healthNumber->setDefaultTextColor(Qt::white);
-    healthNumber->setFont(statsFont);
+    healthDisplay->setDefaultTextColor(Qt::white);
+    healthDisplay->setFont(statsFont);
     // set position
     int HNxPos = HIxPos + 64;
-    int HNyPos = 40;
-    healthNumber->setPos(HNxPos,HNyPos);
+    int HNyPos = HIyPos;
+    healthDisplay->setPos(HNxPos,HNyPos);
     // add to the scene
-    addItem(healthNumber);
+    addItem(healthDisplay);
 
         // display wealth
     // Create the wealth indicator
@@ -314,22 +338,22 @@ void Game::createGameControls()
     wealthIndicatorB.setTexture(QPixmap(":/images/Currency.png"));
     wealthIndicator->setBrush(wealthIndicatorB);
     // set position
-    int WIxPos = 1064;
-    int WIyPos = 40;
+    int WIxPos = 1000;
+    int WIyPos = 140;
     wealthIndicator->setPos(WIxPos,WIyPos);
     // add indicator to the scene
     addItem(wealthIndicator);
     // Create the round number
-    QGraphicsTextItem * wealthNumber = new QGraphicsTextItem(QString::number(currency_));
+    wealthDisplay = new QGraphicsTextItem(QString::number(currency_));
     // set font
-    wealthNumber->setDefaultTextColor(Qt::white);
-    wealthNumber->setFont(statsFont);
+    wealthDisplay->setDefaultTextColor(Qt::white);
+    wealthDisplay->setFont(statsFont);
     // set position
     int WNxPos = WIxPos + 64;
-    int WNyPos = 40;
-    wealthNumber->setPos(WNxPos,WNyPos);
+    int WNyPos = WIyPos;
+    wealthDisplay->setPos(WNxPos,WNyPos);
     // add to the scene
-    addItem(wealthNumber);
+    addItem(wealthDisplay);
 
 
     // main menu button
@@ -393,7 +417,7 @@ void Game::createGameControls()
 
     // add the button to the control layout
     QGraphicsProxyWidget* SEWidget = addWidget(build_SE);
-    controlsLayout->addItem(SEWidget, 2, 1);
+    controlsLayout->addItem(SEWidget, 1, 3);
 
 
         // create Language server button
@@ -407,7 +431,7 @@ void Game::createGameControls()
 
     // add the button to the control layout
     QGraphicsProxyWidget* LSWidget = addWidget(build_LS);
-    controlsLayout->addItem(LSWidget, 2, 2);
+    controlsLayout->addItem(LSWidget, 2, 1);
 
 
         // create Valgrind button
@@ -421,7 +445,7 @@ void Game::createGameControls()
 
     // add the button to the control layout
     QGraphicsProxyWidget* ValWidget = addWidget(build_Valgrind);
-    controlsLayout->addItem(ValWidget, 3, 1);
+    controlsLayout->addItem(ValWidget, 2, 2);
 
 
         // create Comment button
@@ -435,7 +459,7 @@ void Game::createGameControls()
 
     // add the button to the control layout
     QGraphicsProxyWidget* ComWidget = addWidget(build_Comment);
-    controlsLayout->addItem(ComWidget, 3, 2);
+    controlsLayout->addItem(ComWidget, 2, 3);
 
 
     // add the control layout to the game layout
@@ -496,6 +520,7 @@ void Game::createWave()
 
     }
     ++level_;
+    roundDisplay->setPlainText(QString::number(level_));
 
 
 
@@ -624,6 +649,7 @@ TowerTypes::TYPES Game::getBuildType() const {
 
 void Game::takeDamage (int dHealth) {
     health_-=dHealth;
+    healthDisplay->setPlainText(QString::number(health_));
     if(--enemyCount_==0 )
     {
         isLost() ? emit gameLost() : (isWon() ? emit gameWon() : createWave());
@@ -633,10 +659,12 @@ void Game::takeDamage (int dHealth) {
 
 void Game::changeCurrency (int dCurrency) {
     currency_+=dCurrency;
+    wealthDisplay->setPlainText(QString::number(currency_));
 }
 
 void Game::changeScore (int dPoints) {
     score_+=dPoints;
+    scoreDisplay->setPlainText(QString::number(score_));
 }
 
 void Game::setMode(Modes::MODES m) {
@@ -833,3 +861,5 @@ bool Game::upgradeTower(int row, int column) {
         return false;
     }
 }
+
+
