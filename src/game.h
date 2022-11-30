@@ -1,5 +1,6 @@
 #ifndef GAME_H
 #define GAME_H
+
 #include <QGraphicsView>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
@@ -11,7 +12,7 @@ namespace Modes{
 
 // enumeration to keep track of tower types for build
 namespace TowerTypes{
-    enum TYPES{CS_Student, TA, SearchEngine, LanguageServer, Valgrind};
+    enum TYPES{CS_Student, TA, SearchEngine, LanguageServer, Valgrind, Comment};
 }
 
 class Game: public QGraphicsScene
@@ -28,10 +29,13 @@ public:
     bool upgradeTower(int row, int column);
 
     bool isLost() const;
+    bool isWon() const;
     void createMap();
     void createGameControls();
-    void createWave(QList<QPoint> path);
+    void createWave();
+    void readWaveFile();
     QList<QPointF> convertCoordinates(QList<QPoint> path);
+    QList<QPoint> getShortestPath(QPoint start);
 
     int getHealth() const;
     int getScore() const;
@@ -41,7 +45,7 @@ public:
     Modes::MODES getMode() const;
     TowerTypes::TYPES getBuildType() const;
 
-    void changeHealth(int dHealth);
+    void takeDamage(int dHealth);
     void changeScore(int points);
     void changeCurrency(int dCurrency);
     void setMode(Modes::MODES m);
@@ -51,9 +55,10 @@ public:
 
     QGraphicsGridLayout* mapLayout; //map area where the action is
     QGraphicsLinearLayout* gameLayout; //the whole are of the game, including the controls
-    QGraphicsLinearLayout* controlsLayout;//change this to your liking
+    QGraphicsGridLayout* controlsLayout;//change this to your liking
 
     bool isTower(int row, int column);
+    bool isPath(int row, int column);
 public slots:
     void showMenu();
     void enterUpgradeMode();
@@ -63,12 +68,24 @@ public slots:
     void enterBuildLS();
     void enterBuildVal();
 
+    void spawnEnemy(int type, QList<QPointF> path);
+    void updateLeadrboard();
+    void showError(QString message);
+
+    void enterBuildCom();
+
+
 signals:
     void gameWon();
     void gameLost();
     void waveWon();
+    void error(QString);
+
 
 private:
+    QPoint start_;
+    QPoint end_;
+    QList<QList<QString>> map_;
 
     int health_;
     int currency_;
@@ -76,7 +93,11 @@ private:
     int wavesCount_;
     int enemyCount_;
     int level_;
+    int finalLevel_;
     int score_;
+    QList<QPoint> path_;
+    QList<QStringList> waves_;
+
     Modes::MODES mode_;
     TowerTypes::TYPES buildType_;
     QList<QPoint> shortest_path_;

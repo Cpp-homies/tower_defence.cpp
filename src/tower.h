@@ -54,6 +54,7 @@ private:
     bool has_target_;
     int rotationAngle_ = 0;
 
+    QGraphicsPixmapItem * towerImg;
     QGraphicsEllipseItem* attack_area_;
     QPointF target_pos_;
     bool targetAble_[3];// array for checking if an enemy is targetable

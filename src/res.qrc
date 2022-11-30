@@ -37,5 +37,22 @@
         <file>images/Stack_overflow4.png</file>
         <file>images/Stack_overflow5.png</file>
         <file>images/Stack_overflow6.png</file>
+
+        <file>files/test.tdmap</file>
+        
+
+
+        <file>files/README.txt</file>
+        <file>files/waves.txt</file>
+
+        <file>images/Path_startend.png</file>
+        <file>images/Copilot_projectile.png</file>
+        <file>images/Language_server_projectile.png</file>
+        <file>images/Ta_projectile.png</file>
+        <file>images/Teacher_projectile.png</file>
+        <file>images/Tree_sitter_projectile.png</file>
+        <file>images/Valgrind_projectile.png</file>
+
+
     </qresource>
 </RCC>
