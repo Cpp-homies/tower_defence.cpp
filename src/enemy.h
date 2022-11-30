@@ -39,13 +39,15 @@ class Enemy: public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Enemy(EnemyType type, QList<QPointF> path, int health = 0, int damage = 0, int speed = 0, QGraphicsItem * parent=0);
+    Enemy(EnemyType type, QList<QPointF> path,QList<QPoint> matrixPath, int health = 0, int damage = 0, int speed = 0, QGraphicsItem * parent=0);
 
     virtual void attack(){}
     virtual void die();
     virtual void takeDamage(int damage);
     void setSpeed(int speed);
     void startMove();
+    void setPath(QList<QPoint> matrixPath, QList<QPointF> path);
+    QPoint getMatrixLocation() const;
 
 public slots:
 
@@ -55,7 +57,7 @@ signals:
 
     void enemyDies(int);
     void dealsDamage(int);
-    void addedEnemy(Enemy*);
+    void addedEnemy(Enemy*,int);
 
 protected:
 
@@ -65,6 +67,7 @@ protected:
     int pointValue_;
 //    Game game_;
     QList<QPointF> path_;
+    QList<QPoint> matrixPath_;
     QPointF dest_;
     int point_index_;
     EnemyType type_;

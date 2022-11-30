@@ -2,8 +2,8 @@
 
 #include <QTimer>
 
-Enemy::Enemy(EnemyType type, QList<QPointF> path, int health , int damage , int speed , QGraphicsItem * parent):
-     QGraphicsPixmapItem(parent), health_(health), damage_(damage), speed_(speed),path_(path), type_(type)
+Enemy::Enemy(EnemyType type, QList<QPointF> path,QList<QPoint> matrixPath, int health , int damage , int speed , QGraphicsItem * parent):
+     QGraphicsPixmapItem(parent), health_(health), damage_(damage), speed_(speed),path_(path),matrixPath_(matrixPath), type_(type)
 {
 
 
@@ -26,12 +26,10 @@ void Enemy::takeDamage(int damage)
 
 void Enemy::die()
 {
-//    game_->changeScore(pointValue_);
-//    game_->changeCurrency(pointValue_);
+
     emit enemyDies(pointValue_);
     deleteLater();
 
-//    game_->enemyDies();
 }
 
 void Enemy::setSpeed(int speed)
@@ -45,6 +43,19 @@ void Enemy::startMove()
     connect(timer,SIGNAL(timeout()),this,SLOT(move()));
     timer->start(90-speed_);
 }
+
+void Enemy::setPath(QList<QPoint> matrixPath,QList<QPointF> path)
+{
+    path_=path;
+    matrixPath_=matrixPath;
+    point_index_=0;
+}
+
+QPoint Enemy::getMatrixLocation() const
+{
+    return matrixPath_[point_index_];
+}
+
 
 void Enemy::move()
 {

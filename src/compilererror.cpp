@@ -31,8 +31,6 @@ CompilerError::CompilerError(CompilerErrorType subType, QList<QPointF> path): En
 
 void CompilerError::die()
 {
-//    game_->changeScore(pointValue_);
-//    game_->changeCurrency(pointValue_);
     if(name_==CompilerErrorType::Exception)
     {
         explodeException();
@@ -52,11 +50,11 @@ void CompilerError::explodeException()
         QList<QPointF> path(path_);
         path.remove(0,point_index_);
         path.push_front(scenePos());
-        CompilerError* enemy = new CompilerError(CompilerErrorType::SyntaxError,path);
+        QList<QPoint> matrixPath(matrixPath_);
+        matrixPath.remove(0,point_index_);
+        CompilerError* enemy = new CompilerError(CompilerErrorType::SyntaxError,path,matrixPath);
         enemy->setSpeed(speed_+i*3);
-        enemy->startMove();
-        scene()->addItem(enemy);
-        emit addedEnemy(enemy);
+        emit addedEnemy((Enemy*)enemy,1);
     }
 }
 

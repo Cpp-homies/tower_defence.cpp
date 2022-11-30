@@ -73,9 +73,10 @@ public slots:
     void spawnEnemy(int type, QList<QPointF> path);
     void updateLeadrboard();
     void showError(QString message);
-    void addEnemies(Enemy*);
+    void addEnemy(Enemy*,int);
     void takeDamage(int dHealth);
     void enterBuildCom();
+    void updatePaths();
 
 
 signals:
@@ -83,6 +84,7 @@ signals:
     void gameLost();
     void waveWon();
     void error(QString);
+    void wallAction();
 
 
 private:
@@ -100,6 +102,7 @@ private:
     int score_;
     QList<QPoint> path_;
     QList<QStringList> waves_;
+    QList<Enemy*> activeEnemies_;
 
     Modes::MODES mode_;
     TowerTypes::TYPES buildType_;

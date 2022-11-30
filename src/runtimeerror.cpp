@@ -1,7 +1,7 @@
 #include "runtimeerror.h"
 #include <QGraphicsScene>
 
-RuntimeError::RuntimeError(RuntimeErrorType subType, QList<QPointF> path): Enemy(EnemyType::MemoryError,path), name_(subType)
+RuntimeError::RuntimeError(RuntimeErrorType subType, QList<QPointF> path,QList<QPoint> matrixPath): Enemy(EnemyType::MemoryError,path, matrixPath), name_(subType)
 {
     switch (subType) {
 
@@ -47,11 +47,11 @@ void RuntimeError::takeDamage(int damage)
             QList<QPointF> path(path_);
             path.remove(0,point_index_);
             path.push_front(scenePos());
-            RuntimeError* minion = new RuntimeError(RuntimeErrorType::MemoryStackMinion,path);
+            QList<QPoint> matrixPath(matrixPath_);
+            matrixPath.remove(0,point_index_);
+            RuntimeError* minion = new RuntimeError(RuntimeErrorType::MemoryStackMinion,path, matrixPath);
             minion->setSpeed(speed_*2);
-            scene()->addItem(minion);
-            minion->startMove();
-            emit addedEnemy(minion);
+            emit addedEnemy((Enemy*)minion,1);
         }
 
     }

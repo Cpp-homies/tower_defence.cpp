@@ -8,7 +8,7 @@ class RuntimeError: public Enemy
     Q_OBJECT
 public:
 
-    RuntimeError(RuntimeErrorType subType, QList<QPointF> path);
+    RuntimeError(RuntimeErrorType subType, QList<QPointF> path,QList<QPoint> matrixPath);
     void takeDamage(int damage);
 
 private:

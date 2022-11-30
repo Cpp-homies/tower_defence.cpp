@@ -7,7 +7,7 @@ class CompilerError: public Enemy
 {
     Q_OBJECT
 public:
-    CompilerError(CompilerErrorType subType, QList<QPointF> path);
+    CompilerError(CompilerErrorType subType, QList<QPointF> path,QList<QPoint> matrixPath);
     void die();
     void explodeException();
 
