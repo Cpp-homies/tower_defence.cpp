@@ -61,6 +61,7 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     addItem(form);
     //connects error signal with a message box
     connect(this,SIGNAL(error(QString)),this, SLOT(showError(QString)));
+    connect(this,SIGNAL(wallAction()),this,SLOT(updatePaths()));
 }
 
 void Game::createMap(){
@@ -508,24 +509,18 @@ void Game::spawnEnemy(int type,QList<QPointF> path)
 {
     if(type==1 || type==2)
     {
-        CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), path, *this);
-        addItem(enemy);
-        enemy->startMove();
-
+        CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), path, shortest_path_);
+        addEnemy((Enemy*)enemy,0);
     }
     else if(type==3 || type==4 || type==5 || type==6)
     {
-        MemoryError* enemy = new MemoryError(static_cast<MemoryErrorType>(type), path, *this);
-        addItem(enemy);
-        enemy->startMove();
-
+        MemoryError* enemy = new MemoryError(static_cast<MemoryErrorType>(type), path, shortest_path_);
+        addEnemy((Enemy*)enemy,0);
     }
     else if(type==7)
     {
-        RuntimeError* enemy = new RuntimeError(static_cast<RuntimeErrorType>(type), path, *this);
-        addItem(enemy);
-        enemy->startMove();
-
+        RuntimeError* enemy = new RuntimeError(static_cast<RuntimeErrorType>(type), path, shortest_path_);
+        addEnemy((Enemy*)enemy,0);
     }
 
 }
@@ -652,12 +647,28 @@ void Game::advanceLevel () {
     level_++;
 }
 
-void Game::enemyDies()
+void Game::enemyDies(int value)
 {
+    changeScore(value);
+    changeCurrency(value);
     if(--enemyCount_==0)
     {
         isWon() ? emit gameWon() : createWave();
     }
+    Enemy* enemy = qobject_cast<Enemy*>(sender());
+    activeEnemies_.removeOne(enemy);
+    activeEnemies_.squeeze();
+}
+
+void Game::addEnemy(Enemy* enemy, int advanceCount)
+{
+    enemyCount_+=advanceCount;
+    addItem(enemy);
+    enemy->startMove();
+    connect(enemy,SIGNAL(enemyDies(int)),this,SLOT(enemyDies(int)));
+    connect(enemy,SIGNAL(addedEnemy(Enemy*,int)),this,SLOT(addEnemy(Enemy*,int)));
+    connect(enemy,SIGNAL(dealsDamage(int)),this,SLOT(takeDamage(int)));
+    activeEnemies_<<enemy;
 }
 
 //just testing scene changing
@@ -798,6 +809,15 @@ void Game::enterBuildVal() {
 void Game::enterBuildCom() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::Comment;
+}
+
+void Game::updatePaths()
+{
+    foreach (Enemy* enemy, activeEnemies_)
+    {
+        QList<QPoint> newMatrixPath = getShortestPath(enemy->getMatrixLocation());
+        enemy->setPath(newMatrixPath,convertCoordinates(newMatrixPath));
+    }
 }
 
 bool Game::upgradeTower(int row, int column) {
