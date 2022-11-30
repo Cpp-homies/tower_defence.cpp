@@ -1,7 +1,7 @@
 #include "compilererror.h"
 #include <QGraphicsScene>
 
-CompilerError::CompilerError(CompilerErrorType subType, QList<QPointF> path): Enemy(EnemyType::CompilerError,path), name_(subType)
+CompilerError::CompilerError(CompilerErrorType subType, QList<QPointF> path,QList<QPoint> matrixPath): Enemy(EnemyType::CompilerError,path, matrixPath), name_(subType)
 {
     switch (subType) {
         case CompilerErrorType::SyntaxError:
