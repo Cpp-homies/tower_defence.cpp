@@ -133,11 +133,11 @@ void Game::createMap(){
                             if (up == false) {
                                 tile = new Path(i, j, TSplit, 0, nullptr);
                             } else if (right == false) {
-                                tile = new Path(i, j, TSplit, 0, nullptr);
+                                tile = new Path(i, j, TSplit, 90, nullptr);
                             } else if (down == false) {
                                 tile = new Path(i, j, TSplit, 180, nullptr);
                             } else {
-                                tile = new Path(i, j, TSplit, 0, nullptr);
+                                tile = new Path(i, j, TSplit, 270, nullptr);
                             }
                         } else if (neighbors == 2) {
                             // Straight Cases
