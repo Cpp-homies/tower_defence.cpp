@@ -1,10 +1,10 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-#include "game.h"
+
 #include <QGraphicsPixmapItem>
 
-//enums of main and subtypes, they double as integers to create waves easier
+//enums of main and subtypes, could help with scaling
 
 //main 3 types of enemies
 //is the type_ variable
@@ -30,8 +30,8 @@ enum MemoryErrorType
 };
 enum RuntimeErrorType
 {
-    MemoryStackMinion=1,
-    StackOverflow=2
+    MemoryStackMinion=8,
+    StackOverflow=7
 };
 
 
@@ -39,18 +39,25 @@ class Enemy: public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Enemy(EnemyType type, QList<QPointF> path, Game& game, int health = 0, int damage = 0, int speed = 0, QGraphicsItem * parent=0);
+    Enemy(EnemyType type, QList<QPointF> path,QList<QPoint> matrixPath, int health = 0, int damage = 0, int speed = 0, QGraphicsItem * parent=0);
 
     virtual void attack(){}
     virtual void die();
     virtual void takeDamage(int damage);
     void setSpeed(int speed);
     void startMove();
+    void setPath(QList<QPoint> matrixPath, QList<QPointF> path);
+    QPoint getMatrixLocation() const;
 
 public slots:
 
     void move();
 
+signals:
+
+    void enemyDies(int);
+    void dealsDamage(int);
+    void addedEnemy(Enemy*,int);
 
 protected:
 
@@ -58,8 +65,9 @@ protected:
     int damage_;
     int speed_; // 0 to 70
     int pointValue_;
-    Game& game_;
+//    Game game_;
     QList<QPointF> path_;
+    QList<QPoint> matrixPath_;
     QPointF dest_;
     int point_index_;
     EnemyType type_;

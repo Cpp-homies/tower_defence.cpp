@@ -16,22 +16,33 @@
 #include "compilererror.h"
 #include "memoryerror.h"
 #include "runtimeerror.h"
-#include "enemy.h"
 #include "tower.h"
 #include "cs_student.h"
 #include "ta.h"
+#include "path.h"
 
+#include <QQueue>
+#include <QSet>
+#include <QPoint>
+#include <QDataStream>
+#include <QFile>
 #include <QIcon>
 #include <QScrollBar>
-#define BUILD_BUTTON_SIZE 100
+#include <QFile>
+#include <QTextStream>
+#include <QRegularExpression>
+#include <QTimer>
+#include <QMessageBox>
+
+#define BUILD_BUTTON_SIZE 80
 extern MainView * view;
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
     // set starting values of health, currency etc
-    health_ = 10;
+    health_ = 10000;
     currency_ = 100;
-    level_ = 1;
+    level_ = 0;
     score_ = 0;
     enemyCount_ = 0;
     wavesCount_ = 0;
@@ -48,24 +59,136 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     mapLayout->setSpacing(0);
     form->setLayout(gameLayout);
     addItem(form);
+    //connects error signal with a message box
+    connect(this,SIGNAL(error(QString)),this, SLOT(showError(QString)));
+    connect(this,SIGNAL(wallAction()),this,SLOT(updatePaths()));
 }
 
 void Game::createMap(){
-
-
-
-
-
     mapLayout = new QGraphicsGridLayout();
 
-    for(int i = 0; i<11; ++i)
-    {
-        for (int j = 0; j < 11; ++j) {
+//    QFile test(":/files/testing.map");
+//    test.open(QIODevice::WriteOnly);
+//    QDataStream out(&test);
+//    out << (qint32)16;
+//    out << (qint32)9;
+//    test.close();
 
-                Square* tile = new Square(i,j,nullptr);
-                QGraphicsProxyWidget* backgroundTile = addWidget(tile);
-                mapLayout->addItem(backgroundTile,i,j);
+    QFile map(":/files/test.tdmap");
+    // TODO: Handle invalid map (either doesn't exist or wrong format)
+    if (map.exists() && map.open(QIODevice::ReadOnly)) {
+        QTextStream data(&map);
+        int width;
+        int height;
 
+        data >> width >> height;
+
+        QList<QList<QString>> matrix;
+        for (int j = 0; j < height; ++j) {
+            QList<QString> row;
+            for (int i = 0; i < width; ++i) {
+                QString value;
+                data >> value;
+                row.push_back(value);
+            }
+            matrix.push_back(row);
+        }
+        map.close();
+        map_ = matrix;
+        for (int j = 0; j < height; ++j) {
+            for (int i = 0; i < width; ++i) {
+                QString value = matrix[j][i];
+                if (value == "1") { // Tile for towers
+                    Square* tile = new Square(j,i,nullptr);
+                    QGraphicsProxyWidget* backgroundTile = addWidget(tile);
+                    mapLayout->addItem(backgroundTile,j,i);
+                } else if (value == "2" || value == "A" || value == "B") { // Normal Path
+                    Path* tile;
+                    bool up = false, right = false, down = false, left = false;
+                    int neighbors = 0; // Number of neighbors
+                    // Checking for adjacent paths
+                    auto check = [](QString a) -> bool {return a == "2" || a == "A" || a == "B";};
+                    if (j > 0 && check(matrix[j-1][i])) {
+                        up = true;
+                        neighbors++;
+                    }
+                    if (j < height - 1 && check(matrix[j+1][i])) {
+                        down = true;
+                        neighbors++;
+                    }
+                    if (i > 0 && check(matrix[j][i-1])) {
+                        left = true;
+                        neighbors++;
+                    }
+                    if (i < width - 1 && check(matrix[j][i+1])) {
+                        right = true;
+                        neighbors++;
+                    }
+                    // Select correct configuration
+                    if (value == "2") {
+                        // X-split case
+                        if (neighbors == 4) {
+                            tile = new Path(i, j, XSplit, 0, nullptr);
+                        } else if (neighbors == 3) { // T-split cases
+                            if (up == false) {
+                                tile = new Path(i, j, TSplit, 0, nullptr);
+                            } else if (right == false) {
+                                tile = new Path(i, j, TSplit, 90, nullptr);
+                            } else if (down == false) {
+                                tile = new Path(i, j, TSplit, 180, nullptr);
+                            } else {
+                                tile = new Path(i, j, TSplit, 270, nullptr);
+                            }
+                        } else if (neighbors == 2) {
+                            // Straight Cases
+                            if (left == true && right == true) {
+                                tile = new Path(i, j, Straight, 90, nullptr);
+                            } else if (up == true && down == true) {
+                                tile = new Path(i, j, Straight, 0, nullptr);
+                            } else if (up == true && right == true) { // Turn cases
+                                tile = new Path(i, j, Turn, 0, nullptr);
+                            } else if (right == true && down == true) {
+                                tile = new Path(i, j, Turn, 90, nullptr);
+                            } else if (down == true && left == true) {
+                                tile = new Path(i, j, Turn, 180, nullptr);
+                            } else {
+                                tile = new Path(i, j, Turn, 270, nullptr);
+                            }
+                        } else {
+                            if (left == true || right == true) {
+                                tile = new Path(j, i, Straight, 90, nullptr);
+                            } else {
+                                tile = new Path(j, i, Straight, 0, nullptr);
+                            }
+                        }
+
+                    } else if (value == "A") {
+                        start_ = QPoint(j, i);
+                        if (left) {
+                            tile = new Path(j, i, Start, 0, nullptr);
+                        } else if (up) {
+                            tile = new Path(j, i, Start, 90, nullptr);
+                        } else if (right) {
+                            tile = new Path(j, i, Start, 180, nullptr);
+                        } else {
+                            tile = new Path(j, i, Start, 270, nullptr);
+                        }
+                    } else {
+                        end_ = QPoint(j, i);
+                        if (left) {
+                            tile = new Path(j, i, End, 0, nullptr);
+                        } else if (up) {
+                            tile = new Path(j, i, End, 90, nullptr);
+                        } else if (right) {
+                            tile = new Path(j, i, End, 180, nullptr);
+                        } else {
+                            tile = new Path(j, i, End, 270, nullptr);
+                        }
+                    }
+                    QGraphicsProxyWidget* pathTile = addWidget(tile);
+                    mapLayout->addItem(pathTile, j, i);
+                }
+            }
         }
     }
 
@@ -75,7 +198,47 @@ void Game::createMap(){
     QGraphicsWidget *form = new QGraphicsWidget;
     form->setLayout(mapLayout);
     gameLayout->addItem(form);
+    shortest_path_ = getShortestPath(start_);
+    qInfo() << shortest_path_;
+}
 
+QList<QPoint> Game::getShortestPath(QPoint start) {
+    QQueue<QList<QPoint>> to_visit;
+    QList<QPoint> initial;
+    initial.push_back(start);
+    to_visit.enqueue(initial);
+    QSet<QPoint> visited;
+
+    int total_rows = map_.size();
+    int total_cols = map_[0].size();
+
+    while (!to_visit.empty()) {
+        auto top = to_visit.dequeue();
+        QPoint cursor = top.last();
+        visited.insert(cursor);
+        QList<QPoint> all_neighbors;
+        all_neighbors.append(cursor + QPoint(0, 1));
+        all_neighbors.append(cursor + QPoint(0, -1));
+        all_neighbors.append(cursor + QPoint(1, 0));
+        all_neighbors.append(cursor + QPoint(-1, 0));
+        QList<QPoint> neighbors;
+        // Get in-bound neighbors that have not been visited yet
+        for (auto i : all_neighbors) {
+            if (i.x() < total_cols && i.x() >= 0 && i.y() < total_rows && i.y() >= 0 && isPath(i.x(), i.y()) && !visited.contains(i)) {
+                neighbors.append(i);
+            }
+        }
+        // Queue new elements
+        for (auto i : neighbors) {
+            QList<QPoint> new_elem;
+            new_elem.append(i);
+            if (i == end_) {
+                return top + new_elem;
+            }
+            to_visit.append(top + new_elem);
+        }
+    }
+    return QList<QPoint>();
 }
 
 void Game::createGameControls()
@@ -281,12 +444,97 @@ void Game::createGameControls()
     gameLayout->addItem(form);
 }
 
-void Game::createWave(QList<QPoint> path)
+//creates a wave of enemies for one level according to the description in wave.txt
+void Game::createWave()
 {
-    //can create an enemy with these 3 lines
-    CompilerError* enemy = new CompilerError(CompilerErrorType::Exception, convertCoordinates(path), *this);
-    addItem(enemy);
-    enemy->startMove();
+
+    //to mark a start of wave creation
+    bool flag = true;
+    //the path the enemies take
+    QList<QPointF> convertedPath = convertCoordinates(shortest_path_);
+    // a buffer variable to hold a timer
+    QPointer<QTimer> timerBuffer;
+    //for every entry in one line from wave.txt
+    for (QString typeOfEnemy: waves_[level_])
+    {
+        QTextStream stream(&typeOfEnemy);
+        int amount=0;
+        int type=0;
+        int delay=0;
+        stream>>amount>>type>>delay;
+        if (stream.status()==QTextStream::Ok && delay>=0)
+        {
+            //timer for this enemy type
+            QTimer* timer = new QTimer(this);
+            //timer to initiate the next enemy type after the current ones have spawned
+            QTimer* nextEnemiesTimer = new QTimer(this);
+            nextEnemiesTimer->setSingleShot(true);
+            nextEnemiesTimer->setInterval((amount+1)*delay);
+            //after every timeout spawn an enemy
+            timer->callOnTimeout([this, type, convertedPath](){this->spawnEnemy(type, convertedPath);});
+            timer->setInterval(delay);
+            //stop current timer when all enemies are spawned
+            connect(nextEnemiesTimer, SIGNAL(timeout()), timer, SLOT(stop()));
+            if(flag)
+            {
+                flag = false;
+                //start both immediately since there are no enemies
+                timer->start();
+                nextEnemiesTimer->start((amount+1)*delay);
+            } else
+            {
+                //wait till the last enemy type has stopped spawning
+                connect(timerBuffer, SIGNAL(timeout()),timer, SLOT(start()));
+                connect(timerBuffer, SIGNAL(timeout()),nextEnemiesTimer, SLOT(start()) );
+            }
+
+            //save a timer to the buffer to connect it during the next loop
+            timerBuffer = nextEnemiesTimer;
+            //how many enemies will be created in this loop
+            enemyCount_+=amount;
+        }
+
+    }
+    ++level_;
+
+
+
+
+
+
+
+}
+
+void Game::spawnEnemy(int type,QList<QPointF> path)
+{
+    if(type==1 || type==2)
+    {
+        CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), path, shortest_path_);
+        addEnemy((Enemy*)enemy,0);
+    }
+    else if(type==3 || type==4 || type==5 || type==6)
+    {
+        MemoryError* enemy = new MemoryError(static_cast<MemoryErrorType>(type), path, shortest_path_);
+        addEnemy((Enemy*)enemy,0);
+    }
+    else if(type==7)
+    {
+        RuntimeError* enemy = new RuntimeError(static_cast<RuntimeErrorType>(type), path, shortest_path_);
+        addEnemy((Enemy*)enemy,0);
+    }
+
+}
+
+void Game::updateLeadrboard()
+{
+
+}
+
+void Game::showError(QString message)
+{
+    QMessageBox::information(qobject_cast<QWidget*>(this), tr("Error"),
+                 message);
+
 }
 
 //converting grid matrix coordinates to scene coordinates for the enemie path
@@ -303,10 +551,46 @@ QList<QPointF> Game::convertCoordinates(QList<QPoint> path)
     return pathF;
 }
 
+void Game::readWaveFile()
+{
+    QFile file(":/files/waves.txt");
+    if(!file.exists())
+    {
+        emit error("wave.txt not found");
+        return;
+
+    }
+    if(!file.open(QIODevice::ReadOnly))
+    {
+        emit error(file.errorString());
+        return;
+    }
+    QTextStream stream(&file);
+    if(stream.atEnd())
+    {
+
+        emit error("wave.txt is empty");
+        return;
+    }
+    while(!stream.atEnd())
+    {
+        QString line = stream.readLine();
+        QStringList wave = line.split(';', Qt::SkipEmptyParts);
+        waves_<<wave;
+    }
+    file.close();
+    finalLevel_=waves_.length();
+}
+
 
 
 bool Game::isLost() const{
     return health_<=0;
+}
+
+bool Game::isWon() const
+{
+    return enemyCount_==0 && health_>0 && level_==finalLevel_;
 }
 
 int Game::getHealth() const {
@@ -338,8 +622,13 @@ TowerTypes::TYPES Game::getBuildType() const {
     return buildType_;
 }
 
-void Game::changeHealth (int dHealth) {
-    health_+=dHealth;
+void Game::takeDamage (int dHealth) {
+    health_-=dHealth;
+    if(--enemyCount_==0 )
+    {
+        isLost() ? emit gameLost() : (isWon() ? emit gameWon() : createWave());
+
+    }
 }
 
 void Game::changeCurrency (int dCurrency) {
@@ -358,26 +647,40 @@ void Game::advanceLevel () {
     level_++;
 }
 
-void Game::enemyDies()
+void Game::enemyDies(int value)
 {
+    changeScore(value);
+    changeCurrency(value);
     if(--enemyCount_==0)
     {
-        if(level_<20)
-        {
-            advanceLevel();
-            emit waveWon();
-
-        } else emit gameWon();
+        isWon() ? emit gameWon() : createWave();
     }
+    Enemy* enemy = qobject_cast<Enemy*>(sender());
+    activeEnemies_.removeOne(enemy);
+    activeEnemies_.squeeze();
+}
+
+void Game::addEnemy(Enemy* enemy, int advanceCount)
+{
+    enemyCount_+=advanceCount;
+    addItem(enemy);
+    enemy->startMove();
+    connect(enemy,SIGNAL(enemyDies(int)),this,SLOT(enemyDies(int)));
+    connect(enemy,SIGNAL(addedEnemy(Enemy*,int)),this,SLOT(addEnemy(Enemy*,int)));
+    connect(enemy,SIGNAL(dealsDamage(int)),this,SLOT(takeDamage(int)));
+    activeEnemies_<<enemy;
 }
 
 //just testing scene changing
 //can be used for other purposes
 void Game::keyPressEvent(QKeyEvent* /* unused */)
 {
-    QList<QPoint> path;
-    path << QPoint(7,0) << QPoint(7,1) << QPoint(8,1)<< QPoint(8,5);
-    createWave(path);
+    if(enemyCount_==0 && !isWon() )
+    {
+
+        createWave();
+
+    }
 
 }
 
@@ -470,6 +773,10 @@ bool Game::isTower(int row, int column) {
     return dynamic_cast<Tower*>(getWidgetAt(row, column));
 }
 
+bool Game::isPath(int row, int column) {
+    return dynamic_cast<Path*>(getWidgetAt(row, column));
+}
+
 void Game::enterUpgradeMode() {
     mode_ = Modes::upgrade;
 }
@@ -502,6 +809,15 @@ void Game::enterBuildVal() {
 void Game::enterBuildCom() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::Comment;
+}
+
+void Game::updatePaths()
+{
+    foreach (Enemy* enemy, activeEnemies_)
+    {
+        QList<QPoint> newMatrixPath = getShortestPath(enemy->getMatrixLocation());
+        enemy->setPath(newMatrixPath,convertCoordinates(newMatrixPath));
+    }
 }
 
 bool Game::upgradeTower(int row, int column) {

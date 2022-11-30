@@ -1,5 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
+
+#include "enemy.h"
 #include <QGraphicsView>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
@@ -28,10 +30,13 @@ public:
     bool upgradeTower(int row, int column);
 
     bool isLost() const;
+    bool isWon() const;
     void createMap();
     void createGameControls();
-    void createWave(QList<QPoint> path);
+    void createWave();
+    void readWaveFile();
     QList<QPointF> convertCoordinates(QList<QPoint> path);
+    QList<QPoint> getShortestPath(QPoint start);
 
     int getHealth() const;
     int getScore() const;
@@ -41,12 +46,13 @@ public:
     Modes::MODES getMode() const;
     TowerTypes::TYPES getBuildType() const;
 
-    void changeHealth(int dHealth);
+
     void changeScore(int points);
     void changeCurrency(int dCurrency);
     void setMode(Modes::MODES m);
     void advanceLevel();
-    void enemyDies();
+
+
     void keyPressEvent(QKeyEvent *keyEvent);
 
     QGraphicsGridLayout* mapLayout; //map area where the action is
@@ -54,6 +60,7 @@ public:
     QGraphicsGridLayout* controlsLayout;//change this to your liking
 
     bool isTower(int row, int column);
+    bool isPath(int row, int column);
 public slots:
     void showMenu();
     void enterUpgradeMode();
@@ -62,14 +69,28 @@ public slots:
     void enterBuildSE();
     void enterBuildLS();
     void enterBuildVal();
+    void enemyDies(int value);
+    void spawnEnemy(int type, QList<QPointF> path);
+    void updateLeadrboard();
+    void showError(QString message);
+    void addEnemy(Enemy*,int);
+    void takeDamage(int dHealth);
     void enterBuildCom();
+    void updatePaths();
+
 
 signals:
     void gameWon();
     void gameLost();
     void waveWon();
+    void error(QString);
+    void wallAction();
+
 
 private:
+    QPoint start_;
+    QPoint end_;
+    QList<QList<QString>> map_;
 
     int health_;
     int currency_;
@@ -77,7 +98,12 @@ private:
     int wavesCount_;
     int enemyCount_;
     int level_;
+    int finalLevel_;
     int score_;
+    QList<QPoint> path_;
+    QList<QStringList> waves_;
+    QList<Enemy*> activeEnemies_;
+
     Modes::MODES mode_;
     TowerTypes::TYPES buildType_;
     QList<QPoint> shortest_path_;
