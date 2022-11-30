@@ -366,7 +366,7 @@ void Game::createGameControls()
     addItem(menuButton);
 
     // upgrade button
-    Button * upgradeButton = new Button(QString("Upgrade Tower"), 240, 50);
+    upgradeButton = new Button(QString("Upgrade Tower"), 240, 50);
 //    upgradeButton->setRect(QRectF(upgradeButton->boundingRect().topLeft(),
 //                            QSizeF(upgradeButton->boundingRect().width() + 20, upgradeButton->boundingRect().height())));
 
@@ -378,11 +378,13 @@ void Game::createGameControls()
     addItem(upgradeButton);
 
     // tower build buttons
+    buildButtonStylesheet = "background-color: white; border: 1px solid white";
         // create CSstudent button
-    QToolButton* build_CSstudent = new QToolButton();
+    build_CSstudent = new QToolButton();
     // create the icon for the button
     build_CSstudent->setIcon(QIcon(QPixmap(":/images/CStudent1.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_CSstudent->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+    build_CSstudent->setStyleSheet(buildButtonStylesheet);
 
     // connect the button with the enterBuildMode function
     connect(build_CSstudent, SIGNAL(clicked()), this, SLOT(enterBuildCS()));
@@ -393,10 +395,11 @@ void Game::createGameControls()
 
 
         // create TA button
-    QToolButton* build_TA = new QToolButton();
+    build_TA = new QToolButton();
     // create the icon for the button
     build_TA->setIcon(QIcon(QPixmap(":/images/TA.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_TA->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+    build_TA->setStyleSheet(buildButtonStylesheet);
 
     // connect the button with the enterBuildMode function
     connect(build_TA, SIGNAL(clicked()), this, SLOT(enterBuildTA()));
@@ -407,10 +410,11 @@ void Game::createGameControls()
 
 
         // create Search Engine button
-    QToolButton* build_SE = new QToolButton();
+    build_SE = new QToolButton();
     // create the icon for the button
     build_SE->setIcon(QIcon(QPixmap(":/images/Bing.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_SE->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+    build_SE->setStyleSheet(buildButtonStylesheet);
 
     // connect the button with the enterBuildMode function
     connect(build_SE, SIGNAL(clicked()), this, SLOT(enterBuildSE()));
@@ -421,10 +425,11 @@ void Game::createGameControls()
 
 
         // create Language server button
-    QToolButton* build_LS = new QToolButton();
+    build_LS = new QToolButton();
     // create the icon for the button
     build_LS->setIcon(QIcon(QPixmap(":/images/Language_server.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_LS->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+    build_LS->setStyleSheet(buildButtonStylesheet);
 
     // connect the button with the enterBuildMode function
     connect(build_LS, SIGNAL(clicked()), this, SLOT(enterBuildLS()));
@@ -435,10 +440,11 @@ void Game::createGameControls()
 
 
         // create Valgrind button
-    QToolButton* build_Valgrind = new QToolButton();
+    build_Valgrind = new QToolButton();
     // create the icon for the button
     build_Valgrind->setIcon(QIcon(QPixmap(":/images/Valgrind.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_Valgrind->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+    build_Valgrind->setStyleSheet(buildButtonStylesheet);
 
     // connect the button with the enterBuildMode function
     connect(build_Valgrind, SIGNAL(clicked()), this, SLOT(enterBuildVal()));
@@ -449,10 +455,11 @@ void Game::createGameControls()
 
 
         // create Comment button
-    QToolButton* build_Comment = new QToolButton();
+    build_Comment = new QToolButton();
     // create the icon for the button
     build_Comment->setIcon(QIcon(QPixmap(":/images/Comment.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_Comment->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+    build_Comment->setStyleSheet(buildButtonStylesheet);
 
     // connect the button with the enterBuildMode function
     connect(build_Comment, SIGNAL(clicked()), this, SLOT(enterBuildCom()));
@@ -748,6 +755,12 @@ bool Game::buildTower(int row, int column) {
 bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
+    build_CSstudent->setStyleSheet(buildButtonStylesheet);
+    build_TA->setStyleSheet(buildButtonStylesheet);
+    build_SE->setStyleSheet(buildButtonStylesheet);
+    build_LS->setStyleSheet(buildButtonStylesheet);
+    build_Valgrind->setStyleSheet(buildButtonStylesheet);
+    build_Comment->setStyleSheet(buildButtonStylesheet);
 
     // if there is a tower occupying the square, return false
     if (dynamic_cast<Tower*>(widget)) {
@@ -807,36 +820,46 @@ bool Game::isPath(int row, int column) {
 
 void Game::enterUpgradeMode() {
     mode_ = Modes::upgrade;
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(Qt::yellow);
+    upgradeButton->setBrush(brush);
 }
 
 void Game::enterBuildCS() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::CS_Student;
+    build_CSstudent->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildTA() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::TA;
+    build_TA->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildSE() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::SearchEngine;
+    build_SE->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildLS() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::LanguageServer;
+    build_LS->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildVal() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::Valgrind;
+    build_Valgrind->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildCom() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::Comment;
+    build_Comment->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::updatePaths()
@@ -851,6 +874,12 @@ void Game::updatePaths()
 bool Game::upgradeTower(int row, int column) {
     QWidget* widget = getWidgetAt(row, column);
     Tower* tower= dynamic_cast<Tower*>(widget);
+
+    // change color back to green
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(Qt::green);
+    upgradeButton->setBrush(brush);
 
     // if the square is a tower, upgrade it if possible
     if (tower) {

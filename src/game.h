@@ -2,9 +2,11 @@
 #define GAME_H
 
 #include "enemy.h"
+#include "button.h"
 #include <QGraphicsView>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
+#include <QToolButton>
 
 // enumeration to keep track of the game's mode
 namespace Modes{
@@ -112,6 +114,14 @@ private:
     QGraphicsTextItem * scoreDisplay;
     QGraphicsTextItem * healthDisplay;
     QGraphicsTextItem * wealthDisplay;
+    Button * upgradeButton;
+    QToolButton* build_CSstudent;
+    QToolButton* build_TA;
+    QToolButton* build_SE;
+    QToolButton* build_LS;
+    QToolButton* build_Valgrind;
+    QToolButton* build_Comment;
+    QString buildButtonStylesheet;
 };
 
 #endif // GAME_H
