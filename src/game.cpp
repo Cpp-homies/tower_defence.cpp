@@ -755,12 +755,8 @@ bool Game::buildTower(int row, int column) {
 bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
-    build_CSstudent->setStyleSheet(buildButtonStylesheet);
-    build_TA->setStyleSheet(buildButtonStylesheet);
-    build_SE->setStyleSheet(buildButtonStylesheet);
-    build_LS->setStyleSheet(buildButtonStylesheet);
-    build_Valgrind->setStyleSheet(buildButtonStylesheet);
-    build_Comment->setStyleSheet(buildButtonStylesheet);
+    resetHighlight();
+
 
     // if there is a tower occupying the square, return false
     if (dynamic_cast<Tower*>(widget)) {
@@ -819,6 +815,8 @@ bool Game::isPath(int row, int column) {
 }
 
 void Game::enterUpgradeMode() {
+    resetHighlight();
+
     mode_ = Modes::upgrade;
     QBrush brush;
     brush.setStyle(Qt::SolidPattern);
@@ -827,36 +825,48 @@ void Game::enterUpgradeMode() {
 }
 
 void Game::enterBuildCS() {
+    resetHighlight();
+
     mode_ = Modes::build;
     buildType_ = TowerTypes::CS_Student;
     build_CSstudent->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildTA() {
+    resetHighlight();
+
     mode_ = Modes::build;
     buildType_ = TowerTypes::TA;
     build_TA->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildSE() {
+    resetHighlight();
+
     mode_ = Modes::build;
     buildType_ = TowerTypes::SearchEngine;
     build_SE->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildLS() {
+    resetHighlight();
+
     mode_ = Modes::build;
     buildType_ = TowerTypes::LanguageServer;
     build_LS->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildVal() {
+    resetHighlight();
+
     mode_ = Modes::build;
     buildType_ = TowerTypes::Valgrind;
     build_Valgrind->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildCom() {
+    resetHighlight();
+
     mode_ = Modes::build;
     buildType_ = TowerTypes::Comment;
     build_Comment->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
@@ -875,7 +885,7 @@ bool Game::upgradeTower(int row, int column) {
     QWidget* widget = getWidgetAt(row, column);
     Tower* tower= dynamic_cast<Tower*>(widget);
 
-    // change color back to green
+    // change upgrade color back to green
     QBrush brush;
     brush.setStyle(Qt::SolidPattern);
     brush.setColor(Qt::green);
@@ -889,6 +899,21 @@ bool Game::upgradeTower(int row, int column) {
         // not a tower
         return false;
     }
+}
+
+void Game::resetHighlight() {
+    build_CSstudent->setStyleSheet(buildButtonStylesheet);
+    build_TA->setStyleSheet(buildButtonStylesheet);
+    build_SE->setStyleSheet(buildButtonStylesheet);
+    build_LS->setStyleSheet(buildButtonStylesheet);
+    build_Valgrind->setStyleSheet(buildButtonStylesheet);
+    build_Comment->setStyleSheet(buildButtonStylesheet);
+
+    // change upgrade color back to green
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(Qt::green);
+    upgradeButton->setBrush(brush);
 }
 
 
