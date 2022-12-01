@@ -5,10 +5,11 @@
 #include <qmath.h>
 
 
-Projectile::Projectile(int damage, QGraphicsItem *parent)
-    : QObject(),QGraphicsPixmapItem(parent), damage_(damage)
+Projectile::Projectile(int damage, QString imgPath,
+                       int pierce, QGraphicsItem *parent)
+    : QObject(),QGraphicsPixmapItem(parent), damage_(damage), pierce_(pierce)
 {
-    setPixmap(QPixmap(":/images/CStudent_projectile.png"));
+    setPixmap(QPixmap(imgPath));
     setTransformOriginPoint(pixmap().width()/2,pixmap().height()/2);
     QTimer * move_timer = new QTimer(this);
     connect(move_timer,SIGNAL(timeout()),this,SLOT(move()));
@@ -16,6 +17,7 @@ Projectile::Projectile(int damage, QGraphicsItem *parent)
 
     maxRange_ = 200;
     distanceTravelled_ = 0;
+    pierceCount_ = 0;
 }
 
 void Projectile::move(){
@@ -31,8 +33,14 @@ void Projectile::move(){
         Enemy* enemy = dynamic_cast<Enemy*>(item);
         if(enemy)
         {
-            enemy->takeDamage(damage_);
-            deleteLater();
+            if (!enemiesHit_.contains(enemy)){
+                enemy->takeDamage(damage_);
+                enemiesHit_.append(enemy);
+                pierceCount_++;
+            }
+            if (pierceCount_ >= pierce_){
+                deleteLater();
+            }
             return;
         }
 

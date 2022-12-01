@@ -40,13 +40,15 @@ public slots:
     void getTarget();
 protected:
     QString ogImagePath_;// the original image path in use
+    QString projectileImagePath_;
     int maxLevel_;
     int upgradeLevel_;
 private:
-    int range_ = 5;
+    int range_ = 3;
     int damage_;
     int attackInterval_;// in mili-seconds
     double damageMultiplier_;
+    int pierce_;
 
     bool upgradeable_;
 

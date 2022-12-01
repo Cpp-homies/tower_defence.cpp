@@ -40,7 +40,7 @@ extern MainView * view;
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
     // set starting values of health, currency etc
-    health_ = 10000;
+    health_ = 100;
     currency_ = 100;
     level_ = 0;
     score_ = 0;
