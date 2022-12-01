@@ -8,17 +8,17 @@ RuntimeError::RuntimeError(RuntimeErrorType subType, QList<QPointF> path,QList<Q
     case RuntimeErrorType::StackOverflow:
         setPixmap(QPixmap(":/images/Stack_overflow1.png"));
         setTransformOriginPoint(pixmap().height()/2, pixmap().width()/2);
-        damage_ = 50;
-        health_ = 100;
-        speed_ = 30;
+        damage_ = 500;
+        health_ = 10000;
+        speed_ = 20;
         break;
 
     case RuntimeErrorType::MemoryStackMinion:
         setPixmap(QPixmap(":/images/Stack_overflow6.png"));
         setTransformOriginPoint(pixmap().height()/2, pixmap().width()/2);
         damage_ = 10;
-        health_ = 5;
-        speed_ = 5;
+        health_ = 50;
+        speed_ = 30;
         break;
 
     default:

@@ -9,8 +9,8 @@ CompilerError::CompilerError(CompilerErrorType subType, QList<QPointF> path,QLis
             setOffset(QPointF(16,16));
             setTransformOriginPoint(pixmap().height(), pixmap().width());
             damage_ = 1;
-            health_ = 1;
-            speed_ = 10;            
+            health_ = 2;
+            speed_ = 20;
             break;
 
         case CompilerErrorType::Exception:
@@ -18,7 +18,7 @@ CompilerError::CompilerError(CompilerErrorType subType, QList<QPointF> path,QLis
             setOffset(QPointF(16,16));
             setTransformOriginPoint(pixmap().height(), pixmap().width());
             damage_ = 10;
-            health_ = 5;
+            health_ = 20;
             speed_ = 5;            
             break;
 
@@ -43,7 +43,7 @@ void CompilerError::die()
 void CompilerError::explodeException()
 {
 
-    int amount = 10;
+    int amount = 3;
 
     for (int i = 1; i < amount+1; ++i)
     {

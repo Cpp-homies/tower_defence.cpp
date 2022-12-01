@@ -27,10 +27,11 @@ const Qt::GlobalColor atkArea_Color = Qt::black;
 
 Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
     // set the default tower stats
-    range_ = 5;
+    range_ = 3;
     damage_ = 10;
     attackInterval_ = 1000;
     damageMultiplier_ = 1.0;
+    pierce_ = 0;
 
     upgradeLevel_ = 1;
     maxLevel_ = 4;
@@ -41,6 +42,7 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
 
     // set tower graphics
     ogImagePath_ = ":/images/CStudent1.png";
+    projectileImagePath_ = ":/images/CStudent_projectile.png";
     towerImg = view->getGame()->addPixmap(QPixmap(ogImagePath_));
     towerImg->setPos(towerCenter() - QPoint(towerImg->boundingRect().width()/2, towerImg->boundingRect().height()/2) );
 
@@ -155,7 +157,7 @@ void Tower::setRange(int range) {
 //Fires a projectile at the targetPos
 void Tower::fire(QPointF targetPos) {
 
-    Projectile* projectile = new Projectile(damage_);
+    Projectile* projectile = new Projectile(damage_, projectileImagePath_, pierce_);
     projectile->setPos(view->getGame()->getSquarePos(x_,y_)); //takes the same coordinates as the tower
     QLineF ln(view->getGame()->getSquarePos(x_,y_),targetPos); //path of the projectile
     int angle = -1 * ln.angle(); //the angle from tower to target
@@ -253,7 +255,14 @@ bool Tower::upgrade() {
             this->damage_ = this->damage_ * 1.2;
             targetAble_[EnemyTypes::memory] = true;
 
+            // increase range to 4
+            setRange(4);
+
+            // increase attack speed
+            attackInterval_ = 800;
+
             // update tower graphics
+            projectileImagePath_ = ":/images/CStudent2_projectile.png";
             ogImagePath_ = ":/images/CStudent2.png";
             towerImg->setPixmap(QPixmap(ogImagePath_));
 
@@ -262,24 +271,46 @@ bool Tower::upgrade() {
 /**
 TODO : Add other changes to tower characteristic beside damage
 */
-            // increase damage by 20%
-            this->damage_ = this->damage_ * 1.2;
+            // increase damage by 50%
+            this->damage_ = this->damage_ * 1.5;
+
+            // increase range to 5
+           setRange(5);
+
+            // increase attack speed
+            attackInterval_ = 600;
 
             // update tower graphics
+            projectileImagePath_ = ":/images/CStudent3_projectile.png";
             ogImagePath_ = ":/images/CStudent3.png";
             towerImg->setPixmap(QPixmap(ogImagePath_));
 
             break;
         case 4:
-            // increase damage by 20%
-            this->damage_ = this->damage_ * 1.2;
+            // increase damage by 50%
+            this->damage_ = this->damage_ * 1.5;
+
+            // increase range to 7
+            setRange(7);
+
+            // increase attack speed
+            attackInterval_ = 300;
+
+            //increase pierce
+            pierce_ = 2;
 
             // update tower graphics
+            projectileImagePath_ = ":/images/CStudent4_projectile.png";
             ogImagePath_ = ":/images/CStudent4.png";
             towerImg->setPixmap(QPixmap(ogImagePath_));
 
             break;
         }
+
+        // connect the timer to the getTarget function
+        QTimer * timer = new QTimer();
+        connect(timer,SIGNAL(timeout()),this,SLOT(getTarget()));
+        timer->start(attackInterval_);
 
         return true;
     }

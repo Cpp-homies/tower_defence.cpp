@@ -34,13 +34,13 @@
 #include <QTimer>
 #include <QMessageBox>
 
-#define BUILD_BUTTON_SIZE 80
+#define BUILD_BUTTON_SIZE 90
 extern MainView * view;
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
     // set starting values of health, currency etc
-    health_ = 10000;
+    health_ = 100;
     currency_ = 100;
     level_ = 0;
     score_ = 0;
@@ -247,7 +247,7 @@ void Game::createGameControls()
     controlsLayout = new QGraphicsGridLayout();
 
     // set spacings
-    controlsLayout->setContentsMargins(130,130,120,120);
+    controlsLayout->setContentsMargins(80,300,0,0);
     controlsLayout->setSpacing(60);
 
     // Font for displaying round, health and wealth
@@ -267,16 +267,40 @@ void Game::createGameControls()
     // add indicator to the scene
     addItem(roundIndicator);
     // Create the round number
-    QGraphicsTextItem * roundNumber = new QGraphicsTextItem(QString::number(level_));
+    roundDisplay = new QGraphicsTextItem(QString::number(level_));
     // set font
-    roundNumber->setDefaultTextColor(Qt::white);
-    roundNumber->setFont(statsFont);
+    roundDisplay->setDefaultTextColor(Qt::white);
+    roundDisplay->setFont(statsFont);
     // set position
-    int RNxPos = 860;
-    int RNyPos = 40;
-    roundNumber->setPos(RNxPos,RNyPos);
+    int RNxPos = RIxPos + roundIndicator->boundingRect().width();
+    int RNyPos = RIyPos;
+    roundDisplay->setPos(RNxPos,RNyPos);
     // add to the scene
-    addItem(roundNumber);
+    addItem(roundDisplay);
+
+        // display score
+    // Create the roundnumber indicator
+    QGraphicsTextItem * scoreIndicator = new QGraphicsTextItem(QString("score"));
+    // set font
+    scoreIndicator->setDefaultTextColor(Qt::white);
+    scoreIndicator->setFont(roundIndicatorFont);
+    // set position
+    int SIxPos = 1000;
+    int SIyPos = 40;
+    scoreIndicator->setPos(SIxPos,SIyPos);
+    // add indicator to the scene
+    addItem(scoreIndicator);
+    // Create the round number
+    scoreDisplay = new QGraphicsTextItem(QString::number(score_));
+    // set font
+    scoreDisplay->setDefaultTextColor(Qt::white);
+    scoreDisplay->setFont(statsFont);
+    // set position
+    int SNxPos = SIxPos + scoreIndicator->boundingRect().width();
+    int SNyPos = SIyPos;
+    scoreDisplay->setPos(SNxPos,SNyPos);
+    // add to the scene
+    addItem(scoreDisplay);
 
         // display health
     // Create the health indicator
@@ -287,23 +311,23 @@ void Game::createGameControls()
     healthIndicatorB.setTexture(QPixmap(":/images/hp_icon.png"));
     healthIndicator->setBrush(healthIndicatorB);
     // set position
-    int HIxPos = 920;
-    int HIyPos = 40;
+    int HIxPos = 744;
+    int HIyPos = 140;
     // QGraphicsProxyWidget* healthIndicatorWidget = addWidget(healthIndicator);
     healthIndicator->setPos(HIxPos,HIyPos);
     // add indicator to the scene
     addItem(healthIndicator);
     // Create the round number
-    QGraphicsTextItem * healthNumber = new QGraphicsTextItem(QString::number(health_));
+    healthDisplay = new QGraphicsTextItem(QString::number(health_));
     // set font
-    healthNumber->setDefaultTextColor(Qt::white);
-    healthNumber->setFont(statsFont);
+    healthDisplay->setDefaultTextColor(Qt::white);
+    healthDisplay->setFont(statsFont);
     // set position
     int HNxPos = HIxPos + 64;
-    int HNyPos = 40;
-    healthNumber->setPos(HNxPos,HNyPos);
+    int HNyPos = HIyPos;
+    healthDisplay->setPos(HNxPos,HNyPos);
     // add to the scene
-    addItem(healthNumber);
+    addItem(healthDisplay);
 
         // display wealth
     // Create the wealth indicator
@@ -314,22 +338,22 @@ void Game::createGameControls()
     wealthIndicatorB.setTexture(QPixmap(":/images/Currency.png"));
     wealthIndicator->setBrush(wealthIndicatorB);
     // set position
-    int WIxPos = 1064;
-    int WIyPos = 40;
+    int WIxPos = 1000;
+    int WIyPos = 140;
     wealthIndicator->setPos(WIxPos,WIyPos);
     // add indicator to the scene
     addItem(wealthIndicator);
     // Create the round number
-    QGraphicsTextItem * wealthNumber = new QGraphicsTextItem(QString::number(currency_));
+    wealthDisplay = new QGraphicsTextItem(QString::number(currency_));
     // set font
-    wealthNumber->setDefaultTextColor(Qt::white);
-    wealthNumber->setFont(statsFont);
+    wealthDisplay->setDefaultTextColor(Qt::white);
+    wealthDisplay->setFont(statsFont);
     // set position
     int WNxPos = WIxPos + 64;
-    int WNyPos = 40;
-    wealthNumber->setPos(WNxPos,WNyPos);
+    int WNyPos = WIyPos;
+    wealthDisplay->setPos(WNxPos,WNyPos);
     // add to the scene
-    addItem(wealthNumber);
+    addItem(wealthDisplay);
 
 
     // main menu button
@@ -342,7 +366,7 @@ void Game::createGameControls()
     addItem(menuButton);
 
     // upgrade button
-    Button * upgradeButton = new Button(QString("Upgrade Tower"), 240, 50);
+    upgradeButton = new Button(QString("Upgrade Tower"), 240, 50);
 //    upgradeButton->setRect(QRectF(upgradeButton->boundingRect().topLeft(),
 //                            QSizeF(upgradeButton->boundingRect().width() + 20, upgradeButton->boundingRect().height())));
 
@@ -354,11 +378,13 @@ void Game::createGameControls()
     addItem(upgradeButton);
 
     // tower build buttons
+    buildButtonStylesheet = "background-color: white; border: 1px solid white";
         // create CSstudent button
-    QToolButton* build_CSstudent = new QToolButton();
+    build_CSstudent = new QToolButton();
     // create the icon for the button
     build_CSstudent->setIcon(QIcon(QPixmap(":/images/CStudent1.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_CSstudent->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+    build_CSstudent->setStyleSheet(buildButtonStylesheet);
 
     // connect the button with the enterBuildMode function
     connect(build_CSstudent, SIGNAL(clicked()), this, SLOT(enterBuildCS()));
@@ -369,10 +395,11 @@ void Game::createGameControls()
 
 
         // create TA button
-    QToolButton* build_TA = new QToolButton();
+    build_TA = new QToolButton();
     // create the icon for the button
     build_TA->setIcon(QIcon(QPixmap(":/images/TA.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_TA->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+    build_TA->setStyleSheet(buildButtonStylesheet);
 
     // connect the button with the enterBuildMode function
     connect(build_TA, SIGNAL(clicked()), this, SLOT(enterBuildTA()));
@@ -383,59 +410,63 @@ void Game::createGameControls()
 
 
         // create Search Engine button
-    QToolButton* build_SE = new QToolButton();
+    build_SE = new QToolButton();
     // create the icon for the button
     build_SE->setIcon(QIcon(QPixmap(":/images/Bing.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_SE->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+    build_SE->setStyleSheet(buildButtonStylesheet);
 
     // connect the button with the enterBuildMode function
     connect(build_SE, SIGNAL(clicked()), this, SLOT(enterBuildSE()));
 
     // add the button to the control layout
     QGraphicsProxyWidget* SEWidget = addWidget(build_SE);
-    controlsLayout->addItem(SEWidget, 2, 1);
+    controlsLayout->addItem(SEWidget, 1, 3);
 
 
         // create Language server button
-    QToolButton* build_LS = new QToolButton();
+    build_LS = new QToolButton();
     // create the icon for the button
     build_LS->setIcon(QIcon(QPixmap(":/images/Language_server.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_LS->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+    build_LS->setStyleSheet(buildButtonStylesheet);
 
     // connect the button with the enterBuildMode function
     connect(build_LS, SIGNAL(clicked()), this, SLOT(enterBuildLS()));
 
     // add the button to the control layout
     QGraphicsProxyWidget* LSWidget = addWidget(build_LS);
-    controlsLayout->addItem(LSWidget, 2, 2);
+    controlsLayout->addItem(LSWidget, 2, 1);
 
 
         // create Valgrind button
-    QToolButton* build_Valgrind = new QToolButton();
+    build_Valgrind = new QToolButton();
     // create the icon for the button
     build_Valgrind->setIcon(QIcon(QPixmap(":/images/Valgrind.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_Valgrind->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+    build_Valgrind->setStyleSheet(buildButtonStylesheet);
 
     // connect the button with the enterBuildMode function
     connect(build_Valgrind, SIGNAL(clicked()), this, SLOT(enterBuildVal()));
 
     // add the button to the control layout
     QGraphicsProxyWidget* ValWidget = addWidget(build_Valgrind);
-    controlsLayout->addItem(ValWidget, 3, 1);
+    controlsLayout->addItem(ValWidget, 2, 2);
 
 
         // create Comment button
-    QToolButton* build_Comment = new QToolButton();
+    build_Comment = new QToolButton();
     // create the icon for the button
     build_Comment->setIcon(QIcon(QPixmap(":/images/Comment.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_Comment->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
+    build_Comment->setStyleSheet(buildButtonStylesheet);
 
     // connect the button with the enterBuildMode function
     connect(build_Comment, SIGNAL(clicked()), this, SLOT(enterBuildCom()));
 
     // add the button to the control layout
     QGraphicsProxyWidget* ComWidget = addWidget(build_Comment);
-    controlsLayout->addItem(ComWidget, 3, 2);
+    controlsLayout->addItem(ComWidget, 2, 3);
 
 
     // add the control layout to the game layout
@@ -496,6 +527,7 @@ void Game::createWave()
 
     }
     ++level_;
+    roundDisplay->setPlainText(QString::number(level_));
 
 
 
@@ -624,6 +656,7 @@ TowerTypes::TYPES Game::getBuildType() const {
 
 void Game::takeDamage (int dHealth) {
     health_-=dHealth;
+    healthDisplay->setPlainText(QString::number(health_));
     if(--enemyCount_==0 )
     {
         isLost() ? emit gameLost() : (isWon() ? emit gameWon() : createWave());
@@ -633,10 +666,12 @@ void Game::takeDamage (int dHealth) {
 
 void Game::changeCurrency (int dCurrency) {
     currency_+=dCurrency;
+    wealthDisplay->setPlainText(QString::number(currency_));
 }
 
 void Game::changeScore (int dPoints) {
     score_+=dPoints;
+    scoreDisplay->setPlainText(QString::number(score_));
 }
 
 void Game::setMode(Modes::MODES m) {
@@ -720,6 +755,12 @@ bool Game::buildTower(int row, int column) {
 bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
+    build_CSstudent->setStyleSheet(buildButtonStylesheet);
+    build_TA->setStyleSheet(buildButtonStylesheet);
+    build_SE->setStyleSheet(buildButtonStylesheet);
+    build_LS->setStyleSheet(buildButtonStylesheet);
+    build_Valgrind->setStyleSheet(buildButtonStylesheet);
+    build_Comment->setStyleSheet(buildButtonStylesheet);
 
     // if there is a tower occupying the square, return false
     if (dynamic_cast<Tower*>(widget)) {
@@ -779,36 +820,46 @@ bool Game::isPath(int row, int column) {
 
 void Game::enterUpgradeMode() {
     mode_ = Modes::upgrade;
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(Qt::yellow);
+    upgradeButton->setBrush(brush);
 }
 
 void Game::enterBuildCS() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::CS_Student;
+    build_CSstudent->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildTA() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::TA;
+    build_TA->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildSE() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::SearchEngine;
+    build_SE->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildLS() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::LanguageServer;
+    build_LS->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildVal() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::Valgrind;
+    build_Valgrind->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::enterBuildCom() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::Comment;
+    build_Comment->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
 void Game::updatePaths()
@@ -824,6 +875,12 @@ bool Game::upgradeTower(int row, int column) {
     QWidget* widget = getWidgetAt(row, column);
     Tower* tower= dynamic_cast<Tower*>(widget);
 
+    // change color back to green
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(Qt::green);
+    upgradeButton->setBrush(brush);
+
     // if the square is a tower, upgrade it if possible
     if (tower) {
         return tower->upgrade();// return the state of the upgrade
@@ -833,3 +890,5 @@ bool Game::upgradeTower(int row, int column) {
         return false;
     }
 }
+
+
