@@ -37,18 +37,22 @@ void Button::mousePressEvent(QGraphicsSceneMouseEvent */* unused */)
 void Button::hoverEnterEvent(QGraphicsSceneHoverEvent */* unused */)
 {
     // change color to dark green
-    QBrush brush;
-    brush.setStyle(Qt::SolidPattern);
-    brush.setColor(Qt::darkGreen);
-    setBrush(brush);
+    if (brush().color() == Qt::green) {
+        QBrush brush;
+        brush.setStyle(Qt::SolidPattern);
+        brush.setColor(Qt::darkGreen);
+        setBrush(brush);
+    }
 }
 
 void Button::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */)
 {
     // change color back to green
-    QBrush brush;
-    brush.setStyle(Qt::SolidPattern);
-    brush.setColor(Qt::green);
-    setBrush(brush);
+    if (brush().color() == Qt::darkGreen) {
+        QBrush brush;
+        brush.setStyle(Qt::SolidPattern);
+        brush.setColor(Qt::green);
+        setBrush(brush);
+    }
 
 }
