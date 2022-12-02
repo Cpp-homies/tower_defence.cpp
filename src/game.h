@@ -56,7 +56,9 @@ public:
 
 
     void keyPressEvent(QKeyEvent *keyEvent);
-    void resetHighlight();
+    void resetButtonHighlights();
+
+    void hideAllAttackAreasExcept(QPointF exclude = QPointF());
 
     QGraphicsGridLayout* mapLayout; //map area where the action is
     QGraphicsLinearLayout* gameLayout; //the whole are of the game, including the controls
@@ -123,6 +125,8 @@ private:
     QToolButton* build_Valgrind;
     QToolButton* build_Comment;
     QString buildButtonStylesheet;
+
+    QList<QPointF> coordsOfTowers;
 };
 
 #endif // GAME_H

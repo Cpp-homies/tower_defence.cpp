@@ -36,6 +36,10 @@ public:
     void setRange(int range);
 
     virtual bool upgrade();
+    virtual bool isTower();
+    void showAttackArea();
+    void hideAttackArea();
+    virtual void showHideAttackArea();
 public slots:
     void getTarget();
 protected:
