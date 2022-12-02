@@ -10,7 +10,7 @@ Enemy::Enemy(EnemyType type, QList<QPointF> path,QList<QPoint> matrixPath, int h
     setPos(path_[0]);
     point_index_ = 0;
     dest_ = path_[0];
-//    game_ = qobject_cast<Game*>(scene());
+    isLastOfWave = false;
 
 }
 

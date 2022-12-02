@@ -45,7 +45,8 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     level_ = 0;
     score_ = 0;
     enemyCount_ = 0;
-    wavesCount_ = 0;
+    wavesEnemyCount_ = 0;
+    spawnedThisWave_ = QAtomicInteger(0);
     mode_ = Modes::normal;
 
     // set size 1280x717 (use 717 height because we dont want scroll)
@@ -501,11 +502,13 @@ void Game::createWave()
             QTimer* nextEnemiesTimer = new QTimer(this);
             nextEnemiesTimer->setSingleShot(true);
             nextEnemiesTimer->setInterval((amount+1)*delay);
+            nextEnemiesTimer->callOnTimeout([this, amount](){this->addSpawnedEnemies(amount);});
             //after every timeout spawn an enemy
             timer->callOnTimeout([this, type, convertedPath](){this->spawnEnemy(type, convertedPath);});
             timer->setInterval(delay);
             //stop current timer when all enemies are spawned
             connect(nextEnemiesTimer, SIGNAL(timeout()), timer, SLOT(stop()));
+
             if(flag)
             {
                 flag = false;
@@ -522,7 +525,7 @@ void Game::createWave()
             //save a timer to the buffer to connect it during the next loop
             timerBuffer = nextEnemiesTimer;
             //how many enemies will be created in this loop
-            enemyCount_+=amount;
+            wavesEnemyCount_+=amount;
         }
 
     }
@@ -542,17 +545,20 @@ void Game::spawnEnemy(int type,QList<QPointF> path)
     if(type==1 || type==2)
     {
         CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), path, shortest_path_);
-        addEnemy((Enemy*)enemy,0);
+        addEnemy((Enemy*)enemy);
+
     }
     else if(type==3 || type==4 || type==5 || type==6)
     {
         MemoryError* enemy = new MemoryError(static_cast<MemoryErrorType>(type), path, shortest_path_);
-        addEnemy((Enemy*)enemy,0);
+        addEnemy((Enemy*)enemy);
+
     }
     else if(type==7)
     {
         RuntimeError* enemy = new RuntimeError(static_cast<RuntimeErrorType>(type), path, shortest_path_);
-        addEnemy((Enemy*)enemy,0);
+        addEnemy((Enemy*)enemy);
+
     }
 
 }
@@ -622,7 +628,19 @@ bool Game::isLost() const{
 
 bool Game::isWon() const
 {
-    return enemyCount_==0 && health_>0 && level_==finalLevel_;
+    return enemyCount_==0 && health_>0 && level_==finalLevel_ ;
+}
+
+bool Game::isWaveWon()
+{
+    qInfo() << enemyCount_ << spawnedThisWave_ << wavesEnemyCount_ << level_;
+    if(spawnedThisWave_ == wavesEnemyCount_ && enemyCount_ == 0)
+    {
+        spawnedThisWave_ = QAtomicInteger(0);
+        wavesEnemyCount_ = 0;
+        return true;
+    } else return false;
+
 }
 
 int Game::getHealth() const {
@@ -657,9 +675,18 @@ TowerTypes::TYPES Game::getBuildType() const {
 void Game::takeDamage (int dHealth) {
     health_-=dHealth;
     healthDisplay->setPlainText(QString::number(health_));
-    if(--enemyCount_==0 )
+    Enemy* enemy = qobject_cast<Enemy*>(sender());
+    activeEnemies_.removeOne(enemy);
+    activeEnemies_.squeeze();
+    updateEnemyCount();
+    if(isLost())
     {
-        isLost() ? emit gameLost() : (isWon() ? emit gameWon() : createWave());
+        emit gameLost();
+        return;
+    }
+    if(isWaveWon())
+    {
+        isWon() ? emit gameWon() :  createWave();
 
     }
 }
@@ -686,24 +713,29 @@ void Game::enemyDies(int value)
 {
     changeScore(value);
     changeCurrency(value);
-    if(--enemyCount_==0)
-    {
-        isWon() ? emit gameWon() : createWave();
-    }
     Enemy* enemy = qobject_cast<Enemy*>(sender());
     activeEnemies_.removeOne(enemy);
     activeEnemies_.squeeze();
+    updateEnemyCount();
+    if(isWaveWon())
+    {
+        isWon() ? emit gameWon() : createWave() ;
+    }
+
 }
 
-void Game::addEnemy(Enemy* enemy, int advanceCount)
+void Game::addEnemy(Enemy* enemy)
 {
-    enemyCount_+=advanceCount;
     addItem(enemy);
     enemy->startMove();
     connect(enemy,SIGNAL(enemyDies(int)),this,SLOT(enemyDies(int)));
-    connect(enemy,SIGNAL(addedEnemy(Enemy*,int)),this,SLOT(addEnemy(Enemy*,int)));
+    connect(enemy,SIGNAL(addedEnemy(Enemy*)),this,SLOT(addEnemy(Enemy*)));
     connect(enemy,SIGNAL(dealsDamage(int)),this,SLOT(takeDamage(int)));
+    connect(enemy,SIGNAL(enemyDies(int)),this,SLOT(updateEnemyCount()));
+    connect(enemy,SIGNAL(addedEnemy(Enemy*)),this,SLOT(updateEnemyCount()));
     activeEnemies_<<enemy;
+    updateEnemyCount();
+
 }
 
 //just testing scene changing
@@ -879,6 +911,16 @@ void Game::updatePaths()
         QList<QPoint> newMatrixPath = getShortestPath(enemy->getMatrixLocation());
         enemy->setPath(newMatrixPath,convertCoordinates(newMatrixPath));
     }
+}
+
+void Game::updateEnemyCount()
+{
+    enemyCount_=activeEnemies_.length();
+}
+
+void Game::addSpawnedEnemies(int amount)
+{
+    spawnedThisWave_+= amount;
 }
 
 bool Game::upgradeTower(int row, int column) {

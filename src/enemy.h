@@ -49,6 +49,7 @@ public:
     void setPath(QList<QPoint> matrixPath, QList<QPointF> path);
     QPoint getMatrixLocation() const;
 
+
 public slots:
 
     void move();
@@ -57,7 +58,7 @@ signals:
 
     void enemyDies(int);
     void dealsDamage(int);
-    void addedEnemy(Enemy*,int);
+    void addedEnemy(Enemy*);
 
 protected:
 
@@ -71,6 +72,7 @@ protected:
     QPointF dest_;
     int point_index_;
     EnemyType type_;
+    bool isLastOfWave;
 };
 
 #endif // ENEMY_H
