@@ -75,15 +75,12 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
             view->getGame()->setMode(Modes::normal);
         }
         break;
+    case Modes::normal:
+        view->getGame()->hideAllAttackAreasExcept(QPointF(x_,y_));
+        if (this->isTower()){
+            this->showHideAttackArea();
+        }
     default:
-//        // if the build fail
-//        if (!view->getGame()->buildTower(this->x_, this->y_)) {
-//            // do something
-//        }
-//        else {
-//            // build successful, schedule to delete the square
-//            deleteLater();
-//        }
         break;
     }
 
@@ -92,7 +89,7 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
 //Fires a projectile at the targetPos
 void Square::fire(QPointF targetPos){
 
-    Projectile* projectile = new Projectile();
+    Projectile* projectile = new Projectile(10);
     projectile->setPos(view->getGame()->getSquarePos(x_,y_)); //takes the same coordinates as the tower
     QLineF ln(view->getGame()->getSquarePos(x_,y_),targetPos); //path of the projectile
     int angle = -1 * ln.angle(); //the angle from tower to target
@@ -114,4 +111,8 @@ QPixmap Square::rotate(int angle, QPixmap pixmap){
     QTransform rotation;
     rotation.rotate(angle);
     return pixmap.transformed(rotation);
+}
+
+bool Square::isTower(){
+    return false;
 }

@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    compilererror.cpp \
     cs_student.cpp \
     enemy.cpp \
     button.cpp \
@@ -16,21 +17,28 @@ SOURCES += \
     leaderboard.cpp \
     main.cpp \
     mainview.cpp \
+    memoryerror.cpp \
     menu.cpp \
+    path.cpp \
     projectile.cpp \
+    runtimeerror.cpp \
     square.cpp \
     ta.cpp \
     tower.cpp \
 
 HEADERS += \
+    compilererror.h \
     cs_student.h \
     enemy.h \
     button.h \
     game.h \
     leaderboard.h \
     mainview.h \
+    memoryerror.h \
     menu.h \
+    path.h \
     projectile.h \
+    runtimeerror.h \
     square.h \
     ta.h \
     tower.h
