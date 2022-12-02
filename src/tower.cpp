@@ -315,3 +315,29 @@ TODO : Add other changes to tower characteristic beside damage
         return true;
     }
 }
+
+void Tower::showAttackArea()
+{
+
+    attack_area_->setPen(QPen(QBrush(atkArea_Color),
+                              atkArea_LineWidth, atkArea_LineStyle));
+}
+
+void Tower::hideAttackArea()
+{
+    attack_area_->setPen(QPen(QBrush(Qt::transparent),
+                              atkArea_LineWidth, atkArea_LineStyle));
+}
+
+void Tower::showHideAttackArea()
+{
+    if (attack_area_->pen().color()==atkArea_Color){
+        hideAttackArea();
+    } else {
+        showAttackArea();
+    }
+}
+
+bool Tower::isTower(){
+    return true;
+}
