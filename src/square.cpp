@@ -75,6 +75,10 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
             view->getGame()->setMode(Modes::normal);
         }
         break;
+    case Modes::normal:
+        if (this->isTower()){
+            this->showHideAttackArea();
+        }
     default:
 //        // if the build fail
 //        if (!view->getGame()->buildTower(this->x_, this->y_)) {
@@ -114,4 +118,8 @@ QPixmap Square::rotate(int angle, QPixmap pixmap){
     QTransform rotation;
     rotation.rotate(angle);
     return pixmap.transformed(rotation);
+}
+
+bool Square::isTower(){
+    return false;
 }
