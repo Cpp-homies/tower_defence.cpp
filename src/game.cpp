@@ -755,7 +755,7 @@ bool Game::buildTower(int row, int column) {
 bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
-    resetHighlight();
+    resetButtonHighlights();
 
 
     // if there is a tower occupying the square, return false
@@ -777,6 +777,9 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
 
             // add a tower to the grid at the given possition
             this->mapLayout->addItem(tower, row, column);
+
+            // Hide the attack ranges of all other towers
+            hideAllAttackAreasExcept(QPointF(row,column));
             break;
         }
         case TowerTypes::TA:
@@ -795,6 +798,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
         default:
             break;
         }
+        coordsOfTowers.append(QPointF(row, column));
         return true;
     }
 
@@ -815,7 +819,7 @@ bool Game::isPath(int row, int column) {
 }
 
 void Game::enterUpgradeMode() {
-    resetHighlight();
+    resetButtonHighlights();
 
     mode_ = Modes::upgrade;
     QBrush brush;
@@ -825,7 +829,7 @@ void Game::enterUpgradeMode() {
 }
 
 void Game::enterBuildCS() {
-    resetHighlight();
+    resetButtonHighlights();
 
     mode_ = Modes::build;
     buildType_ = TowerTypes::CS_Student;
@@ -833,7 +837,7 @@ void Game::enterBuildCS() {
 }
 
 void Game::enterBuildTA() {
-    resetHighlight();
+    resetButtonHighlights();
 
     mode_ = Modes::build;
     buildType_ = TowerTypes::TA;
@@ -841,7 +845,7 @@ void Game::enterBuildTA() {
 }
 
 void Game::enterBuildSE() {
-    resetHighlight();
+    resetButtonHighlights();
 
     mode_ = Modes::build;
     buildType_ = TowerTypes::SearchEngine;
@@ -849,7 +853,7 @@ void Game::enterBuildSE() {
 }
 
 void Game::enterBuildLS() {
-    resetHighlight();
+    resetButtonHighlights();
 
     mode_ = Modes::build;
     buildType_ = TowerTypes::LanguageServer;
@@ -857,7 +861,7 @@ void Game::enterBuildLS() {
 }
 
 void Game::enterBuildVal() {
-    resetHighlight();
+    resetButtonHighlights();
 
     mode_ = Modes::build;
     buildType_ = TowerTypes::Valgrind;
@@ -865,7 +869,7 @@ void Game::enterBuildVal() {
 }
 
 void Game::enterBuildCom() {
-    resetHighlight();
+    resetButtonHighlights();
 
     mode_ = Modes::build;
     buildType_ = TowerTypes::Comment;
@@ -893,6 +897,9 @@ bool Game::upgradeTower(int row, int column) {
 
     // if the square is a tower, upgrade it if possible
     if (tower) {
+        // Hide the attack ranges of all other towers
+        hideAllAttackAreasExcept(tower->getCoords());
+
         return tower->upgrade();// return the state of the upgrade
     }
     else {
@@ -901,7 +908,7 @@ bool Game::upgradeTower(int row, int column) {
     }
 }
 
-void Game::resetHighlight() {
+void Game::resetButtonHighlights() {
     build_CSstudent->setStyleSheet(buildButtonStylesheet);
     build_TA->setStyleSheet(buildButtonStylesheet);
     build_SE->setStyleSheet(buildButtonStylesheet);
@@ -914,6 +921,18 @@ void Game::resetHighlight() {
     brush.setStyle(Qt::SolidPattern);
     brush.setColor(Qt::green);
     upgradeButton->setBrush(brush);
+}
+
+void Game::hideAllAttackAreasExcept(QPointF exclude)
+{
+    for (QPointF towerCoords : coordsOfTowers){
+        if (towerCoords != exclude){
+            QWidget* widget = getWidgetAt(towerCoords.x(), towerCoords.y());
+            Tower* tower= dynamic_cast<Tower*>(widget);
+            tower->hideAttackArea();
+        }
+    }
+
 }
 
 
