@@ -1,6 +1,7 @@
 #include "mainview.h"
 #include "menu.h"
 
+
 MainView::MainView(QWidget *parent): QGraphicsView(parent)
 {
     setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
@@ -9,7 +10,7 @@ MainView::MainView(QWidget *parent): QGraphicsView(parent)
     setFixedSize(1280,720);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
+    leaderboard_ = new Leaderboard(this);
     // Set background image
     QBrush brush;
     brush.setTexture(QPixmap(":/images/Mainmenu.png"));
@@ -55,6 +56,9 @@ void MainView::showMenu()
 
 void MainView::showLeaderboard()
 {
+
+    leaderboard_->clear();
+    leaderboard_ = new Leaderboard(this);
     setScene(leaderboard_);
 }
 

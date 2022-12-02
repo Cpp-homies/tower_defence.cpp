@@ -33,6 +33,10 @@
 #include <QRegularExpression>
 #include <QTimer>
 #include <QMessageBox>
+#include <QInputDialog>
+#include <QDir>
+#include <QStandardPaths>
+
 
 #define BUILD_BUTTON_SIZE 90
 extern MainView * view;
@@ -63,6 +67,10 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     //connects error signal with a message box
     connect(this,SIGNAL(error(QString)),this, SLOT(showError(QString)));
     connect(this,SIGNAL(wallAction()),this,SLOT(updatePaths()));
+    connect(this,SIGNAL(gameWon()),this,SLOT(updateLeaderboard()));
+    connect(this,SIGNAL(gameLost()),this,SLOT(stopEnemies()));
+    connect(this,SIGNAL(gameLost()),this,SLOT(updateLeaderboard()));
+
 }
 
 void Game::createMap(){
@@ -563,14 +571,79 @@ void Game::spawnEnemy(int type,QList<QPointF> path)
 
 }
 
-void Game::updateLeadrboard()
+void Game::updateLeaderboard()
 {
+    QFile file(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)+"leaderboard.dat");
+
+
+    if(!file.open(QIODevice::ReadWrite))
+    {
+
+        emit error("Could not open leaderboard file: "+file.errorString());
+        return;
+    }
+    QDataStream stream(&file);
+
+    if(stream.atEnd())
+    {
+        bool ok;
+        QString text = QInputDialog::getText(nullptr, tr("QInputDialog::getText()"),
+                                             tr("You got a TOP10 score, enter name:"), QLineEdit::Normal,
+                                             QDir::home().dirName(), &ok);
+        if (ok && !text.isEmpty()) stream<<text<<score_;
+        file.close();
+        return;
+    }
+    QList<int> leaderboard;
+    QList<QPair<QString,int>> fullLeaderboard;
+    while(!stream.atEnd())
+    {
+        QString name;
+        int score;
+        stream>>name>>score;
+        leaderboard<<score;
+        fullLeaderboard<<QPair<QString,int>(name,score);
+    }
+    if(leaderboard.length()>=10)
+    {
+        int min = *std::min(leaderboard.begin(),leaderboard.end());
+        if(score_<=min)
+        {
+            QMessageBox::information(qobject_cast<QWidget*>(this), tr("Weak sauce"),
+                         "You didn't get a TOP10 score, try again.");
+            file.close();
+            return;
+        }
+        else
+        {
+            bool ok;
+            QString text = QInputDialog::getText(nullptr, tr("Yay!"),
+                                                 tr("You got a TOP10 score, enter name:"), QLineEdit::Normal,
+                                                 QDir::home().dirName(), &ok);
+
+            fullLeaderboard.removeIf([min](QPair<QString,int> i){return min == i.second;});
+            fullLeaderboard.squeeze();
+            fullLeaderboard<<QPair<QString,int>(text,score_);
+            file.close();
+            return;
+        }
+    }
+    else
+    {
+        bool ok;
+        QString text = QInputDialog::getText(nullptr, tr("Yay!"),
+                                             tr("You got a TOP10 score, enter name:"), QLineEdit::Normal,
+                                             QDir::home().dirName(), &ok);
+        if (ok && !text.isEmpty()) stream<<text<<score_;
+        file.close();
+        return;
+    }
 
 }
 
 void Game::showError(QString message)
 {
-    QMessageBox::information(qobject_cast<QWidget*>(this), tr("Error"),
+    QMessageBox::warning(qobject_cast<QWidget*>(this), tr("Error"),
                  message);
 
 }
@@ -916,6 +989,13 @@ void Game::updatePaths()
 void Game::updateEnemyCount()
 {
     enemyCount_=activeEnemies_.length();
+}
+
+void Game::stopEnemies()
+{
+    foreach (Enemy* enemy, activeEnemies_) {
+        enemy->getTimer()->stop();
+    }
 }
 
 void Game::addSpawnedEnemies(int amount)

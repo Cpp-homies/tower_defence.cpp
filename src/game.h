@@ -41,6 +41,7 @@ public:
     void createGameControls();
     void createWave();
     void readWaveFile();
+
     QList<QPointF> convertCoordinates(QList<QPoint> path);
     QList<QPoint> getShortestPath(QPoint start);
 
@@ -78,14 +79,14 @@ public slots:
     void enterBuildVal();
     void enemyDies(int value);
     void spawnEnemy(int type, QList<QPointF> path);
-    void updateLeadrboard();
+    void updateLeaderboard();
     void showError(QString message);
     void addEnemy(Enemy*);
     void takeDamage(int dHealth);
     void enterBuildCom();
     void updatePaths();
     void updateEnemyCount();
-
+    void stopEnemies();
 
 
 signals:

@@ -3,6 +3,7 @@
 
 
 #include <QGraphicsPixmapItem>
+#include <QTimer>
 
 //enums of main and subtypes, could help with scaling
 
@@ -48,6 +49,7 @@ public:
     void startMove();
     void setPath(QList<QPoint> matrixPath, QList<QPointF> path);
     QPoint getMatrixLocation() const;
+    QTimer *getTimer ();
 
 
 public slots:
@@ -72,7 +74,7 @@ protected:
     QPointF dest_;
     int point_index_;
     EnemyType type_;
-    bool isLastOfWave;
+    QTimer* timer_;
 };
 
 #endif // ENEMY_H
