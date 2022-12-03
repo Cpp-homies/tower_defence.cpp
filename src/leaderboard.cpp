@@ -15,20 +15,26 @@ Leaderboard::Leaderboard(QObject* parent): QGraphicsScene(parent)
     // set size 1280x717 (use 717 height because we dont want scroll)
     setSceneRect(0,0,1280,717);
     readFile();
-    //only testing purposes
+
+    QGraphicsWidget *form = new QGraphicsWidget;
     QGraphicsLinearLayout* layout = new QGraphicsLinearLayout(Qt::Vertical);
     for(QPair<QString,int> &score:leaderboard_)
     {
-        QLabel* test = new QLabel();
-        test->setText(score.first+ " " +QString::number(score.second));
-        QGraphicsProxyWidget* player = addWidget(test);
+        QLabel* highScore = new QLabel();
+        highScore->setText(score.first+ " " +QString::number(score.second));
+        highScore->setFont(QFont("Roboto", 20, QFont::Bold));
+        highScore->setFrameStyle(QFrame::Raised | QFrame::Panel);
+        highScore->setStyleSheet("QLabel { background-color : black; color : lime; }");
+        QGraphicsProxyWidget* player = addWidget(highScore);
         layout->addItem(player);
     }
 
 
-    QGraphicsWidget *form = new QGraphicsWidget;
+
     form->setLayout(layout);
     addItem(form);
+
+    form->setPos(this->width()/2-form->boundingRect().width()/2-120,this->height()/4);
 
     // main menu button
     Button * menuButton = new Button(QString("Main menu"), 200, 50);
@@ -47,11 +53,11 @@ void Leaderboard::setLeaderBoard(QList<QPair<QString, int> > leaderboard)
 
 void Leaderboard::readFile()
 {
-    QFile file(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)+"leaderboard.dat");
-    if(!file.open(QIODevice::ReadOnly))
+    QFile file(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)+"_leaderboard.dat");
+    if(!file.open(QIODevice::ReadWrite))
     {
 
-        QMessageBox::information(qobject_cast<QWidget*>(this), tr("Error"),
+        QMessageBox::critical(qobject_cast<QWidget*>(this), tr("Error"),
                      "Could not open leaderboard file: "+file.errorString());
 
         return;
@@ -59,9 +65,6 @@ void Leaderboard::readFile()
     QDataStream stream(&file);
     if(stream.atEnd())
     {
-        QMessageBox::information(qobject_cast<QWidget*>(this), tr("Error"),
-                     "Leaderboard file is empty!"+file.errorString());
-        file.close();
         return;
     }
     QList<QPair<QString,int>> leaderboard;

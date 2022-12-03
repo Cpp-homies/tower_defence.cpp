@@ -573,7 +573,7 @@ void Game::spawnEnemy(int type,QList<QPointF> path)
 
 void Game::updateLeaderboard()
 {
-    QFile file(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)+"leaderboard.dat");
+    QFile file(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)+"_leaderboard.dat");
 
 
     if(!file.open(QIODevice::ReadWrite))
@@ -590,29 +590,48 @@ void Game::updateLeaderboard()
         QString text = QInputDialog::getText(nullptr, tr("QInputDialog::getText()"),
                                              tr("You got a TOP10 score, enter name:"), QLineEdit::Normal,
                                              QDir::home().dirName(), &ok);
-        if (ok && !text.isEmpty()) stream<<text<<score_;
-        file.close();
-        return;
-    }
-    QList<int> leaderboard;
-    QList<QPair<QString,int>> fullLeaderboard;
-    while(!stream.atEnd())
-    {
-        QString name;
-        int score;
-        stream>>name>>score;
-        leaderboard<<score;
-        fullLeaderboard<<QPair<QString,int>(name,score);
-    }
-    if(leaderboard.length()>=10)
-    {
-        int min = *std::min(leaderboard.begin(),leaderboard.end());
-        if(score_<=min)
+        if (ok && !text.isEmpty())
         {
-            QMessageBox::information(qobject_cast<QWidget*>(this), tr("Weak sauce"),
-                         "You didn't get a TOP10 score, try again.");
-            file.close();
-            return;
+            stream<<text<<score_;
+
+        }
+
+    }
+    else
+    {
+        QList<QPair<QString,int>> fullLeaderboard;
+        while(!stream.atEnd())
+        {
+            QString name;
+            int score;
+            stream>>name>>score;
+            fullLeaderboard<<QPair<QString,int>(name,score);
+        }
+        if(fullLeaderboard.length()>=10)
+        {
+            auto min = std::min_element(fullLeaderboard.begin(),fullLeaderboard.end(),[](QPair<QString,int> a,QPair<QString,int> b)
+            {
+                    return a.second < b.second;
+            });
+            if(score_ <= min->second)
+            {
+                QMessageBox::information(qobject_cast<QWidget*>(this), tr("Weak sauce"),
+                             "You didn't get a TOP10 score, try again.");
+                file.close();
+                return;
+            }
+            else
+            {
+                bool ok;
+                QString text = QInputDialog::getText(nullptr, tr("Yay!"),
+                                                     tr("You got a TOP10 score, enter name:"), QLineEdit::Normal,
+                                                     QDir::home().dirName(), &ok);
+
+
+                *min = QPair<QString,int>(text,score_);
+
+
+            }
         }
         else
         {
@@ -620,24 +639,23 @@ void Game::updateLeaderboard()
             QString text = QInputDialog::getText(nullptr, tr("Yay!"),
                                                  tr("You got a TOP10 score, enter name:"), QLineEdit::Normal,
                                                  QDir::home().dirName(), &ok);
+            if (ok && !text.isEmpty()) fullLeaderboard<<QPair<QString,int>(text,score_);
 
-            fullLeaderboard.removeIf([min](QPair<QString,int> i){return min == i.second;});
-            fullLeaderboard.squeeze();
-            fullLeaderboard<<QPair<QString,int>(text,score_);
-            file.close();
-            return;
         }
+        std::sort(fullLeaderboard.begin(),fullLeaderboard.end(),[](QPair<QString,int> a,QPair<QString,int> b)
+        {
+            return a.second>b.second;
+        });
+        file.seek(0);
+        foreach (auto score, fullLeaderboard) {
+            stream<<score.first<<score.second;
+        }
+
     }
-    else
-    {
-        bool ok;
-        QString text = QInputDialog::getText(nullptr, tr("Yay!"),
-                                             tr("You got a TOP10 score, enter name:"), QLineEdit::Normal,
-                                             QDir::home().dirName(), &ok);
-        if (ok && !text.isEmpty()) stream<<text<<score_;
-        file.close();
-        return;
-    }
+    file.close();
+    MainView* view_ = qobject_cast<MainView*>(this->parent());
+
+    view_->showLeaderboard();
 
 }
 
@@ -706,7 +724,6 @@ bool Game::isWon() const
 
 bool Game::isWaveWon()
 {
-    qInfo() << enemyCount_ << spawnedThisWave_ << wavesEnemyCount_ << level_;
     if(spawnedThisWave_ == wavesEnemyCount_ && enemyCount_ == 0)
     {
         spawnedThisWave_ = QAtomicInteger(0);
@@ -752,6 +769,7 @@ void Game::takeDamage (int dHealth) {
     activeEnemies_.removeOne(enemy);
     activeEnemies_.squeeze();
     updateEnemyCount();
+    delete enemy;
     if(isLost())
     {
         emit gameLost();
@@ -831,7 +849,7 @@ QPointF Game::getSquarePos(int row, int column){
 
 void Game::showMenu(){
     view->showMenu();
-    this->clear();
+
 }
 
 bool Game::buildTower(int row, int column) {
@@ -995,6 +1013,8 @@ void Game::stopEnemies()
 {
     foreach (Enemy* enemy, activeEnemies_) {
         enemy->getTimer()->stop();
+        delete enemy;
+//        this->removeItem(enemy);
     }
 }
 

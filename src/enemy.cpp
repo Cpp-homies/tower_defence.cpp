@@ -73,7 +73,7 @@ void Enemy::move()
         if (point_index_ >= path_.size()){
 
            emit dealsDamage(damage_);
-            deleteLater();
+
 
             return;
         }

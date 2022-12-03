@@ -57,8 +57,11 @@ void MainView::showMenu()
 void MainView::showLeaderboard()
 {
 
-    leaderboard_->clear();
     leaderboard_ = new Leaderboard(this);
+    // Set background image
+    QBrush brush;
+    brush.setTexture(QPixmap(":/images/Mainmenu.png"));
+    setBackgroundBrush(brush);
     setScene(leaderboard_);
 }
 

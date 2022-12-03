@@ -133,6 +133,7 @@ private:
     QToolButton* build_Comment;
     QString buildButtonStylesheet;
 
+
     mutable QMutex mutex;
 };
 
