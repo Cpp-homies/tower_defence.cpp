@@ -11,7 +11,7 @@
 */
 
 //Tower(int x, int y, int range, int damage, int attackSpeed, QWidget *parent=nullptr);
-TA::TA(int row, int column, QWidget *parent /* unused */) : Tower(row, column, 4, 10, 3000) {
+TA::TA(int row, int column, QWidget *parent) : Tower(row, column, 4, 10, 3000, parent) {
     // set TA stats
     damageBuffFactor_ = 1.2;
     upgradeLevel_ = 1;

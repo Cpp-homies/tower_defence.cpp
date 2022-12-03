@@ -39,7 +39,7 @@ public:
     void setRange(int range);
     void addCost(int cost);
 
-    virtual bool upgrade();
+    virtual bool upgrade() = 0;
     virtual bool isTower();
     void showAttackArea();
     void hideAttackArea();
@@ -47,27 +47,28 @@ public:
 public slots:
     void getTarget();
 protected:
-    QString ogImagePath_;// the original image path in use
-    QString projectileImagePath_;
+    int range_;
+    int damage_;
+    double damageMultiplier_;
+    int attackInterval_;// in mili-seconds
+    int pierce_;
     int maxLevel_;
     int upgradeLevel_;
-    QGraphicsPixmapItem * towerImg;
-private:
-    int range_ = 3;
-    int damage_;
-    int attackInterval_;// in mili-seconds
-    double damageMultiplier_;
-    int pierce_;
+    int totalCost_;
+    int rotationAngle_;
 
+    QGraphicsPixmapItem * towerImg;
+    QString ogImagePath_;// the original image path in use
+    QString projectileImagePath_;
+
+    bool targetAble_[3];// array for checking if an enemy is targetable
+private:
     bool upgradeable_;
 
-    int totalCost_;
     bool has_target_;
-    int rotationAngle_ = 0;
 
     QGraphicsEllipseItem* attack_area_;
     QPointF target_pos_;
-    bool targetAble_[3];// array for checking if an enemy is targetable
 };
 
 

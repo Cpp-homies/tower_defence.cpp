@@ -754,7 +754,7 @@ bool Game::buildTower(int row, int column) {
     }
     else {
         // create a new tower and add it to the scene
-        QGraphicsWidget* tower = this->addWidget(new Tower(row, column, nullptr));
+        QGraphicsWidget* tower = this->addWidget(new CS_Student(row, column, nullptr));
 
         // remove the current square from the grid
         this->removeItem(item->graphicsItem());
