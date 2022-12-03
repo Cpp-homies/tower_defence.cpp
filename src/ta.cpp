@@ -16,8 +16,9 @@ TA::TA(int row, int column, QWidget *parent) : Tower(row, column, 4, 10, 3000) {
 
     // set TA graphics
     ogImagePath_ = ":/images/TA.png";
-    towerImg = view->getGame()->addPixmap(QPixmap(ogImagePath_));
-    towerImg->setPos(towerCenter() - QPoint(towerImg->boundingRect().width()/2, towerImg->boundingRect().height()/2) );
+    projectileImagePath_ = ":/images/Ta_projectile.png";
+    this->towerImg = view->getGame()->addPixmap(QPixmap(ogImagePath_));
+    this->towerImg->setPos(towerCenter() - QPoint(towerImg->boundingRect().width()/2, towerImg->boundingRect().height()/2) );
 
     // get all the items in the tower's range
     QList <QGraphicsItem*> items_in_range = getItemInRange();

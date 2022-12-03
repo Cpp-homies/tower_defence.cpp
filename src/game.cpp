@@ -679,10 +679,6 @@ void Game::setMode(Modes::MODES m) {
     mode_ = m;
 }
 
-void Game::setMode(Modes::MODES m) {
-    mode_ = m;
-}
-
 void Game::advanceLevel () {
     level_++;
 }

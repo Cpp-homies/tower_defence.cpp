@@ -71,6 +71,9 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
 // constructor that set specific stats, used in subclasses of tower
 Tower::Tower(int x, int y, int range, int damage, int attackInterval, QWidget *parent) : Square(x, y, parent),
                                                                     range_(range), damage_(damage), attackInterval_(attackInterval) {
+    // set the tower image to null at first
+    this->towerImg = nullptr;
+
     // set the original damage multipier to 1.0
     damageMultiplier_ = 1.0;
 

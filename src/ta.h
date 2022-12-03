@@ -11,7 +11,6 @@ public:
     bool upgrade();
 private:
     double damageBuffFactor_;
-    QGraphicsPixmapItem * towerImg;
 };
 
 
