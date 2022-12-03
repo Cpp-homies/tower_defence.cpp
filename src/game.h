@@ -71,7 +71,7 @@ public slots:
     void enterBuildLS();
     void enterBuildVal();
     void enemyDies(int value);
-    void spawnEnemy(int type, QList<QPointF> path);
+    void spawnEnemy(int type);
     void updateLeadrboard();
     void showError(QString message);
     void addEnemy(Enemy*,int);

@@ -451,8 +451,6 @@ void Game::createWave()
 
     //to mark a start of wave creation
     bool flag = true;
-    //the path the enemies take
-    QList<QPointF> convertedPath = convertCoordinates(shortest_path_);
     // a buffer variable to hold a timer
     QPointer<QTimer> timerBuffer;
     //for every entry in one line from wave.txt
@@ -472,7 +470,7 @@ void Game::createWave()
             nextEnemiesTimer->setSingleShot(true);
             nextEnemiesTimer->setInterval((amount+1)*delay);
             //after every timeout spawn an enemy
-            timer->callOnTimeout([this, type, convertedPath](){this->spawnEnemy(type, convertedPath);});
+            timer->callOnTimeout([this, type](){this->spawnEnemy(type);});
             timer->setInterval(delay);
             //stop current timer when all enemies are spawned
             connect(nextEnemiesTimer, SIGNAL(timeout()), timer, SLOT(stop()));
@@ -506,21 +504,23 @@ void Game::createWave()
 
 }
 
-void Game::spawnEnemy(int type,QList<QPointF> path)
+void Game::spawnEnemy(int type)
 {
+    QList<QPoint> shortestPath = getShortestPath(start_);
+    QList<QPointF> convertedPath = convertCoordinates(shortestPath);
     if(type==1 || type==2)
     {
-        CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), path, shortest_path_);
+        CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), convertedPath, shortestPath);
         addEnemy((Enemy*)enemy,0);
     }
     else if(type==3 || type==4 || type==5 || type==6)
     {
-        MemoryError* enemy = new MemoryError(static_cast<MemoryErrorType>(type), path, shortest_path_);
+        MemoryError* enemy = new MemoryError(static_cast<MemoryErrorType>(type), convertedPath, shortestPath);
         addEnemy((Enemy*)enemy,0);
     }
     else if(type==7)
     {
-        RuntimeError* enemy = new RuntimeError(static_cast<RuntimeErrorType>(type), path, shortest_path_);
+        RuntimeError* enemy = new RuntimeError(static_cast<RuntimeErrorType>(type), convertedPath, shortestPath);
         addEnemy((Enemy*)enemy,0);
     }
 
