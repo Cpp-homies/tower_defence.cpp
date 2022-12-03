@@ -36,6 +36,10 @@
 #include <QMessageBox>
 
 #define BUILD_BUTTON_SIZE 90
+
+// prices of towers can be set here
+#define CS_COST 20
+#define TA_COST 30
 extern MainView * view;
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
@@ -730,6 +734,7 @@ void Game::showMenu(){
     this->clear();
 }
 
+// build a default tower (CS Student)
 bool Game::buildTower(int row, int column) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
@@ -769,31 +774,61 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
         switch (type) {
         case TowerTypes::CS_Student:
         {
-            // create a new tower and add it to the scene
-            QGraphicsWidget* tower = this->addWidget(new CS_Student(row, column, nullptr));
+            // first, check if the player have enough money or not
+            // if yes, build the tower
+            if (this->currency_ >= CS_COST) {
+                // create a new tower and add it to the scene
+                Tower* newTower = new CS_Student(row, column, nullptr);
+                QGraphicsWidget* tower = this->addWidget(newTower);
 
-            // remove the current square from the grid
-            this->removeItem(item->graphicsItem());
-            this->mapLayout->removeItem(item);
+                // remove the current square from the grid
+                this->removeItem(item->graphicsItem());
+                this->mapLayout->removeItem(item);
 
-            // add a tower to the grid at the given possition
-            this->mapLayout->addItem(tower, row, column);
+                // add a tower to the grid at the given possition
+                this->mapLayout->addItem(tower, row, column);
 
-            // Hide the attack ranges of all other towers
-            hideAllAttackAreasExcept(QPointF(row,column));
+                // Hide the attack ranges of all other towers
+                hideAllAttackAreasExcept(QPointF(row,column));
+
+                // deduct the cost of the tower from player's money
+                changeCurrency(-CS_COST);
+
+                // add the cost of the tower tower's total cost
+                newTower->addCost(CS_COST);
+            }
+            else {
+                // not enough money
+                return false;
+            }
             break;
         }
         case TowerTypes::TA:
         {
-            // create a new tower and add it to the scene
-            QGraphicsWidget* tower = this->addWidget(new TA(row, column, nullptr));
+            // first, check if the player have enough money or not
+            // if yes, build the tower
+            if (this->currency_ >= TA_COST) {
+                // create a new tower and add it to the scene
+                Tower* newTower = new TA(row, column, nullptr);
+                QGraphicsWidget* tower = this->addWidget(newTower);
 
-            // remove the current square from the grid
-            this->removeItem(item->graphicsItem());
-            this->mapLayout->removeItem(item);
+                // remove the current square from the grid
+                this->removeItem(item->graphicsItem());
+                this->mapLayout->removeItem(item);
 
-            // add a tower to the grid at the given possition
-            this->mapLayout->addItem(tower, row, column);
+                // add a tower to the grid at the given possition
+                this->mapLayout->addItem(tower, row, column);
+
+                // deduct the cost of the tower from player's money
+                changeCurrency(-TA_COST);
+
+                // add the cost of the tower tower's total cost
+                newTower->addCost(TA_COST);
+            }
+            else {
+                // not enough money
+                return false;
+            }
             break;
         }
         default:

@@ -34,6 +34,7 @@ public:
 
     QList<QGraphicsItem*> getItemInRange();
     void setRange(int range);
+    void addCost(int cost);
 
     virtual bool upgrade();
     virtual bool isTower();

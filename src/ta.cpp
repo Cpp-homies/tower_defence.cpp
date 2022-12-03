@@ -1,5 +1,7 @@
 #include "ta.h"
 
+// TA tower upgrade costs can be set here
+#define LVL2_COST 15
 
 /**
 *
@@ -7,8 +9,9 @@
 * so it cannot be casted to that
 *
 */
+
 //Tower(int x, int y, int range, int damage, int attackSpeed, QWidget *parent=nullptr);
-TA::TA(int row, int column, QWidget *parent) : Tower(row, column, 4, 10, 3000) {
+TA::TA(int row, int column, QWidget *parent /* unused */) : Tower(row, column, 4, 10, 3000) {
     // set TA stats
     damageBuffFactor_ = 1.2;
     upgradeLevel_ = 1;
@@ -43,13 +46,26 @@ bool TA::upgrade() {
 
         switch (upgradeLevel_) {
         case 2:
-            // increase range
-            setRange(6);
+            // if the player has enough money for the upgrade
+            // upgrade the tower
+            if (view->getGame()->getCurrency() >= LVL2_COST) {
+                // increase range
+                setRange(6);
 
-            // update tower graphics
-            ogImagePath_ = ":/images/Teacher.png";
-            towerImg->setPixmap(QPixmap(ogImagePath_));
+                // update tower graphics
+                ogImagePath_ = ":/images/Teacher.png";
+                towerImg->setPixmap(QPixmap(ogImagePath_));
 
+                // deduct the cost of the tower from player's money
+                view->getGame()->changeCurrency(-LVL2_COST);
+
+                // add the cost of the upgrade to tower's total cost
+                addCost(LVL2_COST);
+            }
+            else {
+                // upgrade failed
+                return false;
+            }
             break;
         }
 

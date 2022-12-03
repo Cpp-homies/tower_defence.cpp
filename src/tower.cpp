@@ -20,6 +20,11 @@ const qreal atkArea_LineWidth = 0.3;
 const Qt::PenStyle atkArea_LineStyle = Qt::DashLine;
 const Qt::GlobalColor atkArea_Color = Qt::black;
 
+// CS tower upgrade costs can be set here
+#define LVL2_COST 10
+#define LVL3_COST 15
+#define LVL4_COST 25
+
 
 //Tower::Tower(QWidget *parent) : Square(parent) {
 
@@ -32,6 +37,8 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
     attackInterval_ = 1000;
     damageMultiplier_ = 1.0;
     pierce_ = 0;
+
+    totalCost_ = 0;
 
     upgradeLevel_ = 1;
     maxLevel_ = 4;
@@ -71,8 +78,7 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
 // constructor that set specific stats, used in subclasses of tower
 Tower::Tower(int x, int y, int range, int damage, int attackInterval, QWidget *parent) : Square(x, y, parent),
                                                                     range_(range), damage_(damage), attackInterval_(attackInterval) {
-    // set the tower image to null at first
-    this->towerImg = nullptr;
+    totalCost_ = 0;
 
     // set the original damage multipier to 1.0
     damageMultiplier_ = 1.0;
@@ -254,58 +260,96 @@ bool Tower::upgrade() {
 
         switch (upgradeLevel_) {
         case 2:
-            // increase damage by 20%
-            this->damage_ = this->damage_ * 1.2;
-            targetAble_[EnemyTypes::memory] = true;
+            // if the player has enough money for the upgrade
+            // upgrade the tower
+            if (view->getGame()->getCurrency() >= LVL2_COST) {
+                // increase damage by 20%
+                this->damage_ = this->damage_ * 1.2;
+                targetAble_[EnemyTypes::memory] = true;
 
-            // increase range to 4
-            setRange(4);
+                // increase range to 4
+                setRange(4);
 
-            // increase attack speed
-            attackInterval_ = 800;
+                // increase attack speed
+                attackInterval_ = 800;
 
-            // update tower graphics
-            projectileImagePath_ = ":/images/CStudent2_projectile.png";
-            ogImagePath_ = ":/images/CStudent2.png";
-            towerImg->setPixmap(QPixmap(ogImagePath_));
+                // update tower graphics
+                projectileImagePath_ = ":/images/CStudent2_projectile.png";
+                ogImagePath_ = ":/images/CStudent2.png";
+                towerImg->setPixmap(QPixmap(ogImagePath_));
+
+                // deduct the cost of the tower from player's money
+                view->getGame()->changeCurrency(-LVL2_COST);
+
+                // add the cost of the upgrade to tower's total cost
+                addCost(LVL2_COST);
+            }
+            else {
+                // upgrade failed
+                return false;
+            }
 
             break;
         case 3:
-/**
-TODO : Add other changes to tower characteristic beside damage
-*/
-            // increase damage by 50%
-            this->damage_ = this->damage_ * 1.5;
+            // if the player has enough money for the upgrade
+            // upgrade the tower
+            if (view->getGame()->getCurrency() >= LVL3_COST) {
+                // increase damage by 50%
+                this->damage_ = this->damage_ * 1.5;
 
-            // increase range to 5
-           setRange(5);
+                // increase range to 5
+               setRange(5);
 
-            // increase attack speed
-            attackInterval_ = 600;
+                // increase attack speed
+                attackInterval_ = 600;
 
-            // update tower graphics
-            projectileImagePath_ = ":/images/CStudent3_projectile.png";
-            ogImagePath_ = ":/images/CStudent3.png";
-            towerImg->setPixmap(QPixmap(ogImagePath_));
+                // update tower graphics
+                projectileImagePath_ = ":/images/CStudent3_projectile.png";
+                ogImagePath_ = ":/images/CStudent3.png";
+                towerImg->setPixmap(QPixmap(ogImagePath_));
+
+                // deduct the cost of the tower from player's money
+                view->getGame()->changeCurrency(-LVL3_COST);
+
+                // add the cost of the upgrade to tower's total cost
+                addCost(LVL3_COST);
+            }
+            else {
+                // upgrade failed
+                return false;
+            }
 
             break;
         case 4:
-            // increase damage by 50%
-            this->damage_ = this->damage_ * 1.5;
+            if (view->getGame()->getCurrency() >= LVL4_COST) {
+                // increase damage by 50%
+                this->damage_ = this->damage_ * 1.5;
 
-            // increase range to 7
-            setRange(7);
+                // increase range to 7
+                setRange(7);
 
-            // increase attack speed
-            attackInterval_ = 300;
+                // increase attack speed
+                attackInterval_ = 300;
 
-            //increase pierce
-            pierce_ = 2;
+                //increase pierce
+                pierce_ = 2;
 
-            // update tower graphics
-            projectileImagePath_ = ":/images/CStudent4_projectile.png";
-            ogImagePath_ = ":/images/CStudent4.png";
-            towerImg->setPixmap(QPixmap(ogImagePath_));
+                // update tower graphics
+                projectileImagePath_ = ":/images/CStudent4_projectile.png";
+                ogImagePath_ = ":/images/CStudent4.png";
+                towerImg->setPixmap(QPixmap(ogImagePath_));
+
+                // deduct the cost of the tower from player's money
+                view->getGame()->changeCurrency(-LVL4_COST);
+
+                // add the cost of the upgrade to tower's total cost
+                addCost(LVL4_COST);
+            }
+            else {
+                // upgrade failed
+                return false;
+            }
+
 
             break;
         }
@@ -343,4 +387,8 @@ void Tower::showHideAttackArea()
 
 bool Tower::isTower(){
     return true;
+}
+
+void Tower::addCost(int cost) {
+    totalCost_ += cost;
 }

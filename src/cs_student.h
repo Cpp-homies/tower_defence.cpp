@@ -7,6 +7,7 @@ class CS_Student : public Tower {
 public:
     CS_Student();
     CS_Student(int row, int column, QWidget *parent=nullptr);
+    int cost();
 };
 
 #endif // CS_STUDENT_H
