@@ -54,7 +54,7 @@ void CompilerError::explodeException()
         matrixPath.remove(0,point_index_);
         CompilerError* enemy = new CompilerError(CompilerErrorType::SyntaxError,path,matrixPath);
         enemy->setSpeed(speed_+i*3);
-        emit addedEnemy((Enemy*)enemy,1);
+        emit addedEnemy((Enemy*)enemy);
     }
 }
 
