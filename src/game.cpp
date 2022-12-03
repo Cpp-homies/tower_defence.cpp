@@ -20,6 +20,7 @@
 #include "cs_student.h"
 #include "ta.h"
 #include "path.h"
+#include "comment.h"
 
 #include <QQueue>
 #include <QSet>
@@ -224,7 +225,7 @@ QList<QPoint> Game::getShortestPath(QPoint start) {
         QList<QPoint> neighbors;
         // Get in-bound neighbors that have not been visited yet
         for (auto i : all_neighbors) {
-            if (i.x() < total_cols && i.x() >= 0 && i.y() < total_rows && i.y() >= 0 && isPath(i.x(), i.y()) && !visited.contains(i)) {
+            if (i.x() < total_cols && i.x() >= 0 && i.y() < total_rows && i.y() >= 0 && isPath(i.x(), i.y()) && !isComment(i.x(), i.y()) && !visited.contains(i)) {
                 neighbors.append(i);
             }
         }
@@ -722,7 +723,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
 
     // if there is a tower occupying the square, return false
-    if (dynamic_cast<Tower*>(widget)) {
+    if (dynamic_cast<Tower*>(widget) || dynamic_cast<Comment*>(widget)) {
         return false;
     }
     else {
@@ -755,6 +756,17 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
             this->mapLayout->addItem(tower, row, column);
             break;
         }
+        case TowerTypes::Comment:
+        {
+            QGraphicsWidget* tower = this->addWidget(new Comment(row, column, 5, nullptr));
+
+            this->removeItem(item->graphicsItem());
+            this->mapLayout->removeItem(item);
+
+            this->mapLayout->addItem(tower, row, column);
+            emit wallAction();
+            break;
+        }
         default:
             break;
         }
@@ -762,6 +774,8 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     }
 
 }
+
+
 
 QWidget* Game::getWidgetAt(int row, int column) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
@@ -775,6 +789,9 @@ bool Game::isTower(int row, int column) {
 
 bool Game::isPath(int row, int column) {
     return dynamic_cast<Path*>(getWidgetAt(row, column));
+}
+bool Game::isComment(int row, int column) {
+    return dynamic_cast<Comment*>(getWidgetAt(row, column));
 }
 
 void Game::enterUpgradeMode() {

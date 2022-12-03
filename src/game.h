@@ -61,6 +61,7 @@ public:
 
     bool isTower(int row, int column);
     bool isPath(int row, int column);
+    bool isComment(int row, int column);
 public slots:
     void showMenu();
     void enterUpgradeMode();
