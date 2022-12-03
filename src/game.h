@@ -10,7 +10,7 @@
 
 // enumeration to keep track of the game's mode
 namespace Modes{
-    enum MODES{normal, build, upgrade};
+    enum MODES{normal, build, upgrade, sell};
 }
 
 // enumeration to keep track of tower types for build
@@ -29,6 +29,7 @@ public:
     QWidget* getWidgetAt(int row, int column);
     bool buildTower(int row, int column);
     bool buildTower(int row, int column, TowerTypes::TYPES type);
+    bool sellTower(int row, int column);
     bool upgradeTower(int row, int column);
 
     bool isLost() const;
@@ -74,6 +75,7 @@ public slots:
     void enterBuildSE();
     void enterBuildLS();
     void enterBuildVal();
+    void enterSellMode();
     void enemyDies(int value);
     void spawnEnemy(int type, QList<QPointF> path);
     void updateLeadrboard();
@@ -118,6 +120,7 @@ private:
     QGraphicsTextItem * healthDisplay;
     QGraphicsTextItem * wealthDisplay;
     Button * upgradeButton;
+    Button * sellButton;
     QToolButton* build_CSstudent;
     QToolButton* build_TA;
     QToolButton* build_SE;

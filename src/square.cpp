@@ -75,11 +75,24 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
             view->getGame()->setMode(Modes::normal);
         }
         break;
+    case Modes::sell:
+        // if sell fail
+        if (!view->getGame()->sellTower(this->x_, this->y_)){
+
+        }
+        else {
+            // sell successfulll schedule to delete the tower
+            this->deleteLater();
+        }
+        // reset the state of the game back to normal
+        view->getGame()->setMode(Modes::normal);
+        break;
     case Modes::normal:
         view->getGame()->hideAllAttackAreasExcept(QPointF(x_,y_));
         if (this->isTower()){
             this->showHideAttackArea();
         }
+        break;
     default:
         break;
     }

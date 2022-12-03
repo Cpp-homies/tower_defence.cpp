@@ -372,8 +372,6 @@ void Game::createGameControls()
 
     // upgrade button
     upgradeButton = new Button(QString("Upgrade Tower"), 240, 50);
-//    upgradeButton->setRect(QRectF(upgradeButton->boundingRect().topLeft(),
-//                            QSizeF(upgradeButton->boundingRect().width() + 20, upgradeButton->boundingRect().height())));
 
     int uxPos = this->width() - upgradeButton->boundingRect().width() - menuButton->boundingRect().width() - 80;
     int uyPos = this->height() - upgradeButton->boundingRect().height() - 40;
@@ -381,6 +379,17 @@ void Game::createGameControls()
     connect(upgradeButton, SIGNAL(clicked()), this, SLOT(enterUpgradeMode()));
     upgradeButton->setZValue(10);
     addItem(upgradeButton);
+
+    // sell tower button
+    sellButton = new Button(QString("Sell Tower"), 200, 50);
+
+    int sxPos = this->width() - sellButton->boundingRect().width() - menuButton->boundingRect().width()
+                    + (upgradeButton->boundingRect().width() - sellButton->boundingRect().width());
+    int syPos = this->height() - sellButton->boundingRect().height() - 100;
+    sellButton->setPos(sxPos, syPos);
+    connect(sellButton, SIGNAL(clicked()), this, SLOT(enterSellMode()));
+    sellButton->setZValue(10);
+    addItem(sellButton);
 
     // tower build buttons
     buildButtonStylesheet = "background-color: white; border: 1px solid white";
@@ -794,7 +803,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // deduct the cost of the tower from player's money
                 changeCurrency(-CS_COST);
 
-                // add the cost of the tower tower's total cost
+                // add the cost of the tower to tower's total cost
                 newTower->addCost(CS_COST);
             }
             else {
@@ -822,7 +831,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // deduct the cost of the tower from player's money
                 changeCurrency(-TA_COST);
 
-                // add the cost of the tower tower's total cost
+                // add the cost of the tower to tower's total cost
                 newTower->addCost(TA_COST);
             }
             else {
@@ -838,6 +847,47 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
         return true;
     }
 
+}
+
+bool Game::sellTower(int row, int column) {
+    // change sell color back to green
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(Qt::green);
+    sellButton->setBrush(brush);
+
+    // get the item at the current square
+    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
+    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
+    resetButtonHighlights();
+    Tower* tower = dynamic_cast<Tower*>(widget);
+
+    // if there is no tower occupying the square, return false
+    if (!tower) {
+        return false;
+    }
+    else {
+        // get the total cost of the tower
+        int totalCost = tower->getTotalCost();
+
+        // create a new square and add it to the scene
+        Square* newSquare = new Square(row, column, nullptr);
+        QGraphicsWidget* square = this->addWidget(newSquare);
+
+        // remove the current tower from the grid
+        this->removeItem(item->graphicsItem());
+        this->mapLayout->removeItem(item);
+
+        // add a square to the grid at the given possition
+        this->mapLayout->addItem(square, row, column);
+
+        // add the money from selling the tower to player's money
+        // current cost penalty for selling a tower is 30%
+        changeCurrency((totalCost * 0.7));
+
+        coordsOfTowers.removeOne(QPointF(row, column));
+        return true;
+    }
 }
 
 QWidget* Game::getWidgetAt(int row, int column) {
@@ -910,6 +960,16 @@ void Game::enterBuildCom() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::Comment;
     build_Comment->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
+}
+
+void Game::enterSellMode() {
+    resetButtonHighlights();
+
+    mode_ = Modes::sell;
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(Qt::yellow);
+    sellButton->setBrush(brush);
 }
 
 void Game::updatePaths()

@@ -26,6 +26,8 @@ public:
     Tower(int x, int y, QWidget *parent=nullptr);
     Tower(int x, int y, int range, int damage, int attackSpeed, QWidget *parent=nullptr);
 
+    ~Tower();
+
     QPointF towerCenter();
     double distanceTo(QGraphicsItem * item);
     virtual void fire(QPointF targetPos);
@@ -33,6 +35,7 @@ public:
     void damageBuff(double buffFactor);
 
     QList<QGraphicsItem*> getItemInRange();
+    int getTotalCost();
     void setRange(int range);
     void addCost(int cost);
 

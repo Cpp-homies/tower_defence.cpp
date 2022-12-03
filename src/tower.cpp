@@ -70,7 +70,7 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
     attack_area_->setPos(0+ln.dx(),0+ln.dy());
 
     // connect the timer to the getTarget function
-    QTimer * timer = new QTimer();
+    QTimer * timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(getTarget()));
     timer->start(attackInterval_);
 }
@@ -100,7 +100,7 @@ Tower::Tower(int x, int y, int range, int damage, int attackInterval, QWidget *p
     attack_area_->setPos(0+ln.dx(),0+ln.dy());
 
     // connect the timer to the getTarget function
-    QTimer * timer = new QTimer();
+    QTimer * timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(getTarget()));
     timer->start(attackInterval_);
 }
@@ -136,6 +136,16 @@ void Tower::getTarget() {
         this->target_pos_ = min_point;
         fire(target_pos_);
     }
+}
+
+Tower::~Tower() {
+   // remove the tower image from the scene and delete it
+   view->getGame()->removeItem(towerImg);
+   delete towerImg;
+
+   // remove the tower attack area from the scene and delete it
+   view->getGame()->removeItem(attack_area_);
+   delete attack_area_;
 }
 
 void Tower::setRange(int range) {
@@ -243,6 +253,10 @@ QPointF Tower::towerCenter() {
                    towerPos.y() + this->pixmap().height()/2);
 
     return center;
+}
+
+int Tower::getTotalCost() {
+    return totalCost_;
 }
 
 void Tower::damageBuff(double buffFactor) {
@@ -355,7 +369,7 @@ bool Tower::upgrade() {
         }
 
         // connect the timer to the getTarget function
-        QTimer * timer = new QTimer();
+        QTimer * timer = new QTimer(this);
         connect(timer,SIGNAL(timeout()),this,SLOT(getTarget()));
         timer->start(attackInterval_);
 
