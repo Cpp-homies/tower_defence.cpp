@@ -40,6 +40,9 @@
 // prices of towers can be set here
 #define CS_COST 20
 #define TA_COST 30
+
+// penalty for selling the tower (will be deducted from the tower's total value
+#define SELL_PENALTY 0.3
 extern MainView * view;
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
@@ -772,9 +775,8 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
     resetButtonHighlights();
 
-
     // if there is a tower occupying the square, return false
-    if (dynamic_cast<Tower*>(widget)) {
+    if (dynamic_cast<Tower*>(widget) || dynamic_cast<Path*>(widget)) {
         return false;
     }
     else {
@@ -883,7 +885,7 @@ bool Game::sellTower(int row, int column) {
 
         // add the money from selling the tower to player's money
         // current cost penalty for selling a tower is 30%
-        changeCurrency((totalCost * 0.7));
+        changeCurrency((totalCost * (1 - SELL_PENALTY)));
 
         coordsOfTowers.removeOne(QPointF(row, column));
         return true;

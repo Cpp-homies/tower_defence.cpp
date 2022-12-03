@@ -22,17 +22,6 @@ TA::TA(int row, int column, QWidget *parent) : Tower(row, column, 4, 10, 3000, p
     projectileImagePath_ = ":/images/Ta_projectile.png";
     this->towerImg = view->getGame()->addPixmap(QPixmap(ogImagePath_));
     this->towerImg->setPos(towerCenter() - QPoint(towerImg->boundingRect().width()/2, towerImg->boundingRect().height()/2) );
-
-    // get all the items in the tower's range
-    QList <QGraphicsItem*> items_in_range = getItemInRange();
-    // buff all towers in range
-    for (int i = 0, n = items_in_range.size(); i < n; i++) {
-        Tower * tower = dynamic_cast<Tower *>(items_in_range[i]);
-        // if this is a tower
-        if (tower) {
-            tower->damageBuff(damageBuffFactor_);
-        }
-    }
 }
 
 bool TA::upgrade() {

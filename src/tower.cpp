@@ -5,6 +5,8 @@
 #include <QTransform>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
+#include <QGraphicsItem>
+#include <QGraphicsProxyWidget>
 #include <QTimer>
 #include <typeinfo>
 #include <iostream>
@@ -13,6 +15,7 @@
 #include "runtimeerror.h"
 #include "mainview.h"
 #include <QGraphicsPixmapItem>
+#include <cmath>
 
 extern MainView * view;
 
@@ -40,7 +43,7 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
 
     // initialize the targetable enemies at first the tower can only target normal enemies
     std::fill_n(targetAble_, std::size(targetAble_), false);
-    targetAble_[EnemyTypes::normal] = true;
+    targetAble_[EnemyTypes::CompilerError] = true;
 
     // set tower graphics
     ogImagePath_ = ":/images/CStudent1.png";
@@ -175,6 +178,8 @@ void Tower::fire(QPointF targetPos) {
     projectile->setPos(view->getGame()->getSquarePos(x_,y_)); //takes the same coordinates as the tower
     QLineF ln(view->getGame()->getSquarePos(x_,y_),targetPos); //path of the projectile
     int angle = -1 * ln.angle(); //the angle from tower to target
+    int maxTowerRange = ceil(this->attack_area_->boundingRect().width() * range_ /2);
+    projectile->setMaxRange(maxTowerRange);// set max range of the projectile to the range of the tower
 
     //set the projectile image to rotate around it's centre and then add it to the scene
     projectile->setTransformOriginPoint(projectile->pixmap().width()/2,projectile->pixmap().height()/2);
@@ -203,34 +208,29 @@ void Tower::fire(QPointF targetPos) {
 }
 
 bool Tower::isTargetable(Enemy* enemy) {
-
-    // iterate through the targetable enemy types
-    for (int i = 0; i < 3; i++) {
-        // if the current enemy type is targetable
-        if (targetAble_[i]) {
-            // try casting the input enemy to the current type
-            switch (i) {
-            case EnemyTypes::boss:
-            {
-                // insert casting here after the merge with enemy implementation
-                break;
-            }
-            case EnemyTypes::memory:
-            {
-                // insert casting here after the merge with enemy implementation
-                break;
-            }
-            case EnemyTypes::normal:
-            {
-                // insert casting here after the merge with enemy implementation
-                break;
-            }
-            default:
-                break;
-            }
+    // check the enemy type
+    int type = static_cast<int>(enemy->getType()) - 1;
+    switch (type) {
+        // check if current tower can target given type
+        case EnemyTypes::RuntimeError:
+        {
+            return targetAble_[EnemyTypes::RuntimeError];
+            break;
         }
-    }
-    return true;
+        case EnemyTypes::MemoryError:
+        {
+            return targetAble_[EnemyTypes::MemoryError];
+            break;
+        }
+        case EnemyTypes::CompilerError:
+        {
+            return targetAble_[EnemyTypes::CompilerError];
+            break;
+        }
+        default:
+            break;
+        }
+    return false;
 }
 
 double Tower::distanceTo(QGraphicsItem * item) {
@@ -240,6 +240,22 @@ double Tower::distanceTo(QGraphicsItem * item) {
 
 QList<QGraphicsItem*> Tower::getItemInRange() {
     return attack_area_->collidingItems();
+}
+
+QList<Tower*> Tower::getTowersInRange() {
+    QList<QGraphicsItem*> items_in_range = getItemInRange();
+    QList<Tower*> towers_in_range;
+
+    // go through all items and add every tower to the list
+    for (QGraphicsItem* item : items_in_range) {
+        QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
+        Tower * tower = dynamic_cast<Tower *>(widget);
+        // if this is a tower
+        if (tower) {
+            towers_in_range.prepend(tower);
+        }
+    }
+    return towers_in_range;
 }
 
 QPointF Tower::towerCenter() {
@@ -257,120 +273,6 @@ int Tower::getTotalCost() {
 void Tower::damageBuff(double buffFactor) {
     damageMultiplier_ *= buffFactor;
 }
-
-//bool Tower::upgrade() {
-//    if (upgradeLevel_ >= maxLevel_) {
-//        // already max level
-//        return false;
-//    }
-//    else {
-//        // upgrade the tower according to its level
-//        upgradeLevel_ += 1;
-
-//        switch (upgradeLevel_) {
-//        case 2:
-//            // if the player has enough money for the upgrade
-//            // upgrade the tower
-//            if (view->getGame()->getCurrency() >= LVL2_COST) {
-//                // increase damage by 20%
-//                this->damage_ = this->damage_ * 1.2;
-//                targetAble_[EnemyTypes::memory] = true;
-
-//                // increase range to 4
-//                setRange(4);
-
-//                // increase attack speed
-//                attackInterval_ = 800;
-
-//                // update tower graphics
-//                projectileImagePath_ = ":/images/CStudent2_projectile.png";
-//                ogImagePath_ = ":/images/CStudent2.png";
-//                towerImg->setPixmap(QPixmap(ogImagePath_));
-
-//                // deduct the cost of the tower from player's money
-//                view->getGame()->changeCurrency(-LVL2_COST);
-
-//                // add the cost of the upgrade to tower's total cost
-//                addCost(LVL2_COST);
-//            }
-//            else {
-//                // upgrade failed
-//                return false;
-//            }
-
-//            break;
-//        case 3:
-//            // if the player has enough money for the upgrade
-//            // upgrade the tower
-//            if (view->getGame()->getCurrency() >= LVL3_COST) {
-//                // increase damage by 50%
-//                this->damage_ = this->damage_ * 1.5;
-
-//                // increase range to 5
-//               setRange(5);
-
-//                // increase attack speed
-//                attackInterval_ = 600;
-
-//                // update tower graphics
-//                projectileImagePath_ = ":/images/CStudent3_projectile.png";
-//                ogImagePath_ = ":/images/CStudent3.png";
-//                towerImg->setPixmap(QPixmap(ogImagePath_));
-
-//                // deduct the cost of the tower from player's money
-//                view->getGame()->changeCurrency(-LVL3_COST);
-
-//                // add the cost of the upgrade to tower's total cost
-//                addCost(LVL3_COST);
-//            }
-//            else {
-//                // upgrade failed
-//                return false;
-//            }
-
-//            break;
-//        case 4:
-//            if (view->getGame()->getCurrency() >= LVL4_COST) {
-//                // increase damage by 50%
-//                this->damage_ = this->damage_ * 1.5;
-
-//                // increase range to 7
-//                setRange(7);
-
-//                // increase attack speed
-//                attackInterval_ = 300;
-
-//                //increase pierce
-//                pierce_ = 2;
-
-//                // update tower graphics
-//                projectileImagePath_ = ":/images/CStudent4_projectile.png";
-//                ogImagePath_ = ":/images/CStudent4.png";
-//                towerImg->setPixmap(QPixmap(ogImagePath_));
-
-//                // deduct the cost of the tower from player's money
-//                view->getGame()->changeCurrency(-LVL4_COST);
-
-//                // add the cost of the upgrade to tower's total cost
-//                addCost(LVL4_COST);
-//            }
-//            else {
-//                // upgrade failed
-//                return false;
-//            }
-
-
-//            break;
-//        }
-
-//        // connect the timer to the getTarget function
-//        QTimer * timer = new QTimer(this);
-//        connect(timer,SIGNAL(timeout()),this,SLOT(getTarget()));
-//        timer->start(attackInterval_);
-
-//        return true;
-//    }
-//}
 
 void Tower::showAttackArea()
 {

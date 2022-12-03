@@ -20,37 +20,6 @@ CS_Student::CS_Student(int row, int column, QWidget *parent) : Tower(row, column
 
 }
 
-// Fires a projectile at the targetPos
-void CS_Student::fire(QPointF targetPos) {
-    Projectile* projectile = new Projectile(damage_, projectileImagePath_, pierce_);
-    projectile->setPos(view->getGame()->getSquarePos(x_,y_)); //takes the same coordinates as the tower
-    QLineF ln(view->getGame()->getSquarePos(x_,y_),targetPos); //path of the projectile
-    int angle = -1 * ln.angle(); //the angle from tower to target
-
-    //set the projectile image to rotate around it's centre and then add it to the scene
-    projectile->setTransformOriginPoint(projectile->pixmap().width()/2,projectile->pixmap().height()/2);
-    projectile->setRotation(angle);
-    view->getGame()->addItem(projectile);
-
-    //rotate the square
-//    QTransform transform;
-//    transform.rotate(angle);
-//    Square::setPixmap(Square::pixmap().transformed(transform));
-
-    // if the angle towards the enemy changes,
-    // undo the previous rotation and update to the new rotation angle
-    if (this->rotationAngle_ != angle) {
-        // the original image rotate by the new angle
-        QTransform transform;
-        transform.rotate(angle);
-        towerImg->setTransformOriginPoint(QPoint(towerImg->boundingRect().width()/2, towerImg->boundingRect().height()/2));
-        //towerImg->setTransform(transform);
-        towerImg->setRotation(angle);
-        //Square::setPixmap(QPixmap(ogImagePath_).transformed(transform).scaled(pixmap().size(), Qt::KeepAspectRatioByExpanding));
-        rotationAngle_ = angle;// update the rotation angle
-    }
-}
-
 bool CS_Student::upgrade() {
     if (upgradeLevel_ >= maxLevel_) {
         // already max level
@@ -67,7 +36,7 @@ bool CS_Student::upgrade() {
             if (view->getGame()->getCurrency() >= LVL2_COST) {
                 // increase damage by 20%
                 this->damage_ = this->damage_ * 1.2;
-                targetAble_[EnemyTypes::memory] = true;
+                targetAble_[EnemyTypes::MemoryError] = true;
 
                 // increase range to 4
                 setRange(4);
@@ -98,6 +67,9 @@ bool CS_Student::upgrade() {
             if (view->getGame()->getCurrency() >= LVL3_COST) {
                 // increase damage by 50%
                 this->damage_ = this->damage_ * 1.5;
+
+                // can now target bosses
+                targetAble_[EnemyTypes::CompilerError] = true;
 
                 // increase range to 5
                setRange(5);

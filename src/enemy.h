@@ -48,6 +48,7 @@ public:
     void startMove();
     void setPath(QList<QPoint> matrixPath, QList<QPointF> path);
     QPoint getMatrixLocation() const;
+    EnemyType getType() const;
 
 public slots:
 

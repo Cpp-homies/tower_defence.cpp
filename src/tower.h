@@ -15,7 +15,7 @@
 
 // enum to act as shorthand that denotes enemy types
 namespace EnemyTypes{
-    enum TYPES{normal=0, memory=1, boss=2};
+    enum TYPES{CompilerError=0, MemoryError=1, RuntimeError=2};
 }
 
 extern MainView* view;
@@ -35,6 +35,7 @@ public:
     void damageBuff(double buffFactor);
 
     QList<QGraphicsItem*> getItemInRange();
+    QList<Tower*> getTowersInRange();
     int getTotalCost();
     void setRange(int range);
     void addCost(int cost);

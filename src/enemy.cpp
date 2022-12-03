@@ -56,6 +56,9 @@ QPoint Enemy::getMatrixLocation() const
     return matrixPath_[point_index_];
 }
 
+EnemyType Enemy::getType() const {
+    return type_;
+}
 
 void Enemy::move()
 {
