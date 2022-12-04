@@ -29,7 +29,7 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
         switch (view->getGame()->getBuildType()) {
         case TowerTypes::CS_Student:
             // if the build fail
-            if (!view->getGame()->buildTower(this->x_, this->y_, TowerTypes::CS_Student)) {
+            if (!view->getGame()->buildTower(this->y_, this->x_, TowerTypes::CS_Student)) {
                 // do something
 
                 // reset the mode of the game back to normal
@@ -44,7 +44,7 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
             break;
         case TowerTypes::TA:
             // if the build fail
-            if (!view->getGame()->buildTower(this->x_, this->y_, TowerTypes::TA)) {
+            if (!view->getGame()->buildTower(this->y_, this->x_, TowerTypes::TA)) {
                 // do something
 
                 // reset the mode of the game back to normal
@@ -64,7 +64,7 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
         break;
     case Modes::upgrade:
         // if upgrade fail
-        if (!view->getGame()->upgradeTower(this->x_, this->y_)) {
+        if (!view->getGame()->upgradeTower(this->y_, this->x_)) {
             // do something
 
             // reset the state of the game back to normal
@@ -77,7 +77,7 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
         break;
     case Modes::sell:
         // if sell fail
-        if (!view->getGame()->sellTower(this->x_, this->y_)){
+        if (!view->getGame()->sellTower(this->y_, this->x_)){
 
         }
         else {
