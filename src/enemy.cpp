@@ -1,4 +1,5 @@
 #include "enemy.h"
+#include "game.h"
 
 #include <QTimer>
 
@@ -61,6 +62,11 @@ QTimer *Enemy::getTimer()
     return timer_;
 }
 
+QPoint Enemy::getNextLocation() const
+{
+    return matrixPath_[point_index_];
+}
+
 EnemyType Enemy::getType() const {
     return type_;
 }
@@ -71,6 +77,7 @@ void Enemy::move()
 
     if (ln.length() == 0)
     {
+
         point_index_++;
         // last point reached
         if (point_index_ >= path_.size()){
@@ -78,6 +85,13 @@ void Enemy::move()
            emit dealsDamage(damage_);
 
 
+            return;
+        }
+
+        QPoint nextPos = matrixPath_[point_index_];
+        if(qobject_cast<Game*>(scene())->isComment(nextPos.x(),nextPos.y()))
+        {
+            timer_->stop();
             return;
         }
         // last point not reached, get new destination

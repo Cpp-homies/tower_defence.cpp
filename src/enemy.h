@@ -50,6 +50,7 @@ public:
     void setPath(QList<QPoint> matrixPath, QList<QPointF> path);
     QPoint getMatrixLocation() const;
     QTimer *getTimer ();
+    QPoint getNextLocation() const;
 
     EnemyType getType() const;
 
