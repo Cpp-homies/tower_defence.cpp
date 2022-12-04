@@ -25,5 +25,8 @@ Path::Path(int x, int y, PathType type, int rotation, QWidget* parent)
     case End:
         setPixmap(QPixmap(":/images/Path_startend.png").transformed(transform));
         break;
+    case CommentType:
+        setPixmap(QPixmap(":/images/Comment.png").transformed(transform));
+        break;
     }
 };

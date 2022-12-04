@@ -22,6 +22,7 @@
 #include "search_engine.h"
 #include "ta.h"
 #include "path.h"
+#include "comment.h"
 
 #include <QQueue>
 #include <QSet>
@@ -46,6 +47,7 @@
 #define CS_COST 20
 #define TA_COST 30
 #define SE_COST 25
+#define COM_COST 15
 
 // penalty for selling the tower (will be deducted from the tower's total value
 #define SELL_PENALTY 0.3
@@ -182,7 +184,7 @@ void Game::createMap(){
                         }
 
                     } else if (value == "A") {
-                        start_ = QPoint(i, j);
+                        start_ = QPoint(j, i);
                         if (left) {
                             tile = new Path(i, j, Start, 0, nullptr);
                         } else if (up) {
@@ -911,10 +913,44 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
     resetButtonHighlights();
 
-    bool testIsPath = isPath(row, column);
-    Path* testDynamicCast = dynamic_cast<Path*>(widget);
+    // if the type is comment
+    if (type == TowerTypes::Comment) {
+        // check if this is a path and whether there is already a comment
+        if (isPath(row, column) && !dynamic_cast<Comment*>(widget)) {
+            // if it is available, start building the comment
+
+            // first, check if the player have enough money or not
+            // if yes, build the tower
+            if (this->currency_ >= COM_COST) {
+                // create a new tower and add it to the scene
+                Comment* newComment = new Comment(column, row, 10000, nullptr);
+                QGraphicsWidget* comment = this->addWidget(newComment);
+
+                // remove the current square from the grid
+                this->removeItem(item->graphicsItem());
+                this->mapLayout->removeItem(item);
+
+                // add the comment to the grid at the given possition
+                this->mapLayout->addItem(comment, row, column);
+
+                // Hide the attack ranges of all other towers
+                hideAllAttackAreasExcept(QPointF(row,column));
+
+                // deduct the cost of the comment from player's money
+                changeCurrency(-COM_COST);
+            }
+            else {
+                // not enough money
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+
+    }
     // if there is a tower or a path occupying the square, return false
-    if (dynamic_cast<Tower*>(widget) || testIsPath) {
+    else if (dynamic_cast<Tower*>(widget) || isPath(row, column)) {
         return false;
     }
     else {
