@@ -53,7 +53,7 @@
 
 // penalty for selling the tower (will be deducted from the tower's total value
 #define SELL_PENALTY 0.3
-extern MainView * view;
+
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
@@ -902,6 +902,7 @@ QPointF Game::getSquarePos(int row, int column){
 }
 
 void Game::showMenu(){
+    MainView* view = qobject_cast<MainView*>(this->parent());
     view->showMenu();
 
 }
