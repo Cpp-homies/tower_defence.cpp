@@ -59,7 +59,7 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
             break;
         case TowerTypes::Comment:
             // if the build fail
-            if (!view->getGame()->buildTower(this->x_, this->y_, TowerTypes::Comment)) {
+            if (!view->getGame()->buildTower(this->y_, this->x_, TowerTypes::Comment)) {
                 // do something
 
                 // reset the mode of the game back to normal
