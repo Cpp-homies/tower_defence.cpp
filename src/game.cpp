@@ -909,11 +909,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
     resetButtonHighlights();
 
-<<<<<<< HEAD
-    bool testIsPath = isPath(column, row);
-=======
     bool testIsPath = isPath(row, column);
->>>>>>> master
     Path* testDynamicCast = dynamic_cast<Path*>(widget);
     // if there is a tower or a path occupying the square, return false
     if (dynamic_cast<Tower*>(widget) || testIsPath) {
@@ -931,7 +927,6 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // create a new tower and add it to the scene
                 Tower* newTower = new CS_Student(row, column, nullptr);
                 QGraphicsWidget* tower = this->addWidget(newTower);
-<<<<<<< HEAD
 
                 // remove the current square from the grid
                 this->removeItem(item->graphicsItem());
@@ -946,22 +941,6 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // deduct the cost of the tower from player's money
                 changeCurrency(-CS_COST);
 
-=======
-
-                // remove the current square from the grid
-                this->removeItem(item->graphicsItem());
-                this->mapLayout->removeItem(item);
-
-                // add a tower to the grid at the given possition
-                this->mapLayout->addItem(tower, row, column);
-
-                // Hide the attack ranges of all other towers
-                hideAllAttackAreasExcept(QPointF(row,column));
-
-                // deduct the cost of the tower from player's money
-                changeCurrency(-CS_COST);
-
->>>>>>> master
                 // add the cost of the tower to tower's total cost
                 newTower->addCost(CS_COST);
             }
@@ -983,7 +962,6 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // remove the current square from the grid
                 this->removeItem(item->graphicsItem());
                 this->mapLayout->removeItem(item);
-<<<<<<< HEAD
 
                 // add a tower to the grid at the given possition
                 this->mapLayout->addItem(tower, row, column);
@@ -991,15 +969,6 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // deduct the cost of the tower from player's money
                 changeCurrency(-TA_COST);
 
-=======
-
-                // add a tower to the grid at the given possition
-                this->mapLayout->addItem(tower, row, column);
-
-                // deduct the cost of the tower from player's money
-                changeCurrency(-TA_COST);
-
->>>>>>> master
                 // add the cost of the tower to tower's total cost
                 newTower->addCost(TA_COST);
             }
@@ -1040,11 +1009,7 @@ bool Game::sellTower(int row, int column) {
         int totalCost = tower->getTotalCost();
 
         // create a new square and add it to the scene
-<<<<<<< HEAD
-        Square* newSquare = new Square(row, column, nullptr);
-=======
         Square* newSquare = new Square(column, row, nullptr);
->>>>>>> master
         QGraphicsWidget* square = this->addWidget(newSquare);
 
         // remove the current tower from the grid

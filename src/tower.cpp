@@ -28,7 +28,7 @@ const Qt::GlobalColor atkArea_Color = Qt::black;
 
 //}
 
-Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
+Tower::Tower(int row, int column, QWidget *parent) : Square(column, row, parent) {
     // set the default tower stats
     range_ = 3;
     damage_ = 10;
@@ -74,7 +74,7 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
 }
 
 // constructor that set specific stats, used in subclasses of tower
-Tower::Tower(int x, int y, int range, int damage, int attackInterval, QWidget *parent) : Square(x, y, parent),
+Tower::Tower(int row, int column, int range, int damage, int attackInterval, QWidget *parent) : Square(column, row, parent),
                                                                     range_(range), damage_(damage), attackInterval_(attackInterval) {
     totalCost_ = 0;
 
@@ -178,8 +178,8 @@ void Tower::setRange(int range) {
 void Tower::fire(QPointF targetPos) {
 
     Projectile* projectile = new Projectile(damage_, projectileImagePath_, pierce_);
-    projectile->setPos(view->getGame()->getSquarePos(x_,y_)); //takes the same coordinates as the tower
-    QLineF ln(view->getGame()->getSquarePos(x_,y_),targetPos); //path of the projectile
+    projectile->setPos(view->getGame()->getSquarePos(y_,x_)); //takes the same coordinates as the tower
+    QLineF ln(view->getGame()->getSquarePos(y_,x_),targetPos); //path of the projectile
     int angle = -1 * ln.angle(); //the angle from tower to target
     int maxTowerRange = ceil(this->attack_area_->boundingRect().width() * range_ /2);
     projectile->setMaxRange(maxTowerRange);// set max range of the projectile to the range of the tower
@@ -267,7 +267,7 @@ QList<Tower*> Tower::getTowersInRange() {
 }
 
 QPointF Tower::towerCenter() {
-    QPoint towerPos = view->getGame()->getSquarePos(x_, y_).toPoint();
+    QPoint towerPos = view->getGame()->getSquarePos(y_, x_).toPoint();
     QPointF center(towerPos.x() + this->pixmap().width()/2,
                    towerPos.y() + this->pixmap().height()/2);
 
@@ -298,6 +298,14 @@ void Tower::atkSpeedBuff(double buffFactor) {
 
 void Tower::atkSpeedDebuff(double debuffFactor) {
     attackInterval_ *= (1 + debuffFactor);
+
+    // schedule to delete the old attackTimer
+    attackTimer_->deleteLater();
+
+    // connect a new timer to the getTarget function
+    attackTimer_ = new QTimer(this);
+    connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
+    attackTimer_->start(attackInterval_);
 }
 
 void Tower::showAttackArea()
