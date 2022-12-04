@@ -68,9 +68,9 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
     attack_area_->setPos(0+ln.dx(),0+ln.dy());
 
     // connect the timer to the getTarget function
-    QTimer * timer = new QTimer(this);
-    connect(timer,SIGNAL(timeout()),this,SLOT(getTarget()));
-    timer->start(attackInterval_);
+    attackTimer_ = new QTimer(this);
+    connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
+    attackTimer_->start(attackInterval_);
 }
 
 // constructor that set specific stats, used in subclasses of tower
@@ -98,9 +98,9 @@ Tower::Tower(int x, int y, int range, int damage, int attackInterval, QWidget *p
     attack_area_->setPos(0+ln.dx(),0+ln.dy());
 
     // connect the timer to the getTarget function
-    QTimer * timer = new QTimer(this);
-    connect(timer,SIGNAL(timeout()),this,SLOT(getTarget()));
-    timer->start(attackInterval_);
+    attackTimer_ = new QTimer(this);
+    connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
+    attackTimer_->start(attackInterval_);
 }
 
 void Tower::getTarget() {
@@ -144,6 +144,9 @@ Tower::~Tower() {
    // remove the tower attack area from the scene and delete it
    view->getGame()->removeItem(attack_area_);
    delete attack_area_;
+
+   // remove the attackTimer
+   attackTimer_->deleteLater();
 }
 
 void Tower::setRange(int range) {
@@ -248,11 +251,16 @@ QList<Tower*> Tower::getTowersInRange() {
 
     // go through all items and add every tower to the list
     for (QGraphicsItem* item : items_in_range) {
-        QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
-        Tower * tower = dynamic_cast<Tower *>(widget);
-        // if this is a tower
-        if (tower) {
-            towers_in_range.prepend(tower);
+        QGraphicsProxyWidget* proxyWidget = dynamic_cast<QGraphicsProxyWidget*>(item);
+
+        // if there is a proxy widget
+        if (proxyWidget) {
+            QWidget* widget = proxyWidget->widget();
+            Tower * tower = dynamic_cast<Tower *>(widget);
+            // if this is a tower
+            if (tower) {
+                towers_in_range.prepend(tower);
+            }
         }
     }
     return towers_in_range;
@@ -271,7 +279,25 @@ int Tower::getTotalCost() {
 }
 
 void Tower::damageBuff(double buffFactor) {
-    damageMultiplier_ *= buffFactor;
+    damageMultiplier_ *= (1 + buffFactor);
+}
+
+void Tower::atkSpeedBuff(double buffFactor) {
+    // reduces the attack interval by buffFactor
+    // which increases the speed by buffFactor
+    attackInterval_ /= (1 + buffFactor);
+
+    // schedule to delete the old attackTimer
+    attackTimer_->deleteLater();
+
+    // connect a new timer to the getTarget function
+    attackTimer_ = new QTimer(this);
+    connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
+    attackTimer_->start(attackInterval_);
+}
+
+void Tower::atkSpeedDebuff(double debuffFactor) {
+    attackInterval_ *= (1 + debuffFactor);
 }
 
 void Tower::showAttackArea()

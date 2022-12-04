@@ -10,6 +10,7 @@
 #include <QPointF>
 #include <QObject>
 #include <QList>
+#include <QTimer>
 #include "mainview.h"
 #include "enemy.h"
 
@@ -33,6 +34,9 @@ public:
     virtual void fire(QPointF targetPos);
     bool isTargetable(Enemy* enemy);
     void damageBuff(double buffFactor);
+    void atkSpeedBuff(double buffFactor);
+
+    void atkSpeedDebuff(double debuffFactor);
 
     QList<QGraphicsItem*> getItemInRange();
     QList<Tower*> getTowersInRange();
@@ -49,9 +53,10 @@ public slots:
     void getTarget();
 protected:
     int range_;
-    int damage_;
+    double damage_;
     double damageMultiplier_;
-    int attackInterval_;// in mili-seconds
+    double attackInterval_;// in mili-seconds
+    QTimer* attackTimer_;
     int pierce_;
     int maxLevel_;
     int upgradeLevel_;

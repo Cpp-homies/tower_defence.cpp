@@ -752,7 +752,7 @@ bool Game::buildTower(int row, int column) {
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
 
     // if there is a tower occupying the square, return false
-    if (dynamic_cast<Tower*>(widget)) {
+    if (dynamic_cast<Tower*>(widget) || isPath(column, row)) {
         return false;
     }
     else {
@@ -775,8 +775,10 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
     resetButtonHighlights();
 
-    // if there is a tower occupying the square, return false
-    if (dynamic_cast<Tower*>(widget) || dynamic_cast<Path*>(widget)) {
+    bool testIsPath = isPath(column, row);
+    Path* testDynamicCast = dynamic_cast<Path*>(widget);
+    // if there is a tower or a path occupying the square, return false
+    if (dynamic_cast<Tower*>(widget) || testIsPath) {
         return false;
     }
     else {

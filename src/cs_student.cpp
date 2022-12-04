@@ -41,8 +41,8 @@ bool CS_Student::upgrade() {
                 // increase range to 4
                 setRange(4);
 
-                // increase attack speed
-                attackInterval_ = 800;
+                // increase attack speed by 20% (attackInterval should be at 800 now)
+                atkSpeedBuff(0.2);
 
                 // update tower graphics
                 projectileImagePath_ = ":/images/CStudent2_projectile.png";
@@ -74,8 +74,8 @@ bool CS_Student::upgrade() {
                 // increase range to 5
                setRange(5);
 
-                // increase attack speed
-                attackInterval_ = 600;
+                // increase attack speed by 30% (attackInterval should be at around 615 now)
+                atkSpeedBuff(0.3);
 
                 // update tower graphics
                 projectileImagePath_ = ":/images/CStudent3_projectile.png";
@@ -102,8 +102,8 @@ bool CS_Student::upgrade() {
                 // increase range to 7
                 setRange(7);
 
-                // increase attack speed
-                attackInterval_ = 300;
+                // increase attack speed by 100% (attackInterval should be at around 307 now)
+                atkSpeedBuff(1);
 
                 //increase pierce
                 pierce_ = 2;
@@ -127,11 +127,6 @@ bool CS_Student::upgrade() {
 
             break;
         }
-
-        // connect the timer to the getTarget function
-        QTimer * timer = new QTimer(this);
-        connect(timer,SIGNAL(timeout()),this,SLOT(getTarget()));
-        timer->start(attackInterval_);
 
         return true;
     }
