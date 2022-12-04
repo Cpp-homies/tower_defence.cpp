@@ -19,9 +19,9 @@
 #include "runtimeerror.h"
 #include "tower.h"
 #include "cs_student.h"
+#include "search_engine.h"
 #include "ta.h"
 #include "path.h"
-#include "comment.h"
 
 #include <QQueue>
 #include <QSet>
@@ -45,6 +45,7 @@
 // prices of towers can be set here
 #define CS_COST 20
 #define TA_COST 30
+#define SE_COST 25
 
 // penalty for selling the tower (will be deducted from the tower's total value
 #define SELL_PENALTY 0.3
@@ -228,10 +229,10 @@ void Game::createMap(){
     form->setLayout(mapLayout);
     gameLayout->addItem(form);
     shortest_path_ = getShortestPath(start_);
-    //qInfo() << shortest_path_;
+    qInfo() << shortest_path_;
 }
 
-QList<QPoint> Game::BFS(QPoint start, QPoint end, bool blocked) {
+QList<QPoint> Game::getShortestPath(QPoint start) {
     QQueue<QList<QPoint>> to_visit;
     QList<QPoint> initial;
     initial.push_back(start);
@@ -253,8 +254,7 @@ QList<QPoint> Game::BFS(QPoint start, QPoint end, bool blocked) {
         QList<QPoint> neighbors;
         // Get in-bound neighbors that have not been visited yet
         for (auto i : all_neighbors) {
-            if (i.x() < total_cols && i.x() >= 0 && i.y() < total_rows && i.y() >= 0 && isPath(i.x(), i.y())
-                    && (blocked || !isComment(i.x(), i.y())) && !visited.contains(i)) {
+            if (i.x() < total_cols && i.x() >= 0 && i.y() < total_rows && i.y() >= 0 && isPath(i.x(), i.y()) && !visited.contains(i)) {
                 neighbors.append(i);
             }
         }
@@ -262,21 +262,13 @@ QList<QPoint> Game::BFS(QPoint start, QPoint end, bool blocked) {
         for (auto i : neighbors) {
             QList<QPoint> new_elem;
             new_elem.append(i);
-            if (i == end) {
+            if (i == end_) {
                 return top + new_elem;
             }
             to_visit.append(top + new_elem);
         }
     }
     return QList<QPoint>();
-}
-
-QList<QPoint> Game::getShortestPath(QPoint start) {
-    QList<QPoint> path = BFS(start, end_, false);
-    if (!path.empty()) {
-        return path;
-    }
-    return BFS(start, end_, true);
 }
 
 void Game::createGameControls()
@@ -988,15 +980,32 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
             }
             break;
         }
-        case TowerTypes::Comment:
+        case TowerTypes::SearchEngine:
         {
-            QGraphicsWidget* tower = this->addWidget(new Comment(row, column, 5, nullptr));
+            // first, check if the player have enough money or not
+            // if yes, build the tower
+            if (this->currency_ >= TA_COST) {
+                // create a new tower and add it to the scene
+                Tower* newTower = new Search_Engine(row, column, nullptr);
+                QGraphicsWidget* tower = this->addWidget(newTower);
 
-            this->removeItem(item->graphicsItem());
-            this->mapLayout->removeItem(item);
+                // remove the current square from the grid
+                this->removeItem(item->graphicsItem());
+                this->mapLayout->removeItem(item);
 
-            this->mapLayout->addItem(tower, row, column);
-            emit wallAction();
+                // add a tower to the grid at the given possition
+                this->mapLayout->addItem(tower, row, column);
+
+                // deduct the cost of the tower from player's money
+                changeCurrency(-SE_COST);
+
+                // add the cost of the tower to tower's total cost
+                newTower->addCost(SE_COST);
+            }
+            else {
+                // not enough money
+                return false;
+            }
             break;
         }
         default:
@@ -1061,9 +1070,6 @@ bool Game::isTower(int row, int column) {
 
 bool Game::isPath(int row, int column) {
     return dynamic_cast<Path*>(getWidgetAt(row, column));
-}
-bool Game::isComment(int row, int column) {
-    return dynamic_cast<Comment*>(getWidgetAt(row, column));
 }
 
 void Game::enterUpgradeMode() {

@@ -57,7 +57,7 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
                 view->getGame()->setMode(Modes::normal);
             }
             break;
-        case TowerTypes::Comment:
+        case TowerTypes::SearchEngine:
             // if the build fail
             if (!view->getGame()->buildTower(this->y_, this->x_, TowerTypes::Comment)) {
                 // do something

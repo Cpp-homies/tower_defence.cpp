@@ -24,8 +24,8 @@ extern MainView* view;
 class Tower : public Square {
 public:
     Tower(QWidget *parent = nullptr);
-    Tower(int x, int y, QWidget *parent=nullptr);
-    Tower(int x, int y, int range, int damage, int attackSpeed, QWidget *parent=nullptr);
+    Tower(int row, int column, QWidget *parent=nullptr);
+    Tower(int row, int column, int range, int damage, int attackSpeed, QWidget *parent=nullptr);
 
     ~Tower();
 

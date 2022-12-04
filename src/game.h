@@ -45,7 +45,6 @@ public:
 
     QList<QPointF> convertCoordinates(QList<QPoint> path);
     QList<QPoint> getShortestPath(QPoint start);
-    QList<QPoint> BFS(QPoint start, QPoint end, bool blocked);
 
     int getHealth() const;
     int getScore() const;
@@ -73,7 +72,6 @@ public:
 
     bool isTower(int row, int column);
     bool isPath(int row, int column);
-    bool isComment(int row, int column);
 public slots:
     void showMenu();
     void enterUpgradeMode();

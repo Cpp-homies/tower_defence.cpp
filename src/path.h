@@ -11,7 +11,6 @@ enum PathType {
 class Path : public Square {
 public:
     Path(int x, int y, PathType type, int rotation, QWidget* parent);
-    bool isComment();
 private:
     bool isComment_;
 };
