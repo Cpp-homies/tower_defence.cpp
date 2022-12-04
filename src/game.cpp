@@ -53,7 +53,7 @@
 
 // penalty for selling the tower (will be deducted from the tower's total value
 #define SELL_PENALTY 0.3
-extern MainView * view;
+
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
@@ -550,7 +550,10 @@ void Game::createWave()
             QTimer* nextEnemiesTimer = new QTimer(this);
             nextEnemiesTimer->setSingleShot(true);
             nextEnemiesTimer->setInterval((amount+1)*delay);
-            nextEnemiesTimer->callOnTimeout([this, amount](){this->addSpawnedEnemies(amount);});
+            QTimer* addEnemyAmountTimer = new QTimer(this);
+            addEnemyAmountTimer->setSingleShot(true);
+            addEnemyAmountTimer->setInterval(amount*delay);
+            addEnemyAmountTimer->callOnTimeout([this, amount](){this->addSpawnedEnemies(amount);});
             //after every timeout spawn an enemy
             timer->callOnTimeout([this, type](){this->spawnEnemy(type);});
             timer->setInterval(delay);
@@ -563,11 +566,13 @@ void Game::createWave()
                 //start both immediately since there are no enemies
                 timer->start();
                 nextEnemiesTimer->start((amount+1)*delay);
+                addEnemyAmountTimer->start();
             } else
             {
                 //wait till the last enemy type has stopped spawning
                 connect(timerBuffer, SIGNAL(timeout()),timer, SLOT(start()));
                 connect(timerBuffer, SIGNAL(timeout()),nextEnemiesTimer, SLOT(start()) );
+                connect(timerBuffer, SIGNAL(timeout()),addEnemyAmountTimer, SLOT(start()));
             }
 
             //save a timer to the buffer to connect it during the next loop
@@ -761,11 +766,12 @@ bool Game::isLost() const{
 
 bool Game::isWon() const
 {
-    return enemyCount_==0 && health_>0 && level_==finalLevel_ ;
+    return  health_>0 && level_==finalLevel_ ;
 }
 
 bool Game::isWaveWon()
 {
+
     if(spawnedThisWave_ == wavesEnemyCount_ && enemyCount_ == 0)
     {
         spawnedThisWave_ = QAtomicInteger(0);
@@ -850,10 +856,16 @@ void Game::enemyDies(int value)
     activeEnemies_.removeOne(enemy);
     activeEnemies_.squeeze();
     updateEnemyCount();
-    if(isWaveWon())
-    {
-        isWon() ? emit gameWon() : createWave() ;
-    }
+    QTimer* timer = new QTimer();
+    timer->setSingleShot(true);
+    timer->setInterval(500);
+    timer->callOnTimeout([this](){
+        if(this->isWaveWon())
+        {
+            this->isWon() ? emit this->gameWon() : this->createWave() ;
+        }
+    });
+    timer->start();
 
 }
 
@@ -875,7 +887,7 @@ void Game::addEnemy(Enemy* enemy)
 //can be used for other purposes
 void Game::keyPressEvent(QKeyEvent* /* unused */)
 {
-    if(enemyCount_==0 && !isWon() )
+    if(level_==0 )
     {
 
         createWave();
@@ -890,6 +902,7 @@ QPointF Game::getSquarePos(int row, int column){
 }
 
 void Game::showMenu(){
+    MainView* view = qobject_cast<MainView*>(this->parent());
     view->showMenu();
 
 }
