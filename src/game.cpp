@@ -590,19 +590,19 @@ void Game::spawnEnemy(int type)
     QList<QPointF> convertedPath = convertCoordinates(shortestPath);
     if(type==1 || type==2)
     {
-        CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), path, shortest_path_);
+        CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), convertedPath, shortestPath);
         addEnemy((Enemy*)enemy);
 
     }
     else if(type==3 || type==4 || type==5 || type==6)
     {
-        MemoryError* enemy = new MemoryError(static_cast<MemoryErrorType>(type), path, shortest_path_);
+        MemoryError* enemy = new MemoryError(static_cast<MemoryErrorType>(type), convertedPath, shortestPath);
         addEnemy((Enemy*)enemy);
 
     }
     else if(type==7)
     {
-        RuntimeError* enemy = new RuntimeError(static_cast<RuntimeErrorType>(type), path, shortest_path_);
+        RuntimeError* enemy = new RuntimeError(static_cast<RuntimeErrorType>(type), convertedPath, shortestPath);
         addEnemy((Enemy*)enemy);
 
     }

@@ -85,7 +85,7 @@ public slots:
     void enterSellMode();
     void enemyDies(int value);
     void spawnEnemy(int type);
-    void updateLeadrboard();
+    void updateLeaderboard();
     void showError(QString message);
     void addEnemy(Enemy*);
     void takeDamage(int dHealth);
