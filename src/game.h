@@ -7,6 +7,9 @@
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
 #include <QToolButton>
+#include <QMutex>
+#include <QThread>
+#include <QAtomicInteger>
 
 // enumeration to keep track of the game's mode
 namespace Modes{
@@ -21,7 +24,7 @@ namespace TowerTypes{
 class Game: public QGraphicsScene
 {
     Q_OBJECT
-
+    QThread thread;
 public:
 
     Game(QObject* parent);
@@ -34,10 +37,12 @@ public:
 
     bool isLost() const;
     bool isWon() const;
+    bool isWaveWon();
     void createMap();
     void createGameControls();
     void createWave();
     void readWaveFile();
+
     QList<QPointF> convertCoordinates(QList<QPoint> path);
     QList<QPoint> getShortestPath(QPoint start);
 
@@ -54,7 +59,7 @@ public:
     void changeCurrency(int dCurrency);
     void setMode(Modes::MODES m);
     void advanceLevel();
-
+    void addSpawnedEnemies(int);
 
     void keyPressEvent(QKeyEvent *keyEvent);
     void resetButtonHighlights();
@@ -78,12 +83,14 @@ public slots:
     void enterSellMode();
     void enemyDies(int value);
     void spawnEnemy(int type, QList<QPointF> path);
-    void updateLeadrboard();
+    void updateLeaderboard();
     void showError(QString message);
-    void addEnemy(Enemy*,int);
+    void addEnemy(Enemy*);
     void takeDamage(int dHealth);
     void enterBuildCom();
     void updatePaths();
+    void updateEnemyCount();
+    void stopEnemies();
 
 
 signals:
@@ -102,7 +109,8 @@ private:
     int health_;
     int currency_;
     int time_;
-    int wavesCount_;
+    int wavesEnemyCount_;
+    QAtomicInteger<int> spawnedThisWave_;
     int enemyCount_;
     int level_;
     int finalLevel_;
@@ -110,6 +118,7 @@ private:
     QList<QPoint> path_;
     QList<QStringList> waves_;
     QList<Enemy*> activeEnemies_;
+
 
     Modes::MODES mode_;
     TowerTypes::TYPES buildType_;

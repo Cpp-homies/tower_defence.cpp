@@ -10,7 +10,7 @@ Enemy::Enemy(EnemyType type, QList<QPointF> path,QList<QPoint> matrixPath, int h
     setPos(path_[0]);
     point_index_ = 0;
     dest_ = path_[0];
-//    game_ = qobject_cast<Game*>(scene());
+    timer_ = new QTimer(this);
 
 }
 
@@ -39,9 +39,9 @@ void Enemy::setSpeed(int speed)
 
 void Enemy::startMove()
 {
-    QTimer * timer = new QTimer(this);
-    connect(timer,SIGNAL(timeout()),this,SLOT(move()));
-    timer->start(90-speed_);
+
+    connect(timer_,SIGNAL(timeout()),this,SLOT(move()));
+    timer_->start(90-speed_);
 }
 
 void Enemy::setPath(QList<QPoint> matrixPath,QList<QPointF> path)
@@ -54,6 +54,11 @@ void Enemy::setPath(QList<QPoint> matrixPath,QList<QPointF> path)
 QPoint Enemy::getMatrixLocation() const
 {
     return matrixPath_[point_index_];
+}
+
+QTimer *Enemy::getTimer()
+{
+    return timer_;
 }
 
 EnemyType Enemy::getType() const {
@@ -71,7 +76,7 @@ void Enemy::move()
         if (point_index_ >= path_.size()){
 
            emit dealsDamage(damage_);
-            deleteLater();
+
 
             return;
         }

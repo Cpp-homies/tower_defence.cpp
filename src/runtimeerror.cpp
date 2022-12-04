@@ -51,7 +51,7 @@ void RuntimeError::takeDamage(int damage)
             matrixPath.remove(0,point_index_);
             RuntimeError* minion = new RuntimeError(RuntimeErrorType::MemoryStackMinion,path, matrixPath);
             minion->setSpeed(speed_*2);
-            emit addedEnemy((Enemy*)minion,1);
+            emit addedEnemy((Enemy*)minion);
         }
 
     }

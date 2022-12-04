@@ -34,6 +34,10 @@
 #include <QRegularExpression>
 #include <QTimer>
 #include <QMessageBox>
+#include <QInputDialog>
+#include <QDir>
+#include <QStandardPaths>
+
 
 #define BUILD_BUTTON_SIZE 90
 
@@ -49,11 +53,12 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
 {
     // set starting values of health, currency etc
     health_ = 100;
-    currency_ = 100;
+    currency_ = 9999999;
     level_ = 0;
     score_ = 0;
     enemyCount_ = 0;
-    wavesCount_ = 0;
+    wavesEnemyCount_ = 0;
+    spawnedThisWave_ = QAtomicInteger(0);
     mode_ = Modes::normal;
 
     // set size 1280x717 (use 717 height because we dont want scroll)
@@ -70,6 +75,10 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     //connects error signal with a message box
     connect(this,SIGNAL(error(QString)),this, SLOT(showError(QString)));
     connect(this,SIGNAL(wallAction()),this,SLOT(updatePaths()));
+    connect(this,SIGNAL(gameWon()),this,SLOT(updateLeaderboard()));
+    connect(this,SIGNAL(gameLost()),this,SLOT(stopEnemies()));
+    connect(this,SIGNAL(gameLost()),this,SLOT(updateLeaderboard()));
+
 }
 
 void Game::createMap(){
@@ -107,7 +116,7 @@ void Game::createMap(){
             for (int i = 0; i < width; ++i) {
                 QString value = matrix[j][i];
                 if (value == "1") { // Tile for towers
-                    Square* tile = new Square(j,i,nullptr);
+                    Square* tile = new Square(i,j,nullptr);
                     QGraphicsProxyWidget* backgroundTile = addWidget(tile);
                     mapLayout->addItem(backgroundTile,j,i);
                 } else if (value == "2" || value == "A" || value == "B") { // Normal Path
@@ -164,39 +173,50 @@ void Game::createMap(){
                             }
                         } else {
                             if (left == true || right == true) {
-                                tile = new Path(j, i, Straight, 90, nullptr);
+                                tile = new Path(i, j, Straight, 90, nullptr);
                             } else {
-                                tile = new Path(j, i, Straight, 0, nullptr);
+                                tile = new Path(i, j, Straight, 0, nullptr);
                             }
                         }
 
                     } else if (value == "A") {
-                        start_ = QPoint(j, i);
+                        start_ = QPoint(i, j);
                         if (left) {
-                            tile = new Path(j, i, Start, 0, nullptr);
+                            tile = new Path(i, j, Start, 0, nullptr);
                         } else if (up) {
-                            tile = new Path(j, i, Start, 90, nullptr);
+                            tile = new Path(i, j, Start, 90, nullptr);
                         } else if (right) {
-                            tile = new Path(j, i, Start, 180, nullptr);
+                            tile = new Path(i, j, Start, 180, nullptr);
                         } else {
-                            tile = new Path(j, i, Start, 270, nullptr);
+                            tile = new Path(i, j, Start, 270, nullptr);
                         }
                     } else {
-                        end_ = QPoint(j, i);
+                        end_ = QPoint(i, j);
                         if (left) {
-                            tile = new Path(j, i, End, 0, nullptr);
+                            tile = new Path(i, j, End, 0, nullptr);
                         } else if (up) {
-                            tile = new Path(j, i, End, 90, nullptr);
+                            tile = new Path(i, j, End, 90, nullptr);
                         } else if (right) {
-                            tile = new Path(j, i, End, 180, nullptr);
+                            tile = new Path(i, j, End, 180, nullptr);
                         } else {
-                            tile = new Path(j, i, End, 270, nullptr);
+                            tile = new Path(i, j, End, 270, nullptr);
                         }
                     }
                     QGraphicsProxyWidget* pathTile = addWidget(tile);
                     mapLayout->addItem(pathTile, j, i);
                 }
             }
+        }
+        for (int j = 0; j < height; ++j) {
+            QString line = "";
+            for (int i = 0; i < width; ++i) {
+                if (isPath(j, i)) {
+                    line.push_back(" ");
+                } else {
+                    line.push_back("O");
+                }
+            }
+            qInfo() << line;
         }
     }
 
@@ -518,11 +538,13 @@ void Game::createWave()
             QTimer* nextEnemiesTimer = new QTimer(this);
             nextEnemiesTimer->setSingleShot(true);
             nextEnemiesTimer->setInterval((amount+1)*delay);
+            nextEnemiesTimer->callOnTimeout([this, amount](){this->addSpawnedEnemies(amount);});
             //after every timeout spawn an enemy
             timer->callOnTimeout([this, type, convertedPath](){this->spawnEnemy(type, convertedPath);});
             timer->setInterval(delay);
             //stop current timer when all enemies are spawned
             connect(nextEnemiesTimer, SIGNAL(timeout()), timer, SLOT(stop()));
+
             if(flag)
             {
                 flag = false;
@@ -539,7 +561,7 @@ void Game::createWave()
             //save a timer to the buffer to connect it during the next loop
             timerBuffer = nextEnemiesTimer;
             //how many enemies will be created in this loop
-            enemyCount_+=amount;
+            wavesEnemyCount_+=amount;
         }
 
     }
@@ -559,29 +581,115 @@ void Game::spawnEnemy(int type,QList<QPointF> path)
     if(type==1 || type==2)
     {
         CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), path, shortest_path_);
-        addEnemy((Enemy*)enemy,0);
+        addEnemy((Enemy*)enemy);
+
     }
     else if(type==3 || type==4 || type==5 || type==6)
     {
         MemoryError* enemy = new MemoryError(static_cast<MemoryErrorType>(type), path, shortest_path_);
-        addEnemy((Enemy*)enemy,0);
+        addEnemy((Enemy*)enemy);
+
     }
     else if(type==7)
     {
         RuntimeError* enemy = new RuntimeError(static_cast<RuntimeErrorType>(type), path, shortest_path_);
-        addEnemy((Enemy*)enemy,0);
+        addEnemy((Enemy*)enemy);
+
     }
 
 }
 
-void Game::updateLeadrboard()
+void Game::updateLeaderboard()
 {
+    QFile file(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)+"_leaderboard.dat");
+
+
+    if(!file.open(QIODevice::ReadWrite))
+    {
+
+        emit error("Could not open leaderboard file: "+file.errorString());
+        return;
+    }
+    QDataStream stream(&file);
+
+    if(stream.atEnd())
+    {
+        bool ok;
+        QString text = QInputDialog::getText(nullptr, tr("QInputDialog::getText()"),
+                                             tr("You got a TOP10 score, enter name:"), QLineEdit::Normal,
+                                             QDir::home().dirName(), &ok);
+        if (ok && !text.isEmpty())
+        {
+            stream<<text<<score_;
+
+        }
+
+    }
+    else
+    {
+        QList<QPair<QString,int>> fullLeaderboard;
+        while(!stream.atEnd())
+        {
+            QString name;
+            int score;
+            stream>>name>>score;
+            fullLeaderboard<<QPair<QString,int>(name,score);
+        }
+        if(fullLeaderboard.length()>=10)
+        {
+            auto min = std::min_element(fullLeaderboard.begin(),fullLeaderboard.end(),[](QPair<QString,int> a,QPair<QString,int> b)
+            {
+                    return a.second < b.second;
+            });
+            if(score_ <= min->second)
+            {
+                QMessageBox::information(qobject_cast<QWidget*>(this), tr("Weak sauce"),
+                             "You didn't get a TOP10 score, try again.");
+                file.close();
+                return;
+            }
+            else
+            {
+                bool ok;
+                QString text = QInputDialog::getText(nullptr, tr("Yay!"),
+                                                     tr("You got a TOP10 score, enter name:"), QLineEdit::Normal,
+                                                     QDir::home().dirName(), &ok);
+
+
+                *min = QPair<QString,int>(text,score_);
+
+
+            }
+        }
+        else
+        {
+            bool ok;
+            QString text = QInputDialog::getText(nullptr, tr("Yay!"),
+                                                 tr("You got a TOP10 score, enter name:"), QLineEdit::Normal,
+                                                 QDir::home().dirName(), &ok);
+            if (ok && !text.isEmpty()) fullLeaderboard<<QPair<QString,int>(text,score_);
+
+        }
+        std::sort(fullLeaderboard.begin(),fullLeaderboard.end(),[](QPair<QString,int> a,QPair<QString,int> b)
+        {
+            return a.second>b.second;
+        });
+        file.seek(0);
+        foreach (auto score, fullLeaderboard) {
+            stream<<score.first<<score.second;
+        }
+
+    }
+    file.close();
+    MainView* view_ = qobject_cast<MainView*>(this->parent());
+
+    view_->showLeaderboard();
 
 }
 
 void Game::showError(QString message)
 {
-    QMessageBox::information(qobject_cast<QWidget*>(this), tr("Error"),
+    QMessageBox::warning(qobject_cast<QWidget*>(this), tr("Error"),
                  message);
 
 }
@@ -639,7 +747,18 @@ bool Game::isLost() const{
 
 bool Game::isWon() const
 {
-    return enemyCount_==0 && health_>0 && level_==finalLevel_;
+    return enemyCount_==0 && health_>0 && level_==finalLevel_ ;
+}
+
+bool Game::isWaveWon()
+{
+    if(spawnedThisWave_ == wavesEnemyCount_ && enemyCount_ == 0)
+    {
+        spawnedThisWave_ = QAtomicInteger(0);
+        wavesEnemyCount_ = 0;
+        return true;
+    } else return false;
+
 }
 
 int Game::getHealth() const {
@@ -674,9 +793,19 @@ TowerTypes::TYPES Game::getBuildType() const {
 void Game::takeDamage (int dHealth) {
     health_-=dHealth;
     healthDisplay->setPlainText(QString::number(health_));
-    if(--enemyCount_==0 )
+    Enemy* enemy = qobject_cast<Enemy*>(sender());
+    activeEnemies_.removeOne(enemy);
+    activeEnemies_.squeeze();
+    updateEnemyCount();
+    delete enemy;
+    if(isLost())
     {
-        isLost() ? emit gameLost() : (isWon() ? emit gameWon() : createWave());
+        emit gameLost();
+        return;
+    }
+    if(isWaveWon())
+    {
+        isWon() ? emit gameWon() :  createWave();
 
     }
 }
@@ -703,24 +832,29 @@ void Game::enemyDies(int value)
 {
     changeScore(value);
     changeCurrency(value);
-    if(--enemyCount_==0)
-    {
-        isWon() ? emit gameWon() : createWave();
-    }
     Enemy* enemy = qobject_cast<Enemy*>(sender());
     activeEnemies_.removeOne(enemy);
     activeEnemies_.squeeze();
+    updateEnemyCount();
+    if(isWaveWon())
+    {
+        isWon() ? emit gameWon() : createWave() ;
+    }
+
 }
 
-void Game::addEnemy(Enemy* enemy, int advanceCount)
+void Game::addEnemy(Enemy* enemy)
 {
-    enemyCount_+=advanceCount;
     addItem(enemy);
     enemy->startMove();
     connect(enemy,SIGNAL(enemyDies(int)),this,SLOT(enemyDies(int)));
-    connect(enemy,SIGNAL(addedEnemy(Enemy*,int)),this,SLOT(addEnemy(Enemy*,int)));
+    connect(enemy,SIGNAL(addedEnemy(Enemy*)),this,SLOT(addEnemy(Enemy*)));
     connect(enemy,SIGNAL(dealsDamage(int)),this,SLOT(takeDamage(int)));
+    connect(enemy,SIGNAL(enemyDies(int)),this,SLOT(updateEnemyCount()));
+    connect(enemy,SIGNAL(addedEnemy(Enemy*)),this,SLOT(updateEnemyCount()));
     activeEnemies_<<enemy;
+    updateEnemyCount();
+
 }
 
 //just testing scene changing
@@ -743,7 +877,7 @@ QPointF Game::getSquarePos(int row, int column){
 
 void Game::showMenu(){
     view->showMenu();
-    this->clear();
+
 }
 
 // build a default tower (CS Student)
@@ -752,7 +886,7 @@ bool Game::buildTower(int row, int column) {
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
 
     // if there is a tower occupying the square, return false
-    if (dynamic_cast<Tower*>(widget) || isPath(column, row)) {
+    if (dynamic_cast<Tower*>(widget) || isPath(row, column)) {
         return false;
     }
     else {
@@ -775,7 +909,11 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
     resetButtonHighlights();
 
+<<<<<<< HEAD
     bool testIsPath = isPath(column, row);
+=======
+    bool testIsPath = isPath(row, column);
+>>>>>>> master
     Path* testDynamicCast = dynamic_cast<Path*>(widget);
     // if there is a tower or a path occupying the square, return false
     if (dynamic_cast<Tower*>(widget) || testIsPath) {
@@ -793,6 +931,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // create a new tower and add it to the scene
                 Tower* newTower = new CS_Student(row, column, nullptr);
                 QGraphicsWidget* tower = this->addWidget(newTower);
+<<<<<<< HEAD
 
                 // remove the current square from the grid
                 this->removeItem(item->graphicsItem());
@@ -807,6 +946,22 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // deduct the cost of the tower from player's money
                 changeCurrency(-CS_COST);
 
+=======
+
+                // remove the current square from the grid
+                this->removeItem(item->graphicsItem());
+                this->mapLayout->removeItem(item);
+
+                // add a tower to the grid at the given possition
+                this->mapLayout->addItem(tower, row, column);
+
+                // Hide the attack ranges of all other towers
+                hideAllAttackAreasExcept(QPointF(row,column));
+
+                // deduct the cost of the tower from player's money
+                changeCurrency(-CS_COST);
+
+>>>>>>> master
                 // add the cost of the tower to tower's total cost
                 newTower->addCost(CS_COST);
             }
@@ -828,6 +983,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // remove the current square from the grid
                 this->removeItem(item->graphicsItem());
                 this->mapLayout->removeItem(item);
+<<<<<<< HEAD
 
                 // add a tower to the grid at the given possition
                 this->mapLayout->addItem(tower, row, column);
@@ -835,6 +991,15 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // deduct the cost of the tower from player's money
                 changeCurrency(-TA_COST);
 
+=======
+
+                // add a tower to the grid at the given possition
+                this->mapLayout->addItem(tower, row, column);
+
+                // deduct the cost of the tower from player's money
+                changeCurrency(-TA_COST);
+
+>>>>>>> master
                 // add the cost of the tower to tower's total cost
                 newTower->addCost(TA_COST);
             }
@@ -875,7 +1040,11 @@ bool Game::sellTower(int row, int column) {
         int totalCost = tower->getTotalCost();
 
         // create a new square and add it to the scene
+<<<<<<< HEAD
         Square* newSquare = new Square(row, column, nullptr);
+=======
+        Square* newSquare = new Square(column, row, nullptr);
+>>>>>>> master
         QGraphicsWidget* square = this->addWidget(newSquare);
 
         // remove the current tower from the grid
@@ -983,6 +1152,25 @@ void Game::updatePaths()
         QList<QPoint> newMatrixPath = getShortestPath(enemy->getMatrixLocation());
         enemy->setPath(newMatrixPath,convertCoordinates(newMatrixPath));
     }
+}
+
+void Game::updateEnemyCount()
+{
+    enemyCount_=activeEnemies_.length();
+}
+
+void Game::stopEnemies()
+{
+    foreach (Enemy* enemy, activeEnemies_) {
+        enemy->getTimer()->stop();
+        delete enemy;
+//        this->removeItem(enemy);
+    }
+}
+
+void Game::addSpawnedEnemies(int amount)
+{
+    spawnedThisWave_+= amount;
 }
 
 bool Game::upgradeTower(int row, int column) {
