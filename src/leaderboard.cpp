@@ -8,7 +8,6 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 
-extern MainView * view;
 
 Leaderboard::Leaderboard(QObject* parent): QGraphicsScene(parent)
 {
@@ -80,5 +79,6 @@ void Leaderboard::readFile()
 }
 
 void Leaderboard::showMenu(){
+    MainView* view = qobject_cast<MainView*>(this->parent());
     view->showMenu();
 }

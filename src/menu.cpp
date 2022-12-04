@@ -11,7 +11,6 @@
 #include <QGraphicsWidget>
 #include <QGraphicsTextItem>
 
-extern MainView * view;
 
 Menu::Menu(QObject *parent): QGraphicsScene(parent)
 {
@@ -56,13 +55,16 @@ Menu::Menu(QObject *parent): QGraphicsScene(parent)
 }
 
 void Menu::showGame(){
+    MainView* view = qobject_cast<MainView*>(this->parent());
     view->showGame();
 }
 
 void Menu::showLeaderboard(){
+    MainView* view = qobject_cast<MainView*>(this->parent());
     view->showLeaderboard();
 }
 
 void Menu::quit(){
+    MainView* view = qobject_cast<MainView*>(this->parent());
     view->close();
 }
