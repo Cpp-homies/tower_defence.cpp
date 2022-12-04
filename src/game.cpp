@@ -12,6 +12,7 @@
 #include <QToolButton>
 #include "square.h"
 #include "mainview.h"
+#include "enemy.h"
 #include "tower.h"
 #include "compilererror.h"
 #include "memoryerror.h"
@@ -39,6 +40,13 @@
 
 
 #define BUILD_BUTTON_SIZE 90
+
+// prices of towers can be set here
+#define CS_COST 20
+#define TA_COST 30
+
+// penalty for selling the tower (will be deducted from the tower's total value
+#define SELL_PENALTY 0.3
 extern MainView * view;
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
@@ -376,8 +384,6 @@ void Game::createGameControls()
 
     // upgrade button
     upgradeButton = new Button(QString("Upgrade Tower"), 240, 50);
-//    upgradeButton->setRect(QRectF(upgradeButton->boundingRect().topLeft(),
-//                            QSizeF(upgradeButton->boundingRect().width() + 20, upgradeButton->boundingRect().height())));
 
     int uxPos = this->width() - upgradeButton->boundingRect().width() - menuButton->boundingRect().width() - 80;
     int uyPos = this->height() - upgradeButton->boundingRect().height() - 40;
@@ -385,6 +391,17 @@ void Game::createGameControls()
     connect(upgradeButton, SIGNAL(clicked()), this, SLOT(enterUpgradeMode()));
     upgradeButton->setZValue(10);
     addItem(upgradeButton);
+
+    // sell tower button
+    sellButton = new Button(QString("Sell Tower"), 200, 50);
+
+    int sxPos = this->width() - sellButton->boundingRect().width() - menuButton->boundingRect().width()
+                    + (upgradeButton->boundingRect().width() - sellButton->boundingRect().width());
+    int syPos = this->height() - sellButton->boundingRect().height() - 100;
+    sellButton->setPos(sxPos, syPos);
+    connect(sellButton, SIGNAL(clicked()), this, SLOT(enterSellMode()));
+    sellButton->setZValue(10);
+    addItem(sellButton);
 
     // tower build buttons
     buildButtonStylesheet = "background-color: white; border: 1px solid white";
@@ -852,17 +869,18 @@ void Game::showMenu(){
 
 }
 
+// build a default tower (CS Student)
 bool Game::buildTower(int row, int column) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
 
     // if there is a tower occupying the square, return false
-    if (dynamic_cast<Tower*>(widget)) {
+    if (dynamic_cast<Tower*>(widget) || isPath(column, row)) {
         return false;
     }
     else {
         // create a new tower and add it to the scene
-        QGraphicsWidget* tower = this->addWidget(new Tower(row, column, nullptr));
+        QGraphicsWidget* tower = this->addWidget(new CS_Student(row, column, nullptr));
 
         // remove the current square from the grid
         this->removeItem(item->graphicsItem());
@@ -880,9 +898,10 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
     resetButtonHighlights();
 
-
-    // if there is a tower occupying the square, return false
-    if (dynamic_cast<Tower*>(widget)) {
+    bool testIsPath = isPath(column, row);
+    Path* testDynamicCast = dynamic_cast<Path*>(widget);
+    // if there is a tower or a path occupying the square, return false
+    if (dynamic_cast<Tower*>(widget) || testIsPath) {
         return false;
     }
     else {
@@ -891,31 +910,61 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
         switch (type) {
         case TowerTypes::CS_Student:
         {
-            // create a new tower and add it to the scene
-            QGraphicsWidget* tower = this->addWidget(new CS_Student(row, column, nullptr));
+            // first, check if the player have enough money or not
+            // if yes, build the tower
+            if (this->currency_ >= CS_COST) {
+                // create a new tower and add it to the scene
+                Tower* newTower = new CS_Student(row, column, nullptr);
+                QGraphicsWidget* tower = this->addWidget(newTower);
 
-            // remove the current square from the grid
-            this->removeItem(item->graphicsItem());
-            this->mapLayout->removeItem(item);
+                // remove the current square from the grid
+                this->removeItem(item->graphicsItem());
+                this->mapLayout->removeItem(item);
 
-            // add a tower to the grid at the given possition
-            this->mapLayout->addItem(tower, row, column);
+                // add a tower to the grid at the given possition
+                this->mapLayout->addItem(tower, row, column);
 
-            // Hide the attack ranges of all other towers
-            hideAllAttackAreasExcept(QPointF(row,column));
+                // Hide the attack ranges of all other towers
+                hideAllAttackAreasExcept(QPointF(row,column));
+
+                // deduct the cost of the tower from player's money
+                changeCurrency(-CS_COST);
+
+                // add the cost of the tower to tower's total cost
+                newTower->addCost(CS_COST);
+            }
+            else {
+                // not enough money
+                return false;
+            }
             break;
         }
         case TowerTypes::TA:
         {
-            // create a new tower and add it to the scene
-            QGraphicsWidget* tower = this->addWidget(new TA(row, column, nullptr));
+            // first, check if the player have enough money or not
+            // if yes, build the tower
+            if (this->currency_ >= TA_COST) {
+                // create a new tower and add it to the scene
+                Tower* newTower = new TA(row, column, nullptr);
+                QGraphicsWidget* tower = this->addWidget(newTower);
 
-            // remove the current square from the grid
-            this->removeItem(item->graphicsItem());
-            this->mapLayout->removeItem(item);
+                // remove the current square from the grid
+                this->removeItem(item->graphicsItem());
+                this->mapLayout->removeItem(item);
 
-            // add a tower to the grid at the given possition
-            this->mapLayout->addItem(tower, row, column);
+                // add a tower to the grid at the given possition
+                this->mapLayout->addItem(tower, row, column);
+
+                // deduct the cost of the tower from player's money
+                changeCurrency(-TA_COST);
+
+                // add the cost of the tower to tower's total cost
+                newTower->addCost(TA_COST);
+            }
+            else {
+                // not enough money
+                return false;
+            }
             break;
         }
         default:
@@ -925,6 +974,47 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
         return true;
     }
 
+}
+
+bool Game::sellTower(int row, int column) {
+    // change sell color back to green
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(Qt::green);
+    sellButton->setBrush(brush);
+
+    // get the item at the current square
+    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
+    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
+    resetButtonHighlights();
+    Tower* tower = dynamic_cast<Tower*>(widget);
+
+    // if there is no tower occupying the square, return false
+    if (!tower) {
+        return false;
+    }
+    else {
+        // get the total cost of the tower
+        int totalCost = tower->getTotalCost();
+
+        // create a new square and add it to the scene
+        Square* newSquare = new Square(row, column, nullptr);
+        QGraphicsWidget* square = this->addWidget(newSquare);
+
+        // remove the current tower from the grid
+        this->removeItem(item->graphicsItem());
+        this->mapLayout->removeItem(item);
+
+        // add a square to the grid at the given possition
+        this->mapLayout->addItem(square, row, column);
+
+        // add the money from selling the tower to player's money
+        // current cost penalty for selling a tower is 30%
+        changeCurrency((totalCost * (1 - SELL_PENALTY)));
+
+        coordsOfTowers.removeOne(QPointF(row, column));
+        return true;
+    }
 }
 
 QWidget* Game::getWidgetAt(int row, int column) {
@@ -997,6 +1087,16 @@ void Game::enterBuildCom() {
     mode_ = Modes::build;
     buildType_ = TowerTypes::Comment;
     build_Comment->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
+}
+
+void Game::enterSellMode() {
+    resetButtonHighlights();
+
+    mode_ = Modes::sell;
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(Qt::yellow);
+    sellButton->setBrush(brush);
 }
 
 void Game::updatePaths()

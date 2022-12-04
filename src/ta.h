@@ -2,16 +2,26 @@
 #define TA_H
 
 #include "tower.h"
+#include <QList>
+#include <QPointF>
 
 class TA : public Tower {
 public:
     TA();
     TA(int row, int column, QWidget *parent=nullptr);
 
+    ~TA();
+
     bool upgrade();
+public slots:
+    void buffPulse();
 private:
     double damageBuffFactor_;
-    QGraphicsPixmapItem * towerImg;
+    double atkSpeedBuffFactor_;
+    int buffPulseInterval_;// time between each check for new tower in range (in ms)
+    QTimer* buffTimer_;
+
+    QList<QPointF> buffedTowers;
 };
 
 

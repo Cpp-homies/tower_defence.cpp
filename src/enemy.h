@@ -51,6 +51,7 @@ public:
     QPoint getMatrixLocation() const;
     QTimer *getTimer ();
 
+    EnemyType getType() const;
 
 public slots:
 
