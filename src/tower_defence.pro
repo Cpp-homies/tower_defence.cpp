@@ -22,6 +22,7 @@ SOURCES += \
     path.cpp \
     projectile.cpp \
     runtimeerror.cpp \
+    search_engine.cpp \
     square.cpp \
     ta.cpp \
     tower.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
     path.h \
     projectile.h \
     runtimeerror.h \
+    search_engine.h \
     square.h \
     ta.h \
     tower.h

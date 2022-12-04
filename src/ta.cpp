@@ -13,7 +13,7 @@
 //Tower(int x, int y, int range, int damage, int attackSpeed, QWidget *parent=nullptr);
 TA::TA(int row, int column, QWidget *parent) : Tower(row, column, 4, 10, 3000, parent) {
     // set TA stats
-    atkSpeedBuffFactor_ = 2;// set the BuffFactor extremely high for testing
+    atkSpeedBuffFactor_ = 5;// set the BuffFactor extremely high for testing
 //    atkSpeedBuffFactor_ = 0.2;
     upgradeLevel_ = 1;
     maxLevel_ = 2;
