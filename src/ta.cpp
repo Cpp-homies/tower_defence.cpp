@@ -79,6 +79,7 @@ bool TA::upgrade() {
                 setRange(6);
 
                 // update tower graphics
+                projectileImagePath_ = ":/images/Teacher_projectile.png";
                 ogImagePath_ = ":/images/Teacher.png";
                 towerImg->setPixmap(QPixmap(ogImagePath_));
 

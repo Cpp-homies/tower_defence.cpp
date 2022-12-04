@@ -1007,6 +1007,9 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // add a tower to the grid at the given possition
                 this->mapLayout->addItem(tower, row, column);
 
+                // Hide the attack ranges of all other towers
+                hideAllAttackAreasExcept(QPointF(row,column));
+
                 // deduct the cost of the tower from player's money
                 changeCurrency(-TA_COST);
 
@@ -1035,6 +1038,9 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // add a tower to the grid at the given possition
                 this->mapLayout->addItem(tower, row, column);
 
+                // Hide the attack ranges of all other towers
+                hideAllAttackAreasExcept(QPointF(row,column));
+
                 // deduct the cost of the tower from player's money
                 changeCurrency(-SE_COST);
 
@@ -1062,6 +1068,9 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
 
                 // add a tower to the grid at the given possition
                 this->mapLayout->addItem(tower, row, column);
+
+                // Hide the attack ranges of all other towers
+                hideAllAttackAreasExcept(QPointF(row,column));
 
                 // deduct the cost of the tower from player's money
                 changeCurrency(-SE_COST);

@@ -292,7 +292,7 @@ int Tower::getTotalCost() {
 }
 
 void Tower::damageBuff(double buffFactor) {
-    damageMultiplier_ *= (1 + buffFactor);
+    damage_ *= (1 + buffFactor);
 }
 
 void Tower::atkSpeedBuff(double buffFactor) {

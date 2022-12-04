@@ -2,7 +2,14 @@
 #include "projectile.h"
 #include "cmath"
 
+#define LVL2_COST 50
+#define LVL3_COST 100
+
 Language_Server::Language_Server(int row, int column, QWidget *parent) : Tower(row, column, 5, 1, 2000, parent) {
+    // set Language_Server stats
+    upgradeLevel_ = 1;
+    maxLevel_ = 3;
+
     // set high piercing
     pierce_ = 3;
     // set Language Server graphics
@@ -27,4 +34,69 @@ void Language_Server::fire(QPointF targetPos) {
     projectile->setTransformOriginPoint(projectile->pixmap().width()/2,projectile->pixmap().height()/2);
     projectile->setRotation(angle);
     view->getGame()->addItem(projectile);
+}
+
+bool Language_Server::upgrade() {
+    if (upgradeLevel_ >= maxLevel_) {
+        // already max level
+        return false;
+    }
+    else {
+        // upgrade the tower according to its level
+        upgradeLevel_ += 1;
+
+        switch (upgradeLevel_) {
+        case 2:
+            // if the player has enough money for the upgrade
+            // upgrade the tower
+            if (view->getGame()->getCurrency() >= LVL2_COST) {
+                // increase damage by 100%
+                damageBuff(1.0);
+
+                // update tower graphics
+                projectileImagePath_ = ":/images/Tree_sitter_projectile.png";
+                ogImagePath_ = ":/images/Tree_sitter.png";
+                towerImg->setPixmap(QPixmap(ogImagePath_));
+
+                // deduct the cost of the tower from player's money
+                view->getGame()->changeCurrency(-LVL2_COST);
+
+                // add the cost of the upgrade to tower's total cost
+                addCost(LVL2_COST);
+            }
+            else {
+                // upgrade failed
+                return false;
+            }
+            break;
+        case 3:
+            // if the player has enough money for the upgrade
+            // upgrade the tower
+            if (view->getGame()->getCurrency() >= LVL2_COST) {
+                // increase attack speed by 200%
+                atkSpeedBuff(2.0);
+
+                // can now target memory errors
+                targetAble_[EnemyTypes::MemoryError] = true;
+
+                // update tower graphics
+                projectileImagePath_ = ":/images/Copilot_projectile.png";
+                ogImagePath_ = ":/images/Copilot.png";
+                towerImg->setPixmap(QPixmap(ogImagePath_));
+
+                // deduct the cost of the tower from player's money
+                view->getGame()->changeCurrency(-LVL3_COST);
+
+                // add the cost of the upgrade to tower's total cost
+                addCost(LVL3_COST);
+            }
+            else {
+                // upgrade failed
+                return false;
+            }
+            break;
+        }
+
+        return true;
+    }
 }
