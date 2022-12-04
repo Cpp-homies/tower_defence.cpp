@@ -5,14 +5,15 @@
 #include "square.h"
 
 enum PathType {
-    Straight, Turn, TSplit, XSplit, Start, End
+    Straight, Turn, TSplit, XSplit, Start, End, CommentType
 };
 
 class Path : public Square {
 public:
     Path(int x, int y, PathType type, int rotation, QWidget* parent);
+    bool isComment();
 private:
-
+    bool isComment_;
 };
 
 #endif // PATH_H
