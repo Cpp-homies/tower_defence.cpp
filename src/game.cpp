@@ -237,6 +237,14 @@ void Game::createMap(){
 }
 
 QList<QPoint> Game::getShortestPath(QPoint start) {
+    QList<QPoint> path = BFS(start, false);
+    if (!path.empty()) {
+        return path;
+    }
+    return BFS(start, true);
+}
+
+QList<QPoint> Game::BFS(QPoint start, bool blocked) {
     QQueue<QList<QPoint>> to_visit;
     QList<QPoint> initial;
     initial.push_back(start);
@@ -258,7 +266,7 @@ QList<QPoint> Game::getShortestPath(QPoint start) {
         QList<QPoint> neighbors;
         // Get in-bound neighbors that have not been visited yet
         for (auto i : all_neighbors) {
-            if (i.x() < total_cols && i.x() >= 0 && i.y() < total_rows && i.y() >= 0 && isPath(i.x(), i.y()) && !visited.contains(i)) {
+            if (i.x() < total_cols && i.x() >= 0 && i.y() < total_rows && i.y() >= 0 && (blocked || !isComment(i.x(), i.y())) && isPath(i.x(), i.y()) && !visited.contains(i)) {
                 neighbors.append(i);
             }
         }
@@ -918,15 +926,17 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     // if the type is comment
     if (type == TowerTypes::Comment) {
         // check if this is a path and whether there is already a comment
-        if (isPath(row, column) && !dynamic_cast<Comment*>(widget)) {
+        if (isPath(row, column) && !dynamic_cast<Comment*>(widget) && !isEnemy(row, column)) {
             // if it is available, start building the comment
-
             // first, check if the player have enough money or not
             // if yes, build the tower
             if (this->currency_ >= COM_COST) {
                 // create a new tower and add it to the scene
                 Comment* newComment = new Comment(column, row, 10000, nullptr);
                 QGraphicsWidget* comment = this->addWidget(newComment);
+
+                // Notify enemeies of path change
+                emit wallAction();
 
                 // remove the current square from the grid
                 this->removeItem(item->graphicsItem());
@@ -940,6 +950,9 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
 
                 // deduct the cost of the comment from player's money
                 changeCurrency(-COM_COST);
+            
+                emit wallAction();
+                
                 return true;
             }
             else {
@@ -1148,6 +1161,20 @@ bool Game::isPath(int row, int column) {
     return dynamic_cast<Path*>(getWidgetAt(row, column));
 }
 
+bool Game::isComment(int row, int column) {
+    return dynamic_cast<Comment*>(getWidgetAt(row, column));
+}
+
+bool Game::isEnemy(int row, int column)
+{
+    QPoint point(row,column);
+    for (Enemy* enemy : activeEnemies_)
+    {
+        if(enemy->getNextLocation()==point) return true;
+    }
+    return false;
+}
+
 void Game::enterUpgradeMode() {
     resetButtonHighlights();
 
@@ -1222,6 +1249,10 @@ void Game::updatePaths()
     {
         QList<QPoint> newMatrixPath = getShortestPath(enemy->getMatrixLocation());
         enemy->setPath(newMatrixPath,convertCoordinates(newMatrixPath));
+        if(!enemy->getTimer()->isActive())
+        {
+            enemy->getTimer()->start();
+        }
     }
 }
 
