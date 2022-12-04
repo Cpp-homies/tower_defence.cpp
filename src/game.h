@@ -45,6 +45,7 @@ public:
 
     QList<QPointF> convertCoordinates(QList<QPoint> path);
     QList<QPoint> getShortestPath(QPoint start);
+    QList<QPoint> BFS(QPoint start, QPoint end, bool blocked);
 
     int getHealth() const;
     int getScore() const;
@@ -72,6 +73,7 @@ public:
 
     bool isTower(int row, int column);
     bool isPath(int row, int column);
+    bool isComment(int row, int column);
 public slots:
     void showMenu();
     void enterUpgradeMode();
@@ -82,8 +84,8 @@ public slots:
     void enterBuildVal();
     void enterSellMode();
     void enemyDies(int value);
-    void spawnEnemy(int type, QList<QPointF> path);
-    void updateLeaderboard();
+    void spawnEnemy(int type);
+    void updateLeadrboard();
     void showError(QString message);
     void addEnemy(Enemy*);
     void takeDamage(int dHealth);

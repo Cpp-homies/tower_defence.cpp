@@ -21,6 +21,7 @@
 #include "cs_student.h"
 #include "ta.h"
 #include "path.h"
+#include "comment.h"
 
 #include <QQueue>
 #include <QSet>
@@ -227,10 +228,10 @@ void Game::createMap(){
     form->setLayout(mapLayout);
     gameLayout->addItem(form);
     shortest_path_ = getShortestPath(start_);
-    qInfo() << shortest_path_;
+    //qInfo() << shortest_path_;
 }
 
-QList<QPoint> Game::getShortestPath(QPoint start) {
+QList<QPoint> Game::BFS(QPoint start, QPoint end, bool blocked) {
     QQueue<QList<QPoint>> to_visit;
     QList<QPoint> initial;
     initial.push_back(start);
@@ -252,7 +253,8 @@ QList<QPoint> Game::getShortestPath(QPoint start) {
         QList<QPoint> neighbors;
         // Get in-bound neighbors that have not been visited yet
         for (auto i : all_neighbors) {
-            if (i.x() < total_cols && i.x() >= 0 && i.y() < total_rows && i.y() >= 0 && isPath(i.x(), i.y()) && !visited.contains(i)) {
+            if (i.x() < total_cols && i.x() >= 0 && i.y() < total_rows && i.y() >= 0 && isPath(i.x(), i.y())
+                    && (blocked || !isComment(i.x(), i.y())) && !visited.contains(i)) {
                 neighbors.append(i);
             }
         }
@@ -260,13 +262,21 @@ QList<QPoint> Game::getShortestPath(QPoint start) {
         for (auto i : neighbors) {
             QList<QPoint> new_elem;
             new_elem.append(i);
-            if (i == end_) {
+            if (i == end) {
                 return top + new_elem;
             }
             to_visit.append(top + new_elem);
         }
     }
     return QList<QPoint>();
+}
+
+QList<QPoint> Game::getShortestPath(QPoint start) {
+    QList<QPoint> path = BFS(start, end_, false);
+    if (!path.empty()) {
+        return path;
+    }
+    return BFS(start, end_, true);
 }
 
 void Game::createGameControls()
@@ -518,8 +528,6 @@ void Game::createWave()
 
     //to mark a start of wave creation
     bool flag = true;
-    //the path the enemies take
-    QList<QPointF> convertedPath = convertCoordinates(shortest_path_);
     // a buffer variable to hold a timer
     QPointer<QTimer> timerBuffer;
     //for every entry in one line from wave.txt
@@ -540,7 +548,7 @@ void Game::createWave()
             nextEnemiesTimer->setInterval((amount+1)*delay);
             nextEnemiesTimer->callOnTimeout([this, amount](){this->addSpawnedEnemies(amount);});
             //after every timeout spawn an enemy
-            timer->callOnTimeout([this, type, convertedPath](){this->spawnEnemy(type, convertedPath);});
+            timer->callOnTimeout([this, type](){this->spawnEnemy(type);});
             timer->setInterval(delay);
             //stop current timer when all enemies are spawned
             connect(nextEnemiesTimer, SIGNAL(timeout()), timer, SLOT(stop()));
@@ -576,8 +584,10 @@ void Game::createWave()
 
 }
 
-void Game::spawnEnemy(int type,QList<QPointF> path)
+void Game::spawnEnemy(int type)
 {
+    QList<QPoint> shortestPath = getShortestPath(start_);
+    QList<QPointF> convertedPath = convertCoordinates(shortestPath);
     if(type==1 || type==2)
     {
         CompilerError* enemy = new CompilerError(static_cast<CompilerErrorType>(type), path, shortest_path_);
@@ -978,6 +988,17 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
             }
             break;
         }
+        case TowerTypes::Comment:
+        {
+            QGraphicsWidget* tower = this->addWidget(new Comment(row, column, 5, nullptr));
+
+            this->removeItem(item->graphicsItem());
+            this->mapLayout->removeItem(item);
+
+            this->mapLayout->addItem(tower, row, column);
+            emit wallAction();
+            break;
+        }
         default:
             break;
         }
@@ -1040,6 +1061,9 @@ bool Game::isTower(int row, int column) {
 
 bool Game::isPath(int row, int column) {
     return dynamic_cast<Path*>(getWidgetAt(row, column));
+}
+bool Game::isComment(int row, int column) {
+    return dynamic_cast<Comment*>(getWidgetAt(row, column));
 }
 
 void Game::enterUpgradeMode() {
