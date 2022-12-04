@@ -15,6 +15,7 @@ public:
      QPointF getCoords() {return QPointF(x_,y_);}
 public slots:
      virtual void getTarget() {};// virtual function for Tower class, needed for connecting the timer
+     virtual void buffPulse() {};// virtual function for support towers, needed for connecting the timer
 protected:
      int x_;
      int y_;

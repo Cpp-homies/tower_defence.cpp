@@ -5,6 +5,8 @@
 #include <QTransform>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
+#include <QGraphicsItem>
+#include <QGraphicsProxyWidget>
 #include <QTimer>
 #include <typeinfo>
 #include <iostream>
@@ -13,6 +15,7 @@
 #include "runtimeerror.h"
 #include "mainview.h"
 #include <QGraphicsPixmapItem>
+#include <cmath>
 
 extern MainView * view;
 
@@ -33,12 +36,14 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
     damageMultiplier_ = 1.0;
     pierce_ = 0;
 
+    totalCost_ = 0;
+
     upgradeLevel_ = 1;
     maxLevel_ = 4;
 
     // initialize the targetable enemies at first the tower can only target normal enemies
     std::fill_n(targetAble_, std::size(targetAble_), false);
-    targetAble_[EnemyTypes::normal] = true;
+    targetAble_[EnemyTypes::CompilerError] = true;
 
     // set tower graphics
     ogImagePath_ = ":/images/CStudent1.png";
@@ -63,14 +68,16 @@ Tower::Tower(int x, int y, QWidget *parent) : Square(x, y, parent) {
     attack_area_->setPos(0+ln.dx(),0+ln.dy());
 
     // connect the timer to the getTarget function
-    QTimer * timer = new QTimer();
-    connect(timer,SIGNAL(timeout()),this,SLOT(getTarget()));
-    timer->start(attackInterval_);
+    attackTimer_ = new QTimer(this);
+    connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
+    attackTimer_->start(attackInterval_);
 }
 
 // constructor that set specific stats, used in subclasses of tower
 Tower::Tower(int x, int y, int range, int damage, int attackInterval, QWidget *parent) : Square(x, y, parent),
                                                                     range_(range), damage_(damage), attackInterval_(attackInterval) {
+    totalCost_ = 0;
+
     // set the original damage multipier to 1.0
     damageMultiplier_ = 1.0;
 
@@ -91,9 +98,9 @@ Tower::Tower(int x, int y, int range, int damage, int attackInterval, QWidget *p
     attack_area_->setPos(0+ln.dx(),0+ln.dy());
 
     // connect the timer to the getTarget function
-    QTimer * timer = new QTimer();
-    connect(timer,SIGNAL(timeout()),this,SLOT(getTarget()));
-    timer->start(attackInterval_);
+    attackTimer_ = new QTimer(this);
+    connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
+    attackTimer_->start(attackInterval_);
 }
 
 void Tower::getTarget() {
@@ -129,6 +136,19 @@ void Tower::getTarget() {
     }
 }
 
+Tower::~Tower() {
+   // remove the tower image from the scene and delete it
+   view->getGame()->removeItem(towerImg);
+   delete towerImg;
+
+   // remove the tower attack area from the scene and delete it
+   view->getGame()->removeItem(attack_area_);
+   delete attack_area_;
+
+   // remove the attackTimer
+   attackTimer_->deleteLater();
+}
+
 void Tower::setRange(int range) {
     this->range_ = range;
 
@@ -161,6 +181,8 @@ void Tower::fire(QPointF targetPos) {
     projectile->setPos(view->getGame()->getSquarePos(x_,y_)); //takes the same coordinates as the tower
     QLineF ln(view->getGame()->getSquarePos(x_,y_),targetPos); //path of the projectile
     int angle = -1 * ln.angle(); //the angle from tower to target
+    int maxTowerRange = ceil(this->attack_area_->boundingRect().width() * range_ /2);
+    projectile->setMaxRange(maxTowerRange);// set max range of the projectile to the range of the tower
 
     //set the projectile image to rotate around it's centre and then add it to the scene
     projectile->setTransformOriginPoint(projectile->pixmap().width()/2,projectile->pixmap().height()/2);
@@ -189,34 +211,29 @@ void Tower::fire(QPointF targetPos) {
 }
 
 bool Tower::isTargetable(Enemy* enemy) {
-
-    // iterate through the targetable enemy types
-    for (int i = 0; i < 3; i++) {
-        // if the current enemy type is targetable
-        if (targetAble_[i]) {
-            // try casting the input enemy to the current type
-            switch (i) {
-            case EnemyTypes::boss:
-            {
-                // insert casting here after the merge with enemy implementation
-                break;
-            }
-            case EnemyTypes::memory:
-            {
-                // insert casting here after the merge with enemy implementation
-                break;
-            }
-            case EnemyTypes::normal:
-            {
-                // insert casting here after the merge with enemy implementation
-                break;
-            }
-            default:
-                break;
-            }
+    // check the enemy type
+    int type = static_cast<int>(enemy->getType()) - 1;
+    switch (type) {
+        // check if current tower can target given type
+        case EnemyTypes::RuntimeError:
+        {
+            return targetAble_[EnemyTypes::RuntimeError];
+            break;
         }
-    }
-    return true;
+        case EnemyTypes::MemoryError:
+        {
+            return targetAble_[EnemyTypes::MemoryError];
+            break;
+        }
+        case EnemyTypes::CompilerError:
+        {
+            return targetAble_[EnemyTypes::CompilerError];
+            break;
+        }
+        default:
+            break;
+        }
+    return false;
 }
 
 double Tower::distanceTo(QGraphicsItem * item) {
@@ -228,6 +245,27 @@ QList<QGraphicsItem*> Tower::getItemInRange() {
     return attack_area_->collidingItems();
 }
 
+QList<Tower*> Tower::getTowersInRange() {
+    QList<QGraphicsItem*> items_in_range = getItemInRange();
+    QList<Tower*> towers_in_range;
+
+    // go through all items and add every tower to the list
+    for (QGraphicsItem* item : items_in_range) {
+        QGraphicsProxyWidget* proxyWidget = dynamic_cast<QGraphicsProxyWidget*>(item);
+
+        // if there is a proxy widget
+        if (proxyWidget) {
+            QWidget* widget = proxyWidget->widget();
+            Tower * tower = dynamic_cast<Tower *>(widget);
+            // if this is a tower
+            if (tower) {
+                towers_in_range.prepend(tower);
+            }
+        }
+    }
+    return towers_in_range;
+}
+
 QPointF Tower::towerCenter() {
     QPoint towerPos = view->getGame()->getSquarePos(x_, y_).toPoint();
     QPointF center(towerPos.x() + this->pixmap().width()/2,
@@ -236,84 +274,30 @@ QPointF Tower::towerCenter() {
     return center;
 }
 
-void Tower::damageBuff(double buffFactor) {
-    damageMultiplier_ *= buffFactor;
+int Tower::getTotalCost() {
+    return totalCost_;
 }
 
-bool Tower::upgrade() {
-    if (upgradeLevel_ >= maxLevel_) {
-        // already max level
-        return false;
-    }
-    else {
-        // upgrade the tower according to its level
-        upgradeLevel_ += 1;
+void Tower::damageBuff(double buffFactor) {
+    damageMultiplier_ *= (1 + buffFactor);
+}
 
-        switch (upgradeLevel_) {
-        case 2:
-            // increase damage by 20%
-            this->damage_ = this->damage_ * 1.2;
-            targetAble_[EnemyTypes::memory] = true;
+void Tower::atkSpeedBuff(double buffFactor) {
+    // reduces the attack interval by buffFactor
+    // which increases the speed by buffFactor
+    attackInterval_ /= (1 + buffFactor);
 
-            // increase range to 4
-            setRange(4);
+    // schedule to delete the old attackTimer
+    attackTimer_->deleteLater();
 
-            // increase attack speed
-            attackInterval_ = 800;
+    // connect a new timer to the getTarget function
+    attackTimer_ = new QTimer(this);
+    connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
+    attackTimer_->start(attackInterval_);
+}
 
-            // update tower graphics
-            projectileImagePath_ = ":/images/CStudent2_projectile.png";
-            ogImagePath_ = ":/images/CStudent2.png";
-            towerImg->setPixmap(QPixmap(ogImagePath_));
-
-            break;
-        case 3:
-/**
-TODO : Add other changes to tower characteristic beside damage
-*/
-            // increase damage by 50%
-            this->damage_ = this->damage_ * 1.5;
-
-            // increase range to 5
-           setRange(5);
-
-            // increase attack speed
-            attackInterval_ = 600;
-
-            // update tower graphics
-            projectileImagePath_ = ":/images/CStudent3_projectile.png";
-            ogImagePath_ = ":/images/CStudent3.png";
-            towerImg->setPixmap(QPixmap(ogImagePath_));
-
-            break;
-        case 4:
-            // increase damage by 50%
-            this->damage_ = this->damage_ * 1.5;
-
-            // increase range to 7
-            setRange(7);
-
-            // increase attack speed
-            attackInterval_ = 300;
-
-            //increase pierce
-            pierce_ = 2;
-
-            // update tower graphics
-            projectileImagePath_ = ":/images/CStudent4_projectile.png";
-            ogImagePath_ = ":/images/CStudent4.png";
-            towerImg->setPixmap(QPixmap(ogImagePath_));
-
-            break;
-        }
-
-        // connect the timer to the getTarget function
-        QTimer * timer = new QTimer();
-        connect(timer,SIGNAL(timeout()),this,SLOT(getTarget()));
-        timer->start(attackInterval_);
-
-        return true;
-    }
+void Tower::atkSpeedDebuff(double debuffFactor) {
+    attackInterval_ *= (1 + debuffFactor);
 }
 
 void Tower::showAttackArea()
@@ -340,4 +324,8 @@ void Tower::showHideAttackArea()
 
 bool Tower::isTower(){
     return true;
+}
+
+void Tower::addCost(int cost) {
+    totalCost_ += cost;
 }

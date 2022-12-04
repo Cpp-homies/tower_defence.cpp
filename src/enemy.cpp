@@ -61,6 +61,9 @@ QTimer *Enemy::getTimer()
     return timer_;
 }
 
+EnemyType Enemy::getType() const {
+    return type_;
+}
 
 void Enemy::move()
 {
