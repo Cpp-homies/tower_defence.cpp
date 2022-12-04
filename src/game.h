@@ -37,6 +37,7 @@ public:
     void readWaveFile();
     QList<QPointF> convertCoordinates(QList<QPoint> path);
     QList<QPoint> getShortestPath(QPoint start);
+    QList<QPoint> BFS(QPoint start, QPoint end, bool blocked);
 
     int getHealth() const;
     int getScore() const;

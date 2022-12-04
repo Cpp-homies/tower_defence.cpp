@@ -200,10 +200,10 @@ void Game::createMap(){
     form->setLayout(mapLayout);
     gameLayout->addItem(form);
     shortest_path_ = getShortestPath(start_);
-    qInfo() << shortest_path_;
+    //qInfo() << shortest_path_;
 }
 
-QList<QPoint> Game::getShortestPath(QPoint start) {
+QList<QPoint> Game::BFS(QPoint start, QPoint end, bool blocked) {
     QQueue<QList<QPoint>> to_visit;
     QList<QPoint> initial;
     initial.push_back(start);
@@ -225,7 +225,8 @@ QList<QPoint> Game::getShortestPath(QPoint start) {
         QList<QPoint> neighbors;
         // Get in-bound neighbors that have not been visited yet
         for (auto i : all_neighbors) {
-            if (i.x() < total_cols && i.x() >= 0 && i.y() < total_rows && i.y() >= 0 && isPath(i.x(), i.y()) && !isComment(i.x(), i.y()) && !visited.contains(i)) {
+            if (i.x() < total_cols && i.x() >= 0 && i.y() < total_rows && i.y() >= 0 && isPath(i.x(), i.y())
+                    && (blocked || !isComment(i.x(), i.y())) && !visited.contains(i)) {
                 neighbors.append(i);
             }
         }
@@ -233,13 +234,21 @@ QList<QPoint> Game::getShortestPath(QPoint start) {
         for (auto i : neighbors) {
             QList<QPoint> new_elem;
             new_elem.append(i);
-            if (i == end_) {
+            if (i == end) {
                 return top + new_elem;
             }
             to_visit.append(top + new_elem);
         }
     }
     return QList<QPoint>();
+}
+
+QList<QPoint> Game::getShortestPath(QPoint start) {
+    QList<QPoint> path = BFS(start, end_, false);
+    if (!path.empty()) {
+        return path;
+    }
+    return BFS(start, end_, true);
 }
 
 void Game::createGameControls()
