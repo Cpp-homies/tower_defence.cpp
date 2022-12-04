@@ -9,7 +9,6 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    comment.cpp \
     compilererror.cpp \
     cs_student.cpp \
     enemy.cpp \
@@ -28,7 +27,6 @@ SOURCES += \
     tower.cpp \
 
 HEADERS += \
-    comment.h \
     compilererror.h \
     cs_student.h \
     enemy.h \

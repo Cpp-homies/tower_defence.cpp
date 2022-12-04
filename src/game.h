@@ -1,136 +1,141 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <QAtomicInteger>
+#include "enemy.h"
+#include "button.h"
+#include <QGraphicsView>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
-#include <QGraphicsView>
+#include <QToolButton>
 #include <QMutex>
 #include <QThread>
-#include <QToolButton>
-
-#include "button.h"
-#include "enemy.h"
+#include <QAtomicInteger>
 
 // enumeration to keep track of the game's mode
-namespace Modes {
-enum MODES { normal, build, upgrade };
+namespace Modes{
+    enum MODES{normal, build, upgrade};
 }
 
 // enumeration to keep track of tower types for build
-namespace TowerTypes {
-enum TYPES { CS_Student, TA, SearchEngine, LanguageServer, Valgrind, Comment };
+namespace TowerTypes{
+    enum TYPES{CS_Student, TA, SearchEngine, LanguageServer, Valgrind, Comment};
 }
 
-class Game : public QGraphicsScene {
-  Q_OBJECT
-  QThread thread;
+class Game: public QGraphicsScene
+{
+    Q_OBJECT
+    QThread thread;
+public:
 
- public:
-  Game(QObject* parent);
-  QPointF getSquarePos(int row, int column);
-  QWidget* getWidgetAt(int row, int column);
-  bool buildTower(int row, int column);
-  bool buildTower(int row, int column, TowerTypes::TYPES type);
-  bool upgradeTower(int row, int column);
+    Game(QObject* parent);
+    QPointF getSquarePos(int row, int column);
+    QWidget* getWidgetAt(int row, int column);
+    bool buildTower(int row, int column);
+    bool buildTower(int row, int column, TowerTypes::TYPES type);
+    bool upgradeTower(int row, int column);
 
-  bool isLost() const;
-  bool isWon() const;
-  bool isWaveWon();
-  void createMap();
-  void createGameControls();
-  void createWave();
-  void readWaveFile();
+    bool isLost() const;
+    bool isWon() const;
+    bool isWaveWon();
+    void createMap();
+    void createGameControls();
+    void createWave();
+    void readWaveFile();
 
-  QList<QPointF> convertCoordinates(QList<QPoint> path);
-  QList<QPoint> getShortestPath(QPoint start);
-  QList<QPoint> BFS(QPoint start, QPoint end, bool blocked);
+    QList<QPointF> convertCoordinates(QList<QPoint> path);
+    QList<QPoint> getShortestPath(QPoint start);
 
-  int getHealth() const;
-  int getScore() const;
-  int getLevel() const;
-  int getCurrency() const;
-  int getEnemyCount() const;
-  Modes::MODES getMode() const;
-  TowerTypes::TYPES getBuildType() const;
+    int getHealth() const;
+    int getScore() const;
+    int getLevel() const;
+    int getCurrency() const;
+    int getEnemyCount() const;
+    Modes::MODES getMode() const;
+    TowerTypes::TYPES getBuildType() const;
 
-  void changeScore(int points);
-  void changeCurrency(int dCurrency);
-  void setMode(Modes::MODES m);
-  void advanceLevel();
-  void addSpawnedEnemies(int);
 
-  void keyPressEvent(QKeyEvent* keyEvent);
-  void resetButtonHighlights();
+    void changeScore(int points);
+    void changeCurrency(int dCurrency);
+    void setMode(Modes::MODES m);
+    void advanceLevel();
+    void addSpawnedEnemies(int);
 
-  void hideAllAttackAreasExcept(QPointF exclude = QPointF());
+    void keyPressEvent(QKeyEvent *keyEvent);
+    void resetButtonHighlights();
 
-  QGraphicsGridLayout* mapLayout;  // map area where the action is
-  QGraphicsLinearLayout*
-      gameLayout;  // the whole are of the game, including the controls
-  QGraphicsGridLayout* controlsLayout;  // change this to your liking
+    void hideAllAttackAreasExcept(QPointF exclude = QPointF());
 
-  bool isTower(int row, int column);
-  bool isPath(int row, int column);
- public slots:
-  void showMenu();
-  void enterUpgradeMode();
-  void enterBuildCS();
-  void enterBuildTA();
-  void enterBuildSE();
-  void enterBuildLS();
-  void enterBuildVal();
-  void enemyDies(int value);
-  void spawnEnemy(int type, QList<QPointF> path);
-  void updateLeaderboard();
-  void showError(QString message);
-  void addEnemy(Enemy*, int);
-  void takeDamage(int dHealth);
-  void enterBuildCom();
-  void updatePaths();
+    QGraphicsGridLayout* mapLayout; //map area where the action is
+    QGraphicsLinearLayout* gameLayout; //the whole are of the game, including the controls
+    QGraphicsGridLayout* controlsLayout;//change this to your liking
 
-  void updatePaths();
-  dateEnemyCount();
-  void updateEnemyCount();
-  void stopEnemiesmies();
-  ilsi : ls : i g voWdnameWon();
-  void waveWon();
-  void error(QString);
-  void wallAction();
+    bool isTower(int row, int column);
+    bool isPath(int row, int column);
+public slots:
+    void showMenu();
+    void enterUpgradeMode();
+    void enterBuildCS();
+    void enterBuildTA();
+    void enterBuildSE();
+    void enterBuildLS();
+    void enterBuildVal();
+    void enemyDies(int value);
+    void spawnEnemy(int type, QList<QPointF> path);
+    void updateLeaderboard();
+    void showError(QString message);
+    void addEnemy(Enemy*);
+    void takeDamage(int dHealth);
+    void enterBuildCom();
+    void updatePaths();
+    void updateEnemyCount();
+    void stopEnemies();
 
-  a rQ ate : QPoint start_;
-  Point end_;
-  ntLhealQhist < QString >> map_;
 
-  tint tim_;
-  int currency_;
-  QAtomice_;
-  int wavesEnemyCount_;
-  Integer<int> spawnedThisWave_;
-  int finant enemyCount_;
-  int leveo_;
-  QlLevel_;
-  QList<QPeint> path_;
-  List<QStringList> waves_;
-  odList<EnEmy*> activeEnemies_;
+signals:
+    void gameWon();
+    void gameLost();
+    void waveWon();
+    void error(QString);
+    void wallAction();
 
-  oes::MODS mode;
-  TwterTypes::TYPESbuildType_;
-  QList<QcPoint> shoest_path_;
-  QGraphisTextItem* roundDisplay;
-  QGraphisTextItem* scoreDisplay;
-  QGraphicsTextItem* h;
-  QToolButton* build_CSstudent;
-  QToolButton* build_TAn;
-  QToolButton* build_CSstudent;
-  QToolButton* build_TA;
-  QToolButton* build_ValgrindQFurs;
-} QToolButton* build_Comment;
-;
-QS tring #buildButtonStylesheet;
 
-QList < QPointF endif  // GAME_
-}
-;
+private:
+    QPoint start_;
+    QPoint end_;
+    QList<QList<QString>> map_;
 
-#endif  // GAME_H
+    int health_;
+    int currency_;
+    int time_;
+    int wavesEnemyCount_;
+    QAtomicInteger<int> spawnedThisWave_;
+    int enemyCount_;
+    int level_;
+    int finalLevel_;
+    int score_;
+    QList<QPoint> path_;
+    QList<QStringList> waves_;
+    QList<Enemy*> activeEnemies_;
+
+
+    Modes::MODES mode_;
+    TowerTypes::TYPES buildType_;
+    QList<QPoint> shortest_path_;
+
+    QGraphicsTextItem * roundDisplay;
+    QGraphicsTextItem * scoreDisplay;
+    QGraphicsTextItem * healthDisplay;
+    QGraphicsTextItem * wealthDisplay;
+    Button * upgradeButton;
+    QToolButton* build_CSstudent;
+    QToolButton* build_TA;
+    QToolButton* build_SE;
+    QToolButton* build_LS;
+    QToolButton* build_Valgrind;
+    QToolButton* build_Comment;
+    QString buildButtonStylesheet;
+
+    QList<QPointF> coordsOfTowers;
+};
+
+#endif // GAME_H
