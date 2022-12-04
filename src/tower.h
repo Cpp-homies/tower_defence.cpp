@@ -40,6 +40,7 @@ public:
     void atkSpeedDebuff(double debuffFactor);
     void targetTableDebuff(EnemyTypes::TYPES type);
 
+    QGraphicsEllipseItem* getAttackArea();
     QList<QGraphicsItem*> getItemInRange();
     QList<Tower*> getTowersInRange();
     int getTotalCost();

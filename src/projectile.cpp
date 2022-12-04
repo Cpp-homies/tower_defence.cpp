@@ -41,6 +41,9 @@ void Projectile::move(){
             if (pierceCount_ >= pierce_){
                 deleteLater();
             }
+            // update distance travel here as well
+            setDistanceTravelled(distanceTravelled_+STEP_SIZE);
+            if(distanceTravelled_>maxRange_) deleteLater();
             return;
         }
 

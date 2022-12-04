@@ -250,6 +250,10 @@ double Tower::distanceTo(QGraphicsItem * item) {
     return line.length();
 }
 
+QGraphicsEllipseItem* Tower::getAttackArea() {
+    return attack_area_;
+}
+
 QList<QGraphicsItem*> Tower::getItemInRange() {
     return attack_area_->collidingItems();
 }

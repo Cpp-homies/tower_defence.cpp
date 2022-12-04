@@ -15,6 +15,7 @@ SOURCES += \
     enemy.cpp \
     button.cpp \
     game.cpp \
+    language_server.cpp \
     leaderboard.cpp \
     main.cpp \
     mainview.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
     enemy.h \
     button.h \
     game.h \
+    language_server.h \
     leaderboard.h \
     mainview.h \
     memoryerror.h \

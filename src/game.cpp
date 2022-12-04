@@ -20,6 +20,7 @@
 #include "tower.h"
 #include "cs_student.h"
 #include "search_engine.h"
+#include "language_server.h"
 #include "ta.h"
 #include "path.h"
 #include "comment.h"
@@ -48,6 +49,7 @@
 #define TA_COST 30
 #define SE_COST 25
 #define COM_COST 15
+#define LS_COST 50
 
 // penalty for selling the tower (will be deducted from the tower's total value
 #define SELL_PENALTY 0.3
@@ -1024,6 +1026,34 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
             if (this->currency_ >= TA_COST) {
                 // create a new tower and add it to the scene
                 Tower* newTower = new Search_Engine(row, column, nullptr);
+                QGraphicsWidget* tower = this->addWidget(newTower);
+
+                // remove the current square from the grid
+                this->removeItem(item->graphicsItem());
+                this->mapLayout->removeItem(item);
+
+                // add a tower to the grid at the given possition
+                this->mapLayout->addItem(tower, row, column);
+
+                // deduct the cost of the tower from player's money
+                changeCurrency(-SE_COST);
+
+                // add the cost of the tower to tower's total cost
+                newTower->addCost(SE_COST);
+            }
+            else {
+                // not enough money
+                return false;
+            }
+            break;
+        }
+        case TowerTypes::LanguageServer:
+        {
+            // first, check if the player have enough money or not
+            // if yes, build the tower
+            if (this->currency_ >= LS_COST) {
+                // create a new tower and add it to the scene
+                Tower* newTower = new Language_Server(row, column, nullptr);
                 QGraphicsWidget* tower = this->addWidget(newTower);
 
                 // remove the current square from the grid
