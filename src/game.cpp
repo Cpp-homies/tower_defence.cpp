@@ -53,7 +53,7 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
 {
     // set starting values of health, currency etc
     health_ = 100;
-    currency_ = 100;
+    currency_ = 9999999;
     level_ = 0;
     score_ = 0;
     enemyCount_ = 0;
@@ -116,7 +116,7 @@ void Game::createMap(){
             for (int i = 0; i < width; ++i) {
                 QString value = matrix[j][i];
                 if (value == "1") { // Tile for towers
-                    Square* tile = new Square(j,i,nullptr);
+                    Square* tile = new Square(i,j,nullptr);
                     QGraphicsProxyWidget* backgroundTile = addWidget(tile);
                     mapLayout->addItem(backgroundTile,j,i);
                 } else if (value == "2" || value == "A" || value == "B") { // Normal Path
@@ -173,39 +173,50 @@ void Game::createMap(){
                             }
                         } else {
                             if (left == true || right == true) {
-                                tile = new Path(j, i, Straight, 90, nullptr);
+                                tile = new Path(i, j, Straight, 90, nullptr);
                             } else {
-                                tile = new Path(j, i, Straight, 0, nullptr);
+                                tile = new Path(i, j, Straight, 0, nullptr);
                             }
                         }
 
                     } else if (value == "A") {
-                        start_ = QPoint(j, i);
+                        start_ = QPoint(i, j);
                         if (left) {
-                            tile = new Path(j, i, Start, 0, nullptr);
+                            tile = new Path(i, j, Start, 0, nullptr);
                         } else if (up) {
-                            tile = new Path(j, i, Start, 90, nullptr);
+                            tile = new Path(i, j, Start, 90, nullptr);
                         } else if (right) {
-                            tile = new Path(j, i, Start, 180, nullptr);
+                            tile = new Path(i, j, Start, 180, nullptr);
                         } else {
-                            tile = new Path(j, i, Start, 270, nullptr);
+                            tile = new Path(i, j, Start, 270, nullptr);
                         }
                     } else {
-                        end_ = QPoint(j, i);
+                        end_ = QPoint(i, j);
                         if (left) {
-                            tile = new Path(j, i, End, 0, nullptr);
+                            tile = new Path(i, j, End, 0, nullptr);
                         } else if (up) {
-                            tile = new Path(j, i, End, 90, nullptr);
+                            tile = new Path(i, j, End, 90, nullptr);
                         } else if (right) {
-                            tile = new Path(j, i, End, 180, nullptr);
+                            tile = new Path(i, j, End, 180, nullptr);
                         } else {
-                            tile = new Path(j, i, End, 270, nullptr);
+                            tile = new Path(i, j, End, 270, nullptr);
                         }
                     }
                     QGraphicsProxyWidget* pathTile = addWidget(tile);
                     mapLayout->addItem(pathTile, j, i);
                 }
             }
+        }
+        for (int j = 0; j < height; ++j) {
+            QString line = "";
+            for (int i = 0; i < width; ++i) {
+                if (isPath(j, i)) {
+                    line.push_back(" ");
+                } else {
+                    line.push_back("O");
+                }
+            }
+            qInfo() << line;
         }
     }
 
@@ -875,7 +886,7 @@ bool Game::buildTower(int row, int column) {
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
 
     // if there is a tower occupying the square, return false
-    if (dynamic_cast<Tower*>(widget) || isPath(column, row)) {
+    if (dynamic_cast<Tower*>(widget) || isPath(row, column)) {
         return false;
     }
     else {
@@ -898,7 +909,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
     resetButtonHighlights();
 
-    bool testIsPath = isPath(column, row);
+    bool testIsPath = isPath(row, column);
     Path* testDynamicCast = dynamic_cast<Path*>(widget);
     // if there is a tower or a path occupying the square, return false
     if (dynamic_cast<Tower*>(widget) || testIsPath) {
@@ -998,7 +1009,7 @@ bool Game::sellTower(int row, int column) {
         int totalCost = tower->getTotalCost();
 
         // create a new square and add it to the scene
-        Square* newSquare = new Square(row, column, nullptr);
+        Square* newSquare = new Square(column, row, nullptr);
         QGraphicsWidget* square = this->addWidget(newSquare);
 
         // remove the current tower from the grid
