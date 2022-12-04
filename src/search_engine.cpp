@@ -6,6 +6,7 @@
 Search_Engine::Search_Engine(int row, int column, QWidget *parent) : Tower(row, column, 4, 10, 3000, parent) {
     // set Search Engine stats
     atkSpeedBuffFactor_ = 5;// set the BuffFactor extremely high for testing
+    canFire_ = false;
     //    atkSpeedBuffFactor_ = 0.2;
     upgradeLevel_ = 1;
     maxLevel_ = 2;
@@ -48,6 +49,11 @@ Search_Engine::~Search_Engine() {
       if (tower) {
           // debuff the tower
           tower->atkSpeedDebuff(atkSpeedBuffFactor_);
+
+          // if this is level 2, remove the friend towers' ability to target memory errors
+          if (this->upgradeLevel_ >= 2) {
+              tower->targetTableDebuff(EnemyTypes::MemoryError);
+          }
       }
   }
 
@@ -69,13 +75,19 @@ bool Search_Engine::upgrade() {
           // if the player has enough money for the upgrade
           // upgrade the tower
           if (view->getGame()->getCurrency() >= LVL2_COST) {
-/**
-*
-* TODO: make tower in range be able to target memory errors
-*/
               // update tower graphics
               ogImagePath_ = ":/images/Google.png";
               towerImg->setPixmap(QPixmap(ogImagePath_));
+
+              // make nearby enemies able to target memory errors
+              for (QPointF point : buffedTowers) {
+                  QWidget* widget = view->getGame()->getWidgetAt(point.y(), point.x());
+                  Tower* tower = dynamic_cast<Tower*>(widget);
+                  if (tower) {
+                      // make the tower able to target memory errors
+                      tower->targetTableBuff(EnemyTypes::MemoryError);
+                  }
+              }
 
               // deduct the cost of the tower from player's money
               view->getGame()->changeCurrency(-LVL2_COST);
@@ -105,6 +117,11 @@ void Search_Engine::buffPulse() {
       if (!buffedTowers.contains(tower->getCoords())) {
           // buff the tower
           tower->atkSpeedBuff(atkSpeedBuffFactor_);
+
+          // if this is level 2, make the towers able to target memory errors
+          if (this->upgradeLevel_ >= 2) {
+              tower->targetTableBuff(EnemyTypes::MemoryError);
+          }
 
           // add the buffed tower's location to the list to marked as buffed
           buffedTowers.prepend(tower->getCoords());

@@ -35,8 +35,10 @@ public:
     bool isTargetable(Enemy* enemy);
     void damageBuff(double buffFactor);
     void atkSpeedBuff(double buffFactor);
+    void targetTableBuff(EnemyTypes::TYPES type);
 
     void atkSpeedDebuff(double debuffFactor);
+    void targetTableDebuff(EnemyTypes::TYPES type);
 
     QList<QGraphicsItem*> getItemInRange();
     QList<Tower*> getTowersInRange();
@@ -67,7 +69,9 @@ protected:
     QString ogImagePath_;// the original image path in use
     QString projectileImagePath_;
 
+    bool canFire_;// method to check if the tower can fire or not
     bool targetAble_[3];// array for checking if an enemy is targetable
+    bool targetAbleBuff_[3];// so that support tower can allow towers to target certain enemy types
 private:
     bool upgradeable_;
 

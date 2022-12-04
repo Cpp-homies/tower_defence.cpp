@@ -35,13 +35,14 @@ Tower::Tower(int row, int column, QWidget *parent) : Square(column, row, parent)
     attackInterval_ = 1000;
     damageMultiplier_ = 1.0;
     pierce_ = 0;
+    canFire_ = true;
 
     totalCost_ = 0;
 
     upgradeLevel_ = 1;
     maxLevel_ = 4;
 
-    // initialize the targetable enemies at first the tower can only target normal enemies
+    // initialize the targetable enemies, at first the tower can only target normal enemies
     std::fill_n(targetAble_, std::size(targetAble_), false);
     targetAble_[EnemyTypes::CompilerError] = true;
 
@@ -77,9 +78,17 @@ Tower::Tower(int row, int column, QWidget *parent) : Square(column, row, parent)
 Tower::Tower(int row, int column, int range, int damage, int attackInterval, QWidget *parent) : Square(column, row, parent),
                                                                     range_(range), damage_(damage), attackInterval_(attackInterval) {
     totalCost_ = 0;
+    canFire_ = true;
 
     // set the original damage multipier to 1.0
     damageMultiplier_ = 1.0;
+
+    // initialize the targetable enemies, at first the tower can only target normal enemies
+    std::fill_n(targetAble_, std::size(targetAble_), false);
+    targetAble_[EnemyTypes::CompilerError] = true;
+
+    // initialize the targetAble buff by other towers, at the start there is no buff
+    std::fill_n(targetAbleBuff_, std::size(targetAbleBuff_), false);
 
     // create the attack circle
     attack_area_ = new QGraphicsEllipseItem(QRect(QPoint(0,0),
@@ -217,17 +226,17 @@ bool Tower::isTargetable(Enemy* enemy) {
         // check if current tower can target given type
         case EnemyTypes::RuntimeError:
         {
-            return targetAble_[EnemyTypes::RuntimeError];
+            return targetAble_[EnemyTypes::RuntimeError] || targetAbleBuff_[EnemyTypes::RuntimeError];
             break;
         }
         case EnemyTypes::MemoryError:
         {
-            return targetAble_[EnemyTypes::MemoryError];
+            return targetAble_[EnemyTypes::MemoryError] || targetAbleBuff_[EnemyTypes::MemoryError];
             break;
         }
         case EnemyTypes::CompilerError:
         {
-            return targetAble_[EnemyTypes::CompilerError];
+            return targetAble_[EnemyTypes::CompilerError] || targetAbleBuff_[EnemyTypes::CompilerError];
             break;
         }
         default:
@@ -283,29 +292,42 @@ void Tower::damageBuff(double buffFactor) {
 }
 
 void Tower::atkSpeedBuff(double buffFactor) {
-    // reduces the attack interval by buffFactor
-    // which increases the speed by buffFactor
-    attackInterval_ /= (1 + buffFactor);
+    if (canFire_) {
+        // reduces the attack interval by buffFactor
+        // which increases the speed by buffFactor
+        attackInterval_ /= (1 + buffFactor);
 
-    // schedule to delete the old attackTimer
-    attackTimer_->deleteLater();
+        // schedule to delete the old attackTimer
+        attackTimer_->deleteLater();
 
-    // connect a new timer to the getTarget function
-    attackTimer_ = new QTimer(this);
-    connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
-    attackTimer_->start(attackInterval_);
+        // connect a new timer to the getTarget function
+        attackTimer_ = new QTimer(this);
+        connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
+        attackTimer_->start(attackInterval_);
+    }
 }
 
 void Tower::atkSpeedDebuff(double debuffFactor) {
-    attackInterval_ *= (1 + debuffFactor);
+    if (canFire_) {
+        attackInterval_ *= (1 + debuffFactor);
 
-    // schedule to delete the old attackTimer
-    attackTimer_->deleteLater();
+        // schedule to delete the old attackTimer
+        attackTimer_->deleteLater();
 
-    // connect a new timer to the getTarget function
-    attackTimer_ = new QTimer(this);
-    connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
-    attackTimer_->start(attackInterval_);
+        // connect a new timer to the getTarget function
+        attackTimer_ = new QTimer(this);
+        connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
+        attackTimer_->start(attackInterval_);
+    }
+}
+
+// support towers call this to make this tower able to target the given enemy type
+void Tower::targetTableBuff(EnemyTypes::TYPES type) {
+    targetAbleBuff_[type] = true;
+}
+
+void Tower::targetTableDebuff(EnemyTypes::TYPES type) {
+    targetAbleBuff_[type] = false;
 }
 
 void Tower::showAttackArea()

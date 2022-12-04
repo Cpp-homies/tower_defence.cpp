@@ -938,6 +938,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
 
                 // deduct the cost of the comment from player's money
                 changeCurrency(-COM_COST);
+                return true;
             }
             else {
                 // not enough money
