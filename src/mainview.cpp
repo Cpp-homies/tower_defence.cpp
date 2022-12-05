@@ -49,7 +49,9 @@ void MainView::showMenu()
     setScene(menu_);
 
     // Delete old game scene
-    game_->deleteLater();
+    if (game_ != nullptr){
+        game_->deleteLater();
+    }
 
     // Set background image
     QBrush brush;
