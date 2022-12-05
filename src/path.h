@@ -10,9 +10,10 @@ enum PathType {
 
 class Path : public Square {
 public:
-    Path(int x, int y, PathType type, int rotation, QWidget* parent);
+    Path(int x, int y, PathType type, int rotation, Path* old = nullptr, QWidget* parent = nullptr);
 private:
     bool isComment_;
+    Path* old_;
 };
 
 #endif // PATH_H

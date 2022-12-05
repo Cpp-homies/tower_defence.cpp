@@ -1,8 +1,8 @@
 #include "path.h"
 #include <QPixmap>
 
-Path::Path(int x, int y, PathType type, int rotation, QWidget* parent)
-        : Square(x, y, parent) {
+Path::Path(int x, int y, PathType type, int rotation, Path* old, QWidget* parent)
+        : Square(x, y, parent), old_(old) {
     isComment_ = (type == CommentType);
     // Set up rotation transform
     QTransform transform;
@@ -26,7 +26,9 @@ Path::Path(int x, int y, PathType type, int rotation, QWidget* parent)
         setPixmap(QPixmap(":/images/Path_startend.png").transformed(transform));
         break;
     case CommentType:
-        setPixmap(QPixmap(":/images/Comment.png").transformed(transform));
+        if (old != nullptr){
+            setPixmap(old_->pixmap());
+        }
         break;
     }
 };

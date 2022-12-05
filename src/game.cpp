@@ -945,14 +945,13 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
             // if yes, build the tower
             if (this->currency_ >= COM_COST) {
                 // create a new tower and add it to the scene
-                Comment* newComment = new Comment(column, row, 10000, nullptr);
+                Comment* newComment = new Comment(column, row, 10000, dynamic_cast<Path*>(widget), nullptr);
                 QGraphicsWidget* comment = this->addWidget(newComment);
 
                 // Notify enemeies of path change
                 emit wallAction();
 
                 // remove the current square from the grid
-                this->removeItem(item->graphicsItem());
                 this->mapLayout->removeItem(item);
 
                 // add the comment to the grid at the given possition
