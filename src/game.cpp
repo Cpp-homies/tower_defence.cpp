@@ -399,9 +399,9 @@ void Game::createGameControls()
 
 
     // main menu button
-    Button * menuButton = new Button(QString("Main menu"), 200, 50);
-    int lxPos = this->width() - menuButton->boundingRect().width() - 40;
-    int lyPos = this->height() - menuButton->boundingRect().height() - 40;
+    Button * menuButton = new Button(QString("Main menu"), 240, 50, Qt::red);
+    int lxPos = this->width() - menuButton->boundingRect().width() - 35;
+    int lyPos = this->height() - menuButton->boundingRect().height() - 35;
     menuButton->setPos(lxPos, lyPos);
     connect(menuButton, SIGNAL(clicked()), this, SLOT(showMenu()));
     menuButton->setZValue(10);
@@ -410,23 +410,33 @@ void Game::createGameControls()
     // upgrade button
     upgradeButton = new Button(QString("Upgrade Tower"), 240, 50);
 
-    int uxPos = this->width() - upgradeButton->boundingRect().width() - menuButton->boundingRect().width() - 80;
-    int uyPos = this->height() - upgradeButton->boundingRect().height() - 40;
+    int uxPos = this->width() - upgradeButton->boundingRect().width() - menuButton->boundingRect().width() - 50;
+    int uyPos = lyPos;
     upgradeButton->setPos(uxPos, uyPos);
     connect(upgradeButton, SIGNAL(clicked()), this, SLOT(enterUpgradeMode()));
     upgradeButton->setZValue(10);
     addItem(upgradeButton);
 
     // sell tower button
-    sellButton = new Button(QString("Sell Tower"), 200, 50);
+    sellButton = new Button(QString("Sell Tower"), 240, 50);
 
-    int sxPos = this->width() - sellButton->boundingRect().width() - menuButton->boundingRect().width()
-                    + (upgradeButton->boundingRect().width() - sellButton->boundingRect().width());
+    int sxPos = uxPos;
     int syPos = this->height() - sellButton->boundingRect().height() - 100;
     sellButton->setPos(sxPos, syPos);
     connect(sellButton, SIGNAL(clicked()), this, SLOT(enterSellMode()));
     sellButton->setZValue(10);
     addItem(sellButton);
+
+    // next round button
+    nextRoundButton = new Button(QString("Start game"), 240, 50);
+
+    int nxPos = lxPos;
+    int nyPos = syPos;
+    nextRoundButton->setPos(nxPos, nyPos);
+    connect(nextRoundButton, SIGNAL(clicked()), this, SLOT(startGame()));
+    nextRoundButton->setZValue(10);
+    addItem(nextRoundButton);
+
 
     // tower build buttons
     buildButtonStylesheet = "background-color: white; border: 1px solid white";
@@ -885,13 +895,11 @@ void Game::addEnemy(Enemy* enemy)
 
 //just testing scene changing
 //can be used for other purposes
-void Game::keyPressEvent(QKeyEvent* /* unused */)
+void Game::keyPressEvent(QKeyEvent* event)
 {
-    if(level_==0 )
-    {
-
-        createWave();
-
+    auto key = event->key();
+    if (key == ' '){
+        startGame();
     }
 
 }
@@ -1337,4 +1345,9 @@ void Game::hideAllAttackAreasExcept(QPointF exclude)
 
 }
 
-
+void Game::startGame() {
+    if(level_==0 )
+    {
+        createWave();
+    }
+}

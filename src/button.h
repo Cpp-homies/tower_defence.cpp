@@ -9,7 +9,8 @@ class Button:public QObject, public QGraphicsRectItem{
     Q_OBJECT
 public:
     // constructors
-    Button(QString name, int w, int h, QGraphicsItem* parent =NULL);
+    Button(QString name, int w, int h, QColor backgroundColor = Qt::green
+            , QGraphicsItem* parent =NULL);
 
     // public methods (events)
     void mousePressEvent(QGraphicsSceneMouseEvent * event);
@@ -21,6 +22,7 @@ signals:
 
 private:
     QGraphicsTextItem * text;
+    QColor backgroundColor_;
 };
 
 #endif // BUTTON_H

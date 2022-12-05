@@ -40,7 +40,6 @@ public:
     bool isWaveWon();
     void createMap();
     void createGameControls();
-    void createWave();
     void readWaveFile();
 
     QList<QPointF> convertCoordinates(QList<QPoint> path);
@@ -95,6 +94,9 @@ public slots:
     void updateEnemyCount();
     void stopEnemies();
 
+    void createWave();
+    void startGame();
+
 
 signals:
     void gameWon();
@@ -133,6 +135,7 @@ private:
     QGraphicsTextItem * wealthDisplay;
     Button * upgradeButton;
     Button * sellButton;
+    Button * nextRoundButton;
     QToolButton* build_CSstudent;
     QToolButton* build_TA;
     QToolButton* build_SE;

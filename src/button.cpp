@@ -5,13 +5,14 @@
 #include <QFontDatabase>
 #include <QCursor>
 
-Button::Button(QString name, int w, int h, QGraphicsItem *parent): QGraphicsRectItem(parent)
+Button::Button(QString name, int w, int h, QColor backgroundColor, QGraphicsItem *parent):
+    QGraphicsRectItem(parent), backgroundColor_(backgroundColor)
 {
     // Draw the rect
     setRect(0,0,w,h);
     QBrush brush;
     brush.setStyle(Qt::SolidPattern);
-    brush.setColor(Qt::green);
+    brush.setColor(backgroundColor_);
     setBrush(brush);
 
     // draw the text
@@ -37,7 +38,7 @@ void Button::mousePressEvent(QGraphicsSceneMouseEvent */* unused */)
 void Button::hoverEnterEvent(QGraphicsSceneHoverEvent */* unused */)
 {
     // change color to dark green
-    if (brush().color() == Qt::green) {
+    if (brush().color() == backgroundColor_) {
         QBrush brush;
         brush.setStyle(Qt::SolidPattern);
         brush.setColor(Qt::darkGreen);
@@ -51,7 +52,7 @@ void Button::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */)
     if (brush().color() == Qt::darkGreen) {
         QBrush brush;
         brush.setStyle(Qt::SolidPattern);
-        brush.setColor(Qt::green);
+        brush.setColor(backgroundColor_);
         setBrush(brush);
     }
 
