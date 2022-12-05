@@ -13,6 +13,21 @@ Leaderboard::Leaderboard(QObject* parent): QGraphicsScene(parent)
 {
     // set size 1280x717 (use 717 height because we dont want scroll)
     setSceneRect(0,0,1280,717);
+
+
+    // Create the titletext
+    QGraphicsTextItem * titleText = new QGraphicsTextItem(QString("Leaderboard"));
+    // set font for titletext
+    QFont titleFont("Roboto", 50, 900);
+    titleText->setDefaultTextColor(Qt::green);
+    titleText->setFont(titleFont);
+    // set position for titletext
+    int txPos = this->width()/2 - titleText->boundingRect().width()/2;
+    int tyPos = 50;
+    titleText->setPos(txPos,tyPos);
+    // add titletext to the scene
+    addItem(titleText);
+
     readFile();
 
     QGraphicsWidget *form = new QGraphicsWidget;
@@ -20,10 +35,13 @@ Leaderboard::Leaderboard(QObject* parent): QGraphicsScene(parent)
     for(QPair<QString,int> &score:leaderboard_)
     {
         QLabel* highScore = new QLabel();
-        highScore->setText(score.first+ " " +QString::number(score.second));
+        highScore->setFixedWidth(titleText->boundingRect().width()-15);
+        highScore->setText("<div style=\"float: left\">" + score.first +
+                           "</div> <div style=\"float: right; text-align:right\">" +
+                           QString::number(score.second) + "</div>");
         highScore->setFont(QFont("Roboto", 20, QFont::Bold));
         highScore->setFrameStyle(QFrame::Raised | QFrame::Panel);
-        highScore->setStyleSheet("QLabel { background-color : black; color : lime; }");
+        highScore->setStyleSheet("QLabel { background-color : black; color : lime; padding : 5px; margin : 0 }");
         QGraphicsProxyWidget* player = addWidget(highScore);
         layout->addItem(player);
     }
@@ -33,7 +51,7 @@ Leaderboard::Leaderboard(QObject* parent): QGraphicsScene(parent)
     form->setLayout(layout);
     addItem(form);
 
-    form->setPos(this->width()/2-form->boundingRect().width()/2-120,this->height()/4);
+    form->setPos(titleText->scenePos().x(),this->height()/4);
 
     // main menu button
     Button * menuButton = new Button(QString("Main menu"), 200, 50);
