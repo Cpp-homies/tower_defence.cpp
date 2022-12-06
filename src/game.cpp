@@ -50,6 +50,7 @@
 #define SE_COST 25
 #define COM_COST 15
 #define LS_COST 50
+#define VAL_COST 70
 
 // penalty for selling the tower (will be deducted from the tower's total value
 #define SELL_PENALTY 0.3
@@ -289,7 +290,7 @@ void Game::createGameControls()
     controlsLayout = new QGraphicsGridLayout();
 
     // set spacings
-    controlsLayout->setContentsMargins(80,300,0,0);
+    controlsLayout->setContentsMargins(80,270,0,0);
     controlsLayout->setSpacing(60);
 
     // Font for displaying round, health and wealth
@@ -912,6 +913,7 @@ QPointF Game::getSquarePos(int row, int column){
 void Game::showMenu(){
     MainView* view = qobject_cast<MainView*>(this->parent());
     view->showMenu();
+    this->deleteLater();
 
 }
 
