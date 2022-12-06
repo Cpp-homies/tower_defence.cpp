@@ -24,7 +24,7 @@ public slots:
 
 
 private:
-    Game* game_;
+    Game* game_ = nullptr;
     Menu* menu_;
     Leaderboard* leaderboard_;
 };
