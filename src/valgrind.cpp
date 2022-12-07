@@ -7,7 +7,7 @@ Valgrind::Valgrind(int row, int column, QWidget *parent/*unused*/) : Tower(row, 
     pierce_ = 3;
 
     // valgrind can also target memory errors and bosses right at level 1 as well
-    targetAble_[EnemyTypes::CompilerError] = true;
+    targetAble_[EnemyTypes::MemoryError] = true;
     targetAble_[EnemyTypes::RuntimeError] = true;
 
     // set Valgrind graphics
