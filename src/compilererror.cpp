@@ -53,7 +53,7 @@ void CompilerError::explodeException()
         QList<QPoint> matrixPath(matrixPath_);
         matrixPath.remove(0,point_index_);
         CompilerError* enemy = new CompilerError(CompilerErrorType::SyntaxError,path,matrixPath);
-        enemy->setSpeed(speed_+i*3);
+        enemy->setSpeed(speed_+i*3 > 70 ? 70 : speed_+i*3);
         emit addedEnemy((Enemy*)enemy);
     }
 }

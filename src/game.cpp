@@ -969,13 +969,19 @@ void Game::enemyDies(int value)
 void Game::addEnemy(Enemy* enemy)
 {
     addItem(enemy);
-    enemy->startMove();
+
     connect(enemy,SIGNAL(enemyDies(int)),this,SLOT(enemyDies(int)));
     connect(enemy,SIGNAL(addedEnemy(Enemy*)),this,SLOT(addEnemy(Enemy*)));
     connect(enemy,SIGNAL(dealsDamage(int)),this,SLOT(takeDamage(int)));
     connect(enemy,SIGNAL(enemyDies(int)),this,SLOT(updateEnemyCount()));
     connect(enemy,SIGNAL(addedEnemy(Enemy*)),this,SLOT(updateEnemyCount()));
     activeEnemies_<<enemy;
+    QPoint nextLocation = enemy->getNextLocation();
+    if(!isComment(nextLocation.x(),nextLocation.y()))
+    {
+        enemy->startMove();
+    }
+
     updateEnemyCount();
 
 }
