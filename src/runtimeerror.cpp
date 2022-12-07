@@ -50,7 +50,7 @@ void RuntimeError::takeDamage(int damage)
             QList<QPoint> matrixPath(matrixPath_);
             matrixPath.remove(0,point_index_);
             RuntimeError* minion = new RuntimeError(RuntimeErrorType::MemoryStackMinion,path, matrixPath);
-            minion->setSpeed(speed_*2);
+            minion->setSpeed(speed_*2>70 ? 70 : speed_*2);
             emit addedEnemy((Enemy*)minion);
         }
 
