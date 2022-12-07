@@ -28,6 +28,7 @@ SOURCES += \
     square.cpp \
     ta.cpp \
     tower.cpp \
+    valgrind.cpp
 
 HEADERS += \
     comment.h \
@@ -47,7 +48,8 @@ HEADERS += \
     search_engine.h \
     square.h \
     ta.h \
-    tower.h
+    tower.h \
+    valgrind.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

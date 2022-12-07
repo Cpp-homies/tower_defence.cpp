@@ -22,6 +22,7 @@
 #include "search_engine.h"
 #include "language_server.h"
 #include "ta.h"
+#include "valgrind.h"
 #include "path.h"
 #include "comment.h"
 
@@ -917,29 +918,34 @@ void Game::showMenu(){
 
 }
 
+/**
+ *
+ * The below function was used for testing and is now outdated
+ *
+ */
 // build a default tower (CS Student)
-bool Game::buildTower(int row, int column) {
-    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
-    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
+//bool Game::buildTower(int row, int column) {
+//    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
+//    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
 
-    // if there is a tower occupying the square, return false
-    if (dynamic_cast<Tower*>(widget) || isPath(row, column)) {
-        return false;
-    }
-    else {
-        // create a new tower and add it to the scene
-        QGraphicsWidget* tower = this->addWidget(new CS_Student(row, column, nullptr));
+//    // if there is a tower occupying the square, return false
+//    if (dynamic_cast<Tower*>(widget) || isPath(row, column)) {
+//        return false;
+//    }
+//    else {
+//        // create a new tower and add it to the scene
+//        QGraphicsWidget* tower = this->addWidget(new CS_Student(row, column, nullptr));
 
-        // remove the current square from the grid
-        this->removeItem(item->graphicsItem());
-        this->mapLayout->removeItem(item);
+//        // remove the current square from the grid
+//        this->removeItem(item->graphicsItem());
+//        this->mapLayout->removeItem(item);
 
-        // add a tower to the grid at the given possition
-        this->mapLayout->addItem(tower, row, column);
+//        // add a tower to the grid at the given possition
+//        this->mapLayout->addItem(tower, row, column);
 
-        return true;
-    }
-}
+//        return true;
+//    }
+//}
 
 bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
@@ -1112,6 +1118,37 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
 
                 // add the cost of the tower to tower's total cost
                 newTower->addCost(SE_COST);
+            }
+            else {
+                // not enough money
+                return false;
+            }
+            break;
+        }
+        case TowerTypes::Valgrind:
+        {
+            // first, check if the player have enough money or not
+            // if yes, build the tower
+            if (this->currency_ >= VAL_COST) {
+                // create a new tower and add it to the scene
+                Tower* newTower = new Valgrind(row, column, nullptr);
+                QGraphicsWidget* tower = this->addWidget(newTower);
+
+                // remove the current square from the grid
+                this->removeItem(item->graphicsItem());
+                this->mapLayout->removeItem(item);
+
+                // add a tower to the grid at the given possition
+                this->mapLayout->addItem(tower, row, column);
+
+                // Hide the attack ranges of all other towers
+                hideAllAttackAreasExcept(QPointF(row,column));
+
+                // deduct the cost of the tower from player's money
+                changeCurrency(-VAL_COST);
+
+                // add the cost of the tower to tower's total cost
+                newTower->addCost(VAL_COST);
             }
             else {
                 // not enough money
