@@ -47,13 +47,15 @@ TA::TA(int row, int column, QWidget *parent) : Tower(row, column, 4, 10, 3000, p
 }
 
 TA::~TA() {
-    // remove the buff from all buffed towers
-    for (QPointF point : buffedTowers) {
-        QWidget* widget = view->getGame()->getWidgetAt(point.y(), point.x());
-        Tower* tower = dynamic_cast<Tower*>(widget);
-        if (tower) {
-            // debuff the tower
-            tower->atkSpeedDebuff(atkSpeedBuffFactor_);
+    if (view->getGame()->getMode() != Modes::exit) {
+        // remove the buff from all buffed towers
+        for (QPointF point : buffedTowers) {
+            QWidget* widget = view->getGame()->getWidgetAt(point.y(), point.x());
+            Tower* tower = dynamic_cast<Tower*>(widget);
+            if (tower) {
+                // debuff the tower
+                tower->atkSpeedDebuff(atkSpeedBuffFactor_);
+            }
         }
     }
 

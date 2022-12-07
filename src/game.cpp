@@ -999,6 +999,7 @@ QPointF Game::getSquarePos(int row, int column){
 void Game::showMenu(){
     MainView* view = qobject_cast<MainView*>(this->parent());
     view->showMenu();
+    mode_ = Modes::exit;// added to handle object deletion
     this->deleteLater();
 
 }
@@ -1455,6 +1456,9 @@ void Game::resetButtonHighlights() {
     brush.setStyle(Qt::SolidPattern);
     brush.setColor(Qt::green);
     upgradeButton->setBrush(brush);
+
+    // change sell color back to green
+    sellButton->setBrush(brush);
 }
 
 void Game::hideAllAttackAreasExcept(QPointF exclude)

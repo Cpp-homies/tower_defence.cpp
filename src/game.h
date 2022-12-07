@@ -13,7 +13,7 @@
 
 // enumeration to keep track of the game's mode
 namespace Modes{
-    enum MODES{normal, build, upgrade, sell};
+    enum MODES{normal, build, upgrade, sell, exit};
 }
 
 // enumeration to keep track of tower types for build

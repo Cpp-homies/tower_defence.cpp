@@ -42,20 +42,24 @@ Search_Engine::Search_Engine(int row, int column, QWidget *parent) : Tower(row, 
 }
 
 Search_Engine::~Search_Engine() {
-  // remove the buff from all buffed towers
-  for (QPointF point : buffedTowers) {
-      QWidget* widget = view->getGame()->getWidgetAt(point.y(), point.x());
-      Tower* tower = dynamic_cast<Tower*>(widget);
-      if (tower) {
-          // debuff the tower
-          tower->atkSpeedDebuff(atkSpeedBuffFactor_);
+    // if the game mode is not exit
+    if (view->getGame()->getMode() != Modes::exit) {
+        // remove the buff from all buffed towers
+        for (QPointF point : buffedTowers) {
+          QWidget* widget = view->getGame()->getWidgetAt(point.y(), point.x());
+          Tower* tower = dynamic_cast<Tower*>(widget);
+          if (tower) {
+              // debuff the tower
+              tower->atkSpeedDebuff(atkSpeedBuffFactor_);
 
-          // if this is level 2, remove the friend towers' ability to target memory errors
-          if (this->upgradeLevel_ >= 2) {
-              tower->targetTableDebuff(EnemyTypes::MemoryError);
+              // if this is level 2, remove the friend towers' ability to target memory errors
+              if (this->upgradeLevel_ >= 2) {
+                  tower->targetTableDebuff(EnemyTypes::MemoryError);
+              }
           }
-      }
-  }
+        }
+    }
+
 
   // schedule to delete the buff timer
   buffTimer_->deleteLater();
