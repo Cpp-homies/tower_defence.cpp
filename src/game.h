@@ -145,6 +145,8 @@ private:
     QString buildButtonStylesheet;
 
     QList<QPointF> coordsOfTowers;
+
+    void addLabelTo(QGraphicsLinearLayout* layout, QString towerName, QString stylesheet);
 };
 
 #endif // GAME_H

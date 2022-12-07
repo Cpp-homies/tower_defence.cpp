@@ -43,7 +43,7 @@
 #include <QStandardPaths>
 
 
-#define BUILD_BUTTON_SIZE 90
+#define BUILD_BUTTON_SIZE 95
 
 // prices of towers can be set here
 #define CS_COST 20
@@ -291,8 +291,8 @@ void Game::createGameControls()
     controlsLayout = new QGraphicsGridLayout();
 
     // set spacings
-    controlsLayout->setContentsMargins(80,270,0,0);
-    controlsLayout->setSpacing(60);
+    controlsLayout->setContentsMargins(80,230,0,0);
+    controlsLayout->setSpacing(50);
 
     // Font for displaying round, health and wealth
     QFont statsFont("Roboto", 32);
@@ -356,7 +356,7 @@ void Game::createGameControls()
     healthIndicator->setBrush(healthIndicatorB);
     // set position
     int HIxPos = 744;
-    int HIyPos = 140;
+    int HIyPos = 120;
     // QGraphicsProxyWidget* healthIndicatorWidget = addWidget(healthIndicator);
     healthIndicator->setPos(HIxPos,HIyPos);
     // add indicator to the scene
@@ -383,7 +383,7 @@ void Game::createGameControls()
     wealthIndicator->setBrush(wealthIndicatorB);
     // set position
     int WIxPos = 1000;
-    int WIyPos = 140;
+    int WIyPos = HIyPos;
     wealthIndicator->setPos(WIxPos,WIyPos);
     // add indicator to the scene
     addItem(wealthIndicator);
@@ -441,7 +441,8 @@ void Game::createGameControls()
 
 
     // tower build buttons
-    buildButtonStylesheet = "background-color: white; border: 1px solid white";
+    buildButtonStylesheet = "background-color: white; border: 1px solid white; text-align: center";
+
         // create CSstudent button
     build_CSstudent = new QToolButton();
     // create the icon for the button
@@ -452,22 +453,16 @@ void Game::createGameControls()
     // connect the button with the enterBuildMode function
     connect(build_CSstudent, SIGNAL(clicked()), this, SLOT(enterBuildCS()));
 
-    // Add price visuals
-    QLabel * cstCostVisual = new QLabel(QString::number(CS_COST));
-    // set font
-    QFont cstCostFont("Roboto", 16);
-    cstCostVisual->setFont(cstCostFont);
     QGraphicsLinearLayout* cstudentButtonAndPrice= new QGraphicsLinearLayout(Qt::Vertical);
     cstudentButtonAndPrice->setSpacing(0);
 
-        // add the button and price to the control layout
+        // add the name, button and price to the control layout
+    addLabelTo(cstudentButtonAndPrice, "CStudent", buildButtonStylesheet);
     // add button to the linearlayout ButtonAndPrice
     QGraphicsProxyWidget* cstWidget = addWidget(build_CSstudent);
     cstudentButtonAndPrice->addItem(cstWidget);
-    // add valCostVisual to the linearlayout ButtonAndPrice
-    QGraphicsProxyWidget* cstWidgetCost = addWidget(cstCostVisual);
-    cstWidgetCost->setMaximumHeight(20);
-    cstudentButtonAndPrice->addItem(cstWidgetCost);
+    // add CostVisual to the linearlayout ButtonAndPrice
+    addLabelTo(cstudentButtonAndPrice, QString::number(CS_COST), buildButtonStylesheet);
     controlsLayout->addItem(cstudentButtonAndPrice, 1, 1);
 
 
@@ -482,21 +477,16 @@ void Game::createGameControls()
     connect(build_TA, SIGNAL(clicked()), this, SLOT(enterBuildTA()));
 
     // Add price visuals
-    QLabel * teaCostVisual = new QLabel(QString::number(TA_COST));
-    // set font
-    QFont teaCostFont("Roboto", 16);
-    teaCostVisual->setFont(teaCostFont);
     QGraphicsLinearLayout* teachersassistantButtonAndPrice= new QGraphicsLinearLayout(Qt::Vertical);
     teachersassistantButtonAndPrice->setSpacing(0);
 
-        // add the button and price to the control layout
+    // add the name, button and price to the control layout
+    addLabelTo(teachersassistantButtonAndPrice, "TA", buildButtonStylesheet);
     // add button to the linearlayout ButtonAndPrice
     QGraphicsProxyWidget* teaWidget = addWidget(build_TA);
     teachersassistantButtonAndPrice->addItem(teaWidget);
     // add valCostVisual to the linearlayout ButtonAndPrice
-    QGraphicsProxyWidget* teaWidgetCost = addWidget(teaCostVisual);
-    teaWidgetCost->setMaximumHeight(20);
-    teachersassistantButtonAndPrice->addItem(teaWidgetCost);
+    addLabelTo(teachersassistantButtonAndPrice, QString::number(TA_COST), buildButtonStylesheet);
     controlsLayout->addItem(teachersassistantButtonAndPrice, 1, 2);
 
 
@@ -511,21 +501,16 @@ void Game::createGameControls()
     connect(build_SE, SIGNAL(clicked()), this, SLOT(enterBuildSE()));
 
     // Add price visuals
-    QLabel * seaCostVisual = new QLabel(QString::number(SE_COST));
-    // set font
-    QFont seaCostFont("Roboto", 16);
-    seaCostVisual->setFont(seaCostFont);
     QGraphicsLinearLayout* searchengineButtonAndPrice= new QGraphicsLinearLayout(Qt::Vertical);
     searchengineButtonAndPrice->setSpacing(0);
 
-        // add the button and price to the control layout
+    // add the name, button and price to the control layout
+    addLabelTo(searchengineButtonAndPrice, "Search", buildButtonStylesheet);
     // add button to the linearlayout ButtonAndPrice
     QGraphicsProxyWidget* seaWidget = addWidget(build_SE);
     searchengineButtonAndPrice->addItem(seaWidget);
     // add valCostVisual to the linearlayout ButtonAndPrice
-    QGraphicsProxyWidget* seaWidgetCost = addWidget(seaCostVisual);
-    seaWidgetCost->setMaximumHeight(20);
-    searchengineButtonAndPrice->addItem(seaWidgetCost);
+    addLabelTo(searchengineButtonAndPrice, QString::number(SE_COST), buildButtonStylesheet);
     controlsLayout->addItem(searchengineButtonAndPrice, 1, 3);
 
 
@@ -540,21 +525,16 @@ void Game::createGameControls()
     connect(build_LS, SIGNAL(clicked()), this, SLOT(enterBuildLS()));
 
     // Add price visuals
-    QLabel * lanCostVisual = new QLabel(QString::number(LS_COST));
-    // set font
-    QFont lanCostFont("Roboto", 16);
-    lanCostVisual->setFont(lanCostFont);
     QGraphicsLinearLayout* languageserverButtonAndPrice= new QGraphicsLinearLayout(Qt::Vertical);
     languageserverButtonAndPrice->setSpacing(0);
 
-        // add the button and price to the control layout
+    // add the name, button and price to the control layout
+    addLabelTo(languageserverButtonAndPrice, "LServer", buildButtonStylesheet);
     // add button to the linearlayout ButtonAndPrice
     QGraphicsProxyWidget* lanWidget = addWidget(build_LS);
     languageserverButtonAndPrice->addItem(lanWidget);
     // add valCostVisual to the linearlayout ButtonAndPrice
-    QGraphicsProxyWidget* lanWidgetCost = addWidget(lanCostVisual);
-    lanWidgetCost->setMaximumHeight(20);
-    languageserverButtonAndPrice->addItem(lanWidgetCost);
+    addLabelTo(languageserverButtonAndPrice, QString::number(LS_COST), buildButtonStylesheet);
     controlsLayout->addItem(languageserverButtonAndPrice, 2, 1);
 
 
@@ -569,21 +549,16 @@ void Game::createGameControls()
     connect(build_Valgrind, SIGNAL(clicked()), this, SLOT(enterBuildVal()));
 
     // Add price visuals
-    QLabel * valCostVisual = new QLabel(QString::number(VAL_COST));
-    // set font
-    QFont valCostFont("Roboto", 16);
-    valCostVisual->setFont(valCostFont);
     QGraphicsLinearLayout* valgrindButtonAndPrice= new QGraphicsLinearLayout(Qt::Vertical);
     valgrindButtonAndPrice->setSpacing(0);
 
-        // add the button and price to the control layout
+    // add the name, button and price to the control layout
+    addLabelTo(valgrindButtonAndPrice, "Valgrind", buildButtonStylesheet);
     // add button to the linearlayout ButtonAndPrice
     QGraphicsProxyWidget* valWidget = addWidget(build_Valgrind);
     valgrindButtonAndPrice->addItem(valWidget);
     // add valCostVisual to the linearlayout ButtonAndPrice
-    QGraphicsProxyWidget* valWidgetCost = addWidget(valCostVisual);
-    valWidgetCost->setMaximumHeight(20);
-    valgrindButtonAndPrice->addItem(valWidgetCost);
+    addLabelTo(valgrindButtonAndPrice, QString::number(VAL_COST), buildButtonStylesheet);
     controlsLayout->addItem(valgrindButtonAndPrice, 2, 2);
 
 
@@ -599,21 +574,16 @@ void Game::createGameControls()
     connect(build_Comment, SIGNAL(clicked()), this, SLOT(enterBuildCom()));
 
     // Add price visuals
-    QLabel * comCostVisual = new QLabel(QString::number(COM_COST));
-    // set font
-    QFont comCostFont("Roboto", 16);
-    comCostVisual->setFont(comCostFont);
     QGraphicsLinearLayout* commentButtonAndPrice= new QGraphicsLinearLayout(Qt::Vertical);
     commentButtonAndPrice->setSpacing(0);
 
-        // add the button and price to the control layout
+    // add the name, button and price to the control layout
+    addLabelTo(commentButtonAndPrice, "Comment", buildButtonStylesheet);
     // add button to the linearlayout ButtonAndPrice
     QGraphicsProxyWidget* comWidget = addWidget(build_Comment);
     commentButtonAndPrice->addItem(comWidget);
     // add valCostVisual to the linearlayout ButtonAndPrice
-    QGraphicsProxyWidget* comWidgetCost = addWidget(comCostVisual);
-    comWidgetCost->setMaximumHeight(20);
-    commentButtonAndPrice->addItem(comWidgetCost);
+    addLabelTo(commentButtonAndPrice, "Comment", buildButtonStylesheet);
     controlsLayout->addItem(commentButtonAndPrice, 2, 3);
 
 
@@ -1484,4 +1454,20 @@ void Game::startGame() {
     {
         createWave();
     }
+}
+
+void Game::addLabelTo(QGraphicsLinearLayout* layout, QString towerName, QString stylesheet) {
+    // Add price visuals
+    QLabel * label = new QLabel(towerName);
+    label->setStyleSheet(stylesheet);
+    // set font
+    QFont font("Roboto", 14);
+    label->setAlignment(Qt::AlignCenter);
+    label->setFont(font);
+    // add nameLabel to the layout
+    QGraphicsProxyWidget* widgetName = new QGraphicsProxyWidget();
+    widgetName->setWidget(label);
+    widgetName->setMaximumHeight(18);
+    widgetName->setMaximumWidth(BUILD_BUTTON_SIZE+5);
+    layout->addItem(widgetName);
 }
