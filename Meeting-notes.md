@@ -17,59 +17,66 @@ In each meeting, you are required to discuss:
 
 ## Summary of works
    1. Saku
+      - Game overlay arrangement
       - Graphics for
-         - Rest of the towers
-         - Rest of enemies
-         - Game overlay
-         - Rest of CStudent upgrades’ projectiles
+         - Rest of the projectiles
+         - Start/endpoint path
       - Graphics implementation for
-         - Main menu
-         - Basic game overlay
-      - Navigation between scenes (Game, Main menu, Leaderboard)
+         - tower graphics over the map tiles
+         - Leaderboard
+         - Projectiles
+      - Level/game design
+      - Hotfixes
+         - Ghost towers and enemies (Issue#6)
    2. Siim
-      - Completed all enemy classes
-      - Implemented game mechanics to know when game/wave is won or lost
-      - Implemented scene switching functionality
+      - Hotfixes
+         - Enemies wondering off the path, 
+         - Projectile fired in the wrong direction, 
+         - Waves creation bug (twice), 
+         - Enemies get stuck on the path, 
+         - Game crashed when boss enemy is killed in the final level 
+      - Local leaderboard functionality
+      - Wave creating from local file
    3. Harvey
-      - Pathfinding implementation
-      - Very basic path implementation, not fully compatible yet
+      - Added comment tower
+      - Changed pathfinding implementation for comments
+
    4. Hung
-      - Full base tower implementation
-      - Tower upgrading feature
-      - Partial enemy type targeting logic
-      - Some other types of tower
-      - Buttons for building towers in the game UI
+      - Other tower types
+      - Enemy targeting logic
+      - Tower selling
+      - Connect tower buying, selling, and upgrading to game money system
+      - Fixed some coordinate bugs in Tower functions
+
 
 ## Challenges
-   1. Typecasting between Qt classes
+   1. Many bugs in big project.
 
 ## Actions
    1. Siim
-      - Hotfixes
-      - Local leaderboard functionality
-      - Audio functionality
-      - Wave creating from local file
+      - Hotfix for some enemies getting past a wall
+      - Writing some comments for the code
+      - Writing additional checks for user errors (wave creation file)
    2. Saku
-      - Projectile graphics
-      - Game overlay
-      - Level design
+      - Level/game design
+      - Modify language server shooting mechanics
    3. Harvey
       - Map loading/saving
       - Documentation
-      - Complete path implementation
+      - Comment breaking
+      - SFX
    4. Hung
-      - Implement other tower types
-      - Enemy type targeting logic
-      - Remove tower function
+      - Add tooltip for the Buttons
+   5. Everyone
+      - Adding comments to code
 
 ## Project status
-Most basic functionalities of the game are working. The most difficult challenges have been solved and the mechanics seem to work as intended at the moment. For the next week, there will be some bug fixing to do and finalize the rest of the planned features before releasing the demo. 
+The project is very close to its final form. Needs some minor bug fixes and non-essential additional features, but overall the game is playable. The deadline seems to be reachable at the moment to release a fully working implementation that fulfills the objectives of our plan. 
 
 ### TODOs
-   1. Finish stage 1 implementations.
-   2. Finish stage 2 implementations.
-   3. Create an executable
-   4. More detailed todo-list: https://miro.com/app/board/uXjVPIee4qA=/?share_link_id=19406790451
+   1. Finish stage 2 implementations.
+   2. Create an executable
+   3. More detailed todo-list: https://miro.com/app/board/uXjVPIee4qA=/?share_link_id=19406790451
 
 
 
