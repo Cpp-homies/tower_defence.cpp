@@ -12,7 +12,7 @@ class Projectile : public QObject, public QGraphicsPixmapItem
     Q_OBJECT
 public:
     Projectile(int damage, QString imgPath = ":/images/CStudent_projectile.png",
-               int pierce = 0, QGraphicsItem * parent=0);
+               int pierce = 0, int stepSize = 6, int maxLifeTime = 100000, QGraphicsItem * parent=0);
     double getMaxRange();
     double getDistanceTravelled();
     void setMaxRange(double rng);
@@ -28,7 +28,9 @@ private:
     int pierce_;
     int pierceCount_;
     QList<Enemy*> enemiesHit_;
-
+    int stepSize_;
+    int maxLifetime_;
+    QTimer timer_;
 };
 
 #endif // PROJECTILE_H

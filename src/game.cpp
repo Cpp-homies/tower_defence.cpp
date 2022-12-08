@@ -1444,6 +1444,10 @@ void Game::hideAllAttackAreasExcept(QPointF exclude)
             QWidget* widget = getWidgetAt(towerCoords.x(), towerCoords.y());
             Tower* tower= dynamic_cast<Tower*>(widget);
             tower->hideAttackArea();
+        } else {
+            QWidget* widget = getWidgetAt(towerCoords.x(), towerCoords.y());
+            Tower* tower= dynamic_cast<Tower*>(widget);
+            tower->showAttackArea();
         }
     }
 

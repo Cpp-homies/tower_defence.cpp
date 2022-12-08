@@ -6,14 +6,17 @@
 
 
 Projectile::Projectile(int damage, QString imgPath,
-                       int pierce, QGraphicsItem *parent)
-    : QObject(),QGraphicsPixmapItem(parent), damage_(damage), pierce_(pierce)
+                       int pierce, int stepSize,
+                       int maxLifeTime, QGraphicsItem *parent)
+    : QObject(),QGraphicsPixmapItem(parent), damage_(damage),
+    pierce_(pierce), stepSize_(stepSize), maxLifetime_(maxLifeTime)
 {
     setPixmap(QPixmap(imgPath));
     setTransformOriginPoint(pixmap().width()/2,pixmap().height()/2);
     QTimer * move_timer = new QTimer(this);
     connect(move_timer,SIGNAL(timeout()),this,SLOT(move()));
     move_timer->start(10);
+    timer_.singleShot(maxLifetime_, [this](){this->deleteLater();});
 
     maxRange_ = 200;
     distanceTravelled_ = 0;
@@ -21,11 +24,10 @@ Projectile::Projectile(int damage, QString imgPath,
 }
 
 void Projectile::move(){
-    int STEP_SIZE = 6;
     double theta = rotation(); // degrees
 
-    double dy = STEP_SIZE * qSin(qDegreesToRadians(theta));
-    double dx = STEP_SIZE * qCos(qDegreesToRadians(theta));
+    double dy = stepSize_ * qSin(qDegreesToRadians(theta));
+    double dx = stepSize_ * qCos(qDegreesToRadians(theta));
 
     setPos(x()+dx, y()+dy);
     for (auto item : collidingItems())
@@ -42,7 +44,7 @@ void Projectile::move(){
                 deleteLater();
             }
             // update distance travel here as well
-            setDistanceTravelled(distanceTravelled_+STEP_SIZE);
+            setDistanceTravelled(distanceTravelled_+stepSize_);
             if(distanceTravelled_>maxRange_) deleteLater();
             return;
         }
@@ -50,7 +52,7 @@ void Projectile::move(){
     }
 
 
-    setDistanceTravelled(distanceTravelled_+STEP_SIZE);
+    setDistanceTravelled(distanceTravelled_+stepSize_);
     if(distanceTravelled_>maxRange_) deleteLater();
 }
 

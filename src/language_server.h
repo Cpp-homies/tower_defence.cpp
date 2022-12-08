@@ -10,7 +10,7 @@ public:
     Language_Server(int row, int column, QWidget *parent=nullptr);
 
     void fire(QPointF targetPos);
-    virtual bool upgrade();
+    bool upgrade();
 };
 
 #endif // LANGUAGE_SERVER_H

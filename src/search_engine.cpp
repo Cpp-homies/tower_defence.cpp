@@ -83,6 +83,9 @@ bool Search_Engine::upgrade() {
               ogImagePath_ = ":/images/Google.png";
               towerImg->setPixmap(QPixmap(ogImagePath_));
 
+              // setRange (to make attack area visible after upgrade)
+              setRange(5);
+
               // make nearby enemies able to target memory errors
               for (QPointF point : buffedTowers) {
                   QWidget* widget = view->getGame()->getWidgetAt(point.y(), point.x());
