@@ -12,9 +12,9 @@
 #include <QTimer>
 
 // CS tower upgrade costs can be set here
-#define LVL2_COST 10
-#define LVL3_COST 15
-#define LVL4_COST 25
+#define LVL2_COST 500
+#define LVL4_COST 500
+#define LVL3_COST 500
 
 CS_Student::CS_Student(int row, int column, QWidget *parent) : Tower(row, column, parent) {
 

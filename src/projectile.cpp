@@ -13,10 +13,14 @@ Projectile::Projectile(int damage, QString imgPath,
 {
     setPixmap(QPixmap(imgPath));
     setTransformOriginPoint(pixmap().width()/2,pixmap().height()/2);
-    QTimer * move_timer = new QTimer(this);
-    connect(move_timer,SIGNAL(timeout()),this,SLOT(move()));
-    move_timer->start(10);
-    timer_.singleShot(maxLifetime_, [this](){this->deleteLater();});
+    if (maxLifetime_ >= 100000){
+        QTimer * move_timer = new QTimer(this);
+        connect(move_timer,SIGNAL(timeout()),this,SLOT(move()));
+        move_timer->start(10);
+    } else {
+        timer_ = new QTimer(this);
+        timer_->singleShot(maxLifetime_, [this](){this->deleteLater();});
+    }
 
     maxRange_ = 200;
     distanceTravelled_ = 0;

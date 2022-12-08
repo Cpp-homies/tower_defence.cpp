@@ -30,7 +30,7 @@ private:
     QList<Enemy*> enemiesHit_;
     int stepSize_;
     int maxLifetime_;
-    QTimer timer_;
+    QTimer* timer_;
 };
 
 #endif // PROJECTILE_H
