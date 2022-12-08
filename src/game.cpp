@@ -884,7 +884,7 @@ void Game::takeDamage (int dHealth) {
     activeEnemies_.removeOne(enemy);
     activeEnemies_.squeeze();
     updateEnemyCount();
-    delete enemy;
+    enemy->deleteLater();
     if(isLost())
     {
         emit gameLost();

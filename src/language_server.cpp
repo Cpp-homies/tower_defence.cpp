@@ -12,7 +12,7 @@ Language_Server::Language_Server(int row, int column, QWidget *parent) : Tower(r
     maxLevel_ = 3;
 
     // set high piercing
-    pierce_ = 32767;
+    pierce_ = 1;
     // set Language Server graphics
     ogImagePath_ = ":/images/Language_server.png";
     projectileImagePath_ = ":/images/Language_server_projectile.png";

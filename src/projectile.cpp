@@ -13,11 +13,10 @@ Projectile::Projectile(int damage, QString imgPath,
 {
     setPixmap(QPixmap(imgPath));
     setTransformOriginPoint(pixmap().width()/2,pixmap().height()/2);
-    if (maxLifetime_ >= 100000){
-        QTimer * move_timer = new QTimer(this);
-        connect(move_timer,SIGNAL(timeout()),this,SLOT(move()));
-        move_timer->start(10);
-    } else {
+    QTimer * move_timer = new QTimer(this);
+    connect(move_timer,SIGNAL(timeout()),this,SLOT(move()));
+    move_timer->start(10);
+    if (maxLifetime_ < 100000){
         timer_ = new QTimer(this);
         timer_->singleShot(maxLifetime_, [this](){this->deleteLater();});
     }
@@ -45,7 +44,9 @@ void Projectile::move(){
                 pierceCount_++;
             }
             if (pierceCount_ >= pierce_){
-                deleteLater();
+                if (maxLifetime_ >= 100000){
+                    deleteLater();
+                }
             }
             // update distance travel here as well
             setDistanceTravelled(distanceTravelled_+stepSize_);
