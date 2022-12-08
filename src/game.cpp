@@ -46,12 +46,12 @@
 #define BUILD_BUTTON_SIZE 95
 
 // prices of towers can be set here
-#define CS_COST 20
-#define TA_COST 30
-#define SE_COST 25
-#define COM_COST 15
-#define LS_COST 50
-#define VAL_COST 70
+#define CS_COST 50
+#define TA_COST 100
+#define SE_COST 200
+#define COM_COST 20
+#define LS_COST 100
+#define VAL_COST 200
 
 // penalty for selling the tower (will be deducted from the tower's total value
 #define SELL_PENALTY 0.3
@@ -61,7 +61,7 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
 {
     // set starting values of health, currency etc
     health_ = 100;
-    currency_ = 9999999;
+    currency_ = 100;
     level_ = 0;
     score_ = 0;
     enemyCount_ = 0;
@@ -583,7 +583,7 @@ void Game::createGameControls()
     QGraphicsProxyWidget* comWidget = addWidget(build_Comment);
     commentButtonAndPrice->addItem(comWidget);
     // add valCostVisual to the linearlayout ButtonAndPrice
-    addLabelTo(commentButtonAndPrice, "Comment", buildButtonStylesheet);
+    addLabelTo(commentButtonAndPrice, QString::number(COM_COST), buildButtonStylesheet);
     controlsLayout->addItem(commentButtonAndPrice, 2, 3);
 
 
@@ -1129,7 +1129,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
         {
             // first, check if the player have enough money or not
             // if yes, build the tower
-            if (this->currency_ >= TA_COST) {
+            if (this->currency_ >= SE_COST) {
                 // create a new tower and add it to the scene
                 Tower* newTower = new Search_Engine(row, column, nullptr);
                 QGraphicsWidget* tower = this->addWidget(newTower);
@@ -1176,10 +1176,10 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 hideAllAttackAreasExcept(QPointF(row,column));
 
                 // deduct the cost of the tower from player's money
-                changeCurrency(-SE_COST);
+                changeCurrency(-LS_COST);
 
                 // add the cost of the tower to tower's total cost
-                newTower->addCost(SE_COST);
+                newTower->addCost(LS_COST);
             }
             else {
                 // not enough money
