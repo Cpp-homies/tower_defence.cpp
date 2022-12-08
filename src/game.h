@@ -97,7 +97,6 @@ public slots:
     void createWave();
     void startGame();
 
-
 signals:
     void gameWon();
     void gameLost();
@@ -110,6 +109,7 @@ private:
     QPoint start_;
     QPoint end_;
     QList<QList<QString>> map_;
+    bool isBlocked_;
 
     int health_;
     int currency_;

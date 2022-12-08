@@ -9,6 +9,9 @@ public:
     Comment(int x, int y, int duration, Path* old, QWidget* parent);
     void changeHealth(int value);
     QPointF towerCenter();
+    void startBreaking();
+    Path* getOld();
+    ~Comment();
 private:
     int duration_;
     QGraphicsPixmapItem * towerImg;

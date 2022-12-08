@@ -241,9 +241,11 @@ void Game::createMap(){
 QList<QPoint> Game::getShortestPath(QPoint start) {
     QList<QPoint> path = BFS(start, false);
     if (!path.empty()) {
+        isBlocked_ = false;
         return path;
     }
-    return BFS(start, true);
+    isBlocked_ = true;
+    return BFS(start, isBlocked_);
 }
 
 QList<QPoint> Game::BFS(QPoint start, bool blocked) {
@@ -1023,7 +1025,9 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
             // if yes, build the tower
             if (this->currency_ >= COM_COST) {
                 // create a new tower and add it to the scene
-                Comment* newComment = new Comment(column, row, 10000, dynamic_cast<Path*>(widget), nullptr);
+                Path* oldPath = dynamic_cast<Path*>(widget);
+//                qInfo() << oldPath->getRotation();
+                Comment* newComment = new Comment(column, row, 10000, oldPath, nullptr);
                 QGraphicsWidget* comment = this->addWidget(newComment);
 
                 // Notify enemeies of path change
@@ -1239,12 +1243,13 @@ bool Game::sellTower(int row, int column) {
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
     resetButtonHighlights();
     Tower* tower = dynamic_cast<Tower*>(widget);
+    Comment* comment = dynamic_cast<Comment*>(widget);
 
     // if there is no tower occupying the square, return false
-    if (!tower) {
+    if (!tower && !comment) {
         return false;
     }
-    else {
+    else if (tower) {
         // get the total cost of the tower
         int totalCost = tower->getTotalCost();
 
@@ -1264,6 +1269,25 @@ bool Game::sellTower(int row, int column) {
         changeCurrency((totalCost * (1 - SELL_PENALTY)));
 
         coordsOfTowers.removeOne(QPointF(row, column));
+        return true;
+    } else {
+        // Get the old path and add it to the scene
+        Path* oldPath = comment->getOld();
+        PathType oldType = oldPath->getType();
+        int oldRotation = oldPath->getRotation();
+        //qInfo() << oldRotation;
+        Path* newPath = new Path(column, row, oldType, oldRotation, nullptr, nullptr);
+        QGraphicsWidget* path = this->addWidget(newPath);
+
+        // Remove the current comment from the grid
+        this->removeItem(item->graphicsItem());
+        this->mapLayout->removeItem(item);
+
+        // Add the path to the grid at the given position
+        this->mapLayout->addItem(path, row, column);
+        changeCurrency((COM_COST * (1 - SELL_PENALTY)));
+        coordsOfTowers.removeOne(QPointF(row, column));
+        comment->deleteLater();
         return true;
     }
 }
