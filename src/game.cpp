@@ -60,8 +60,8 @@
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
     // set starting values of health, currency etc
-    health_ = 32767; // CHANGE TO 100
-    currency_ = 100000; // CHANGE TO 100
+    health_ = 100; // CHANGE TO 100 32767
+    currency_ = 100; // CHANGE TO 100
     level_ = 0;
     score_ = 0;
     enemyCount_ = 0;
@@ -418,6 +418,21 @@ void Game::createGameControls()
     connect(upgradeButton, SIGNAL(clicked()), this, SLOT(enterUpgradeMode()));
     upgradeButton->setZValue(10);
     addItem(upgradeButton);
+    // upgrade price
+    QLabel * upgradeCostLabel = new QLabel("Upgrade cost: " + QString::number(500));
+    upgradeCostLabel->setStyleSheet(buildButtonStylesheet);
+    // set font
+    QFont font("Roboto", 14);
+    upgradeCostLabel->setAlignment(Qt::AlignCenter);
+    upgradeCostLabel->setFont(font);
+    // add the Label to the layout
+    QGraphicsProxyWidget* upgradeCostWidget = new QGraphicsProxyWidget();
+    upgradeCostWidget->setWidget(upgradeCostLabel);
+    upgradeCostWidget->setMaximumHeight(18);
+    upgradeCostWidget->setMinimumWidth(upgradeButton->boundingRect().width());
+    upgradeCostWidget->setPos(uxPos,uyPos + upgradeButton->boundingRect().height());
+    upgradeCostWidget->setZValue(11);
+    addItem(upgradeCostWidget);
 
     // sell tower button
     sellButton = new Button(QString("Sell Tower"), 240, 50);
