@@ -1026,7 +1026,6 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
             if (this->currency_ >= COM_COST) {
                 // create a new tower and add it to the scene
                 Path* oldPath = dynamic_cast<Path*>(widget);
-//                qInfo() << oldPath->getRotation();
                 Comment* newComment = new Comment(column, row, 10000, oldPath, nullptr);
                 QGraphicsWidget* comment = this->addWidget(newComment);
 
@@ -1288,6 +1287,7 @@ bool Game::sellTower(int row, int column) {
         changeCurrency((COM_COST * (1 - SELL_PENALTY)));
         coordsOfTowers.removeOne(QPointF(row, column));
         comment->deleteLater();
+        emit wallAction();
         return true;
     }
 }

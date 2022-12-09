@@ -2,7 +2,7 @@
 #include <QPixmap>
 
 Path::Path(int x, int y, PathType type, int rotation, Path* old, QWidget* parent)
-        : Square(x, y, parent), old_(old), type_(type) {
+        : Square(x, y, parent), old_(old), type_(type), rotation_(rotation) {
     isComment_ = (type == CommentType);
     // Set up rotation transform
     QTransform transform;
