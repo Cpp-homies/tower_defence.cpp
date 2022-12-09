@@ -92,6 +92,7 @@ void Enemy::move()
         if(qobject_cast<Game*>(scene())->isComment(nextPos.x(),nextPos.y()))
         {
             timer_->stop();
+            qobject_cast<Game*>(scene())->breakComment(nextPos.x(),nextPos.y());
             return;
         }
         // last point not reached, get new destination

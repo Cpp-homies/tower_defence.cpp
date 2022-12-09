@@ -1270,26 +1270,35 @@ bool Game::sellTower(int row, int column) {
         coordsOfTowers.removeOne(QPointF(row, column));
         return true;
     } else {
-        // Get the old path and add it to the scene
-        Path* oldPath = comment->getOld();
-        PathType oldType = oldPath->getType();
-        int oldRotation = oldPath->getRotation();
-        //qInfo() << oldRotation;
-        Path* newPath = new Path(column, row, oldType, oldRotation, nullptr, nullptr);
-        QGraphicsWidget* path = this->addWidget(newPath);
-
-        // Remove the current comment from the grid
-        this->removeItem(item->graphicsItem());
-        this->mapLayout->removeItem(item);
-
-        // Add the path to the grid at the given position
-        this->mapLayout->addItem(path, row, column);
+        deleteComment(row, column);
         changeCurrency((COM_COST * (1 - SELL_PENALTY)));
         coordsOfTowers.removeOne(QPointF(row, column));
-        comment->deleteLater();
-        emit wallAction();
         return true;
     }
+}
+
+void Game::breakComment(int row, int column) {
+    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
+    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
+    Comment* comment = dynamic_cast<Comment*>(widget);
+    comment->startTimer();
+}
+
+void Game::deleteComment(int row, int column) {
+    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
+    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
+    Comment* comment = dynamic_cast<Comment*>(widget);
+
+    Path* oldPath = comment->getOld();
+    PathType oldType = oldPath->getType();
+    int oldRotation = oldPath->getRotation();
+    Path* newPath = new Path(column, row, oldType, oldRotation, nullptr, nullptr);
+    QGraphicsWidget* path = this->addWidget(newPath);
+    this->removeItem(item->graphicsItem());
+    this->mapLayout->removeItem(item);
+    this->mapLayout->addItem(path, row, column);
+    comment->deleteLater();
+    emit wallAction();
 }
 
 QWidget* Game::getWidgetAt(int row, int column) {

@@ -46,6 +46,9 @@ public:
     QList<QPoint> getShortestPath(QPoint start);
     QList<QPoint> BFS(QPoint start, bool blocked);
 
+    void breakComment(int row, int column);
+    void deleteComment(int row, int column);
+
     int getHealth() const;
     int getScore() const;
     int getLevel() const;
