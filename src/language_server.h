@@ -11,6 +11,7 @@ public:
 
     void fire(QPointF targetPos);
     virtual bool upgrade();
+    void updateDescription();
 };
 
 #endif // LANGUAGE_SERVER_H

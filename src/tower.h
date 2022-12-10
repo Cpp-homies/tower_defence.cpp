@@ -53,11 +53,13 @@ public:
     void showAttackArea();
     void hideAttackArea();
     virtual void showHideAttackArea();
+    virtual void updateDescription();
 
     int projectileStepSize_ = 6;
 public slots:
     void getTarget();
 protected:
+    QString type_;
     int range_;
     double damage_;
     double damageMultiplier_;
@@ -73,6 +75,7 @@ protected:
     QString ogImagePath_;// the original image path in use
     QString projectileImagePath_;
     QGraphicsEllipseItem* attack_area_;
+    QString description_;
 
     bool canFire_;// method to check if the tower can fire or not
     bool targetAble_[3];// array for checking if an enemy is targetable

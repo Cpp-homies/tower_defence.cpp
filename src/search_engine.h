@@ -12,6 +12,7 @@ public:
     ~Search_Engine();
 
     bool upgrade();
+    void updateDescription();
 public slots:
     void buffPulse();
 private:

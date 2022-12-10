@@ -60,35 +60,41 @@
 QString CS_DESCRIPTION("<p><b>CS student:</b><br>"
                        "A student on his quest to complete his CS degree. In his first year he had a hard time identifying memory errors."
                        " He has somewhat mediocre ability at first, but as he advances through his degree,"
-                       " he soon become a valuable member of the debugging force.</p>");
+                       " he soon become a valuable member of the debugging force.<br>"
+                       "<b>Shortcut:</b> C</p>");
 
 QString TA_DESCRIPTION("<p><b>Teaching Assistant:</b><br>"
                        "A Teaching Assistant who is rather experienced at his field."
                        " With his hints, other members within his reach will have higher commit rate."
                        " After having enough work experience, he can be promoted to a Teacher, with higher patches per commit"
-                       " and better reach. Teacher also have the ability to spot a major error type that TA cannot.</p>");
+                       " and better reach. Teacher also have the ability to spot a major error type that TA cannot.<br>"
+                       "<b>Shortcut:</b> T</p>");
 
 QString SE_DESCRIPTION("<p><b>Search Engine:</b><br>"
                        "A crucial tool for any programmer. It was recently found in a study that Search Engine can increase"
                        " a programmer's commit rate up to 10%. Not all Search Engine are equal however,"
                        " some are just worse than others.<br>"
-                       "By using a good Search Engine (that start with a G), even an amatuer programmer could solve memory errors.</p>");
+                       "By using a good Search Engine (that start with a G), even an amatuer programmer could solve memory errors.<br>"
+                       "<b>Shortcut:</b> E or B</p>");
 
-QString COM_DESCRIPTION("<p><b>Search Engine:</b><br>"
+QString COM_DESCRIPTION("<p><b>Comment:</b><br>"
                         "\"Out of sight, out of mind\", a programmer can choose to comment a block of error away and deal with it later."
                         " But everything has a deadline and the errors need to be dealt with enventually, though."
-                        " The errors block will be uncommented after a while and continue its way to wreak havoc on the project.</p>");
+                        " The errors block will be uncommented after a while and continue its way to wreak havoc on the project.<br>"
+                        "<b>Shortcut:</b> O or \\</p>");
 
 QString LS_DESCRIPTION("<p><b>Language Server:</b><br>"
                        "\"The Language Server Protocol (LSP) is an open, JSON-RPC-based protocol for...\". Yeah whatever, it can catch"
                        " some bugs for you, very cool. Language Server can be more effective than humans at handling minor bugs,"
                        " but some special errors can only be manually dealt with. Unless you have a"
-                       " really good Language Server, of course.</p>");
+                       " really good Language Server, of course.<br>"
+                       "<b>Shortcut:</b> L</p>");
 
 QString VAL_DESCRIPTION("<p><b>Valgrind:</b><br>"
                         "A programmer's favorite tool for dealing with memory problems. Valgrind can search far and wide for bugs,"
                         " some might even say that nothing can escape its scope. It does take a bit long for Valgrind to detect"
-                        " something, but when it does, that bug is almost as good as dead.</p>");
+                        " something, but when it does, that bug is almost as good as dead.<br>"
+                        "<b>Shortcut:</b> V</p>");
 
 Game::Game(QObject* parent,int gamemode)
     : QGraphicsScene(parent), gamemode_(gamemode)
@@ -1183,6 +1189,9 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
 
                 // add the cost of the tower to tower's total cost
                 newTower->addCost(CS_COST);
+
+                // update the tower's description
+                newTower->updateDescription();
             }
             else {
                 // not enough money
@@ -1214,6 +1223,9 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
 
                 // add the cost of the tower to tower's total cost
                 newTower->addCost(TA_COST);
+
+                // update the tower's description
+                newTower->updateDescription();
             }
             else {
                 // not enough money
@@ -1245,6 +1257,9 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
 
                 // add the cost of the tower to tower's total cost
                 newTower->addCost(SE_COST);
+
+                // update the tower's description
+                newTower->updateDescription();
             }
             else {
                 // not enough money
@@ -1276,6 +1291,9 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
 
                 // add the cost of the tower to tower's total cost
                 newTower->addCost(LS_COST);
+
+                // update the tower's description
+                newTower->updateDescription();
             }
             else {
                 // not enough money
@@ -1307,6 +1325,9 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
 
                 // add the cost of the tower to tower's total cost
                 newTower->addCost(VAL_COST);
+
+                // update the tower's description
+                newTower->updateDescription();
             }
             else {
                 // not enough money

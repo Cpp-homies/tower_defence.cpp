@@ -3,6 +3,7 @@
 #include <QPointF>
 #include <QPen>
 #include <QTransform>
+#include <QLocale>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QGraphicsItem>
@@ -28,6 +29,7 @@ const Qt::GlobalColor atkArea_Color = Qt::black;
 
 //}
 
+// build default CS Student tower at position row, column in the grid
 Tower::Tower(int row, int column, QWidget *parent) : Square(column, row, parent) {
     // set the default tower stats
     range_ = 3;
@@ -41,6 +43,8 @@ Tower::Tower(int row, int column, QWidget *parent) : Square(column, row, parent)
 
     upgradeLevel_ = 1;
     maxLevel_ = 4;
+
+    description_ = "";
 
     // has no attack speed buff at creation
     bool hasAtkSpdBuff_ = false;
@@ -375,6 +379,74 @@ void Tower::showHideAttackArea()
     } else {
         showAttackArea();
     }
+}
+
+void Tower::updateDescription() {
+    // create new Tooltip description for this tower
+    description_ = QString("<p><b>-CS Student level %1-</b><br><br>"
+                           "<b>Damage: </b>%2<br>"
+                           "<b>Attack interval: </b>%3s<br>"
+                           "<b>Range: </b>%4<br>"
+                           "<b>Pierce: </b>%5<br>"
+                           "<b>Total value: </b>%6<br>"
+                           "<b>Can target: </b>").arg(QString::number(upgradeLevel_),
+                                                            QString::number(damage_),
+                                                            QString::number(attackInterval_ / 1000, 'f', 2),
+                                                            QString::number(range_),
+                                                            QString::number(pierce_),
+                                                            QString::number(totalCost_));
+
+    // list out the enemy types that this tower can target at the moment
+    for (int i = 0, n = 3; i < n; ++i) {
+        QString str = "";
+        // check the enemy type
+        switch (i) {
+        // check if current tower can target given type
+        // if yes, append it to the tower's description
+        case EnemyTypes::RuntimeError:
+        {
+            if(targetAble_[EnemyTypes::RuntimeError] || targetAbleBuff_[EnemyTypes::RuntimeError]) {
+                // add comma at the start of every element except the first one
+                if (i != 0) {
+                    str.append(", ");
+                }
+                str.append("Runtime Errors");
+            }
+            break;
+        }
+        case EnemyTypes::MemoryError:
+        {
+            if(targetAble_[EnemyTypes::MemoryError] || targetAbleBuff_[EnemyTypes::MemoryError]) {
+                // add comma at the start of every element except the first one
+                if (i != 0) {
+                    str.append(", ");
+                }
+                str.append("Memory Errors");
+            }
+            break;
+        }
+        case EnemyTypes::CompilerError:
+        {
+            if(targetAble_[EnemyTypes::CompilerError] || targetAbleBuff_[EnemyTypes::CompilerError]) {
+                // add comma at the start of every element except the first one
+                if (i != 0) {
+                    str.append(", ");
+                }
+                str.append("Compiler Errors");
+            }
+            break;
+        }
+        default:
+            break;
+        }
+
+        description_.append(str);
+    }
+
+    // close the description
+    description_.append("</p>");
+
+    this->setToolTip(description_);
 }
 
 bool Tower::isTower(){
