@@ -69,7 +69,7 @@ public:
     void keyPressEvent(QKeyEvent *keyEvent);
     void resetButtonHighlights();
 
-    void hideAllAttackAreasExcept(QPointF exclude = QPointF());
+    void hideAllAttackAreasExcept(QPointF exclude = QPointF(-1, -1));
 
     QGraphicsGridLayout* mapLayout; //map area where the action is
     QGraphicsLinearLayout* gameLayout; //the whole are of the game, including the controls
