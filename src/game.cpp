@@ -1083,13 +1083,13 @@ void Game::keyPressEvent(QKeyEvent* event)
         enterBuildCS();
     } else if (key == 'T'){
         enterBuildTA();
-    } else if (key == 'E' | key == 'B'){
+    } else if (key == 'E' || key == 'B'){
         enterBuildSE();
     } else if (key == 'L'){
         enterBuildLS();
     } else if (key == 'V'){
         enterBuildVal();
-    } else if (key == 'O' | key == '\''){
+    } else if (key == 'O' || key == '\''){
         enterBuildCom();
     }
 
