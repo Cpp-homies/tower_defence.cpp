@@ -10,13 +10,6 @@
 #define SPEED_BUFF 1.05
 #define DAMAGE_BUFF 1.1
 
-/**
-*
-* TODO : FIX THE BUFF FEATURE, THE GraphicsItem is not a base class of tower
-* so it cannot be casted to that
-*
-*/
-
 //Tower(int x, int y, int range, int damage, int attackSpeed, QWidget *parent=nullptr);
 TA::TA(int row, int column, QWidget *parent)
     : Tower(row, column, RANGE, DAMAGE, ATTACK_INTERVAL, parent) {

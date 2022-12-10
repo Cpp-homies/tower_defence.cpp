@@ -53,9 +53,42 @@
 #define LS_COST 120
 #define VAL_COST 200
 
-// penalty for selling the tower (will be deducted from the tower's total value
+// penalty for selling the tower (will be deducted from the tower's total value)
 #define SELL_PENALTY 0.3
 
+// the descriptions (tooltips) of buttons can be set here
+QString CS_DESCRIPTION("<p><b>CS student:</b><br>"
+                       "A student on his quest to complete his CS degree. In his first year he had a hard time identifying memory errors."
+                       " He has somewhat mediocre ability at first, but as he advances through his degree,"
+                       " he soon become a valuable member of the debugging force.</p>");
+
+QString TA_DESCRIPTION("<p><b>Teaching Assistant:</b><br>"
+                       "A Teaching Assistant who is rather experienced at his field."
+                       " With his hints, other members within his reach will have higher commit rate."
+                       " After having enough work experience, he can be promoted to a Teacher, with higher patches per commit"
+                       " and better reach. Teacher also have the ability to spot a major error type that TA cannot.</p>");
+
+QString SE_DESCRIPTION("<p><b>Search Engine:</b><br>"
+                       "A crucial tool for any programmer. It was recently found in a study that Search Engine can increase"
+                       " a programmer's commit rate up to 10%. Not all Search Engine are equal however,"
+                       " some are just worse than others.<br>"
+                       "By using a good Search Engine (that start with a G), even an amatuer programmer could solve memory errors.</p>");
+
+QString COM_DESCRIPTION("<p><b>Search Engine:</b><br>"
+                        "\"Out of sight, out of mind\", a programmer can choose to comment a block of error away and deal with it later."
+                        " But everything has a deadline and the errors need to be dealt with enventually, though."
+                        " The errors block will be uncommented after a while and continue its way to wreak havoc on the project.</p>");
+
+QString LS_DESCRIPTION("<p><b>Language Server:</b><br>"
+                       "\"The Language Server Protocol (LSP) is an open, JSON-RPC-based protocol for...\". Yeah whatever, it can catch"
+                       " some bugs for you, very cool. Language Server can be more effective than humans at handling minor bugs,"
+                       " but some special errors can only be manually dealt with. Unless you have a"
+                       " really good Language Server, of course.</p>");
+
+QString VAL_DESCRIPTION("<p><b>Valgrind:</b><br>"
+                        "A programmer's favorite tool for dealing with memory problems. Valgrind can search far and wide for bugs,"
+                        " some might even say that nothing can escape its scope. It does take a bit long for Valgrind to detect"
+                        " something, but when it does, that bug is almost as good as dead.</p>");
 
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
@@ -460,6 +493,8 @@ void Game::createGameControls()
 
         // create CSstudent button
     build_CSstudent = new QToolButton();
+    // set the tooltip description for the button
+    build_CSstudent->setToolTip(CS_DESCRIPTION);
     // create the icon for the button
     build_CSstudent->setIcon(QIcon(QPixmap(":/images/CStudent1.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_CSstudent->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
@@ -483,6 +518,8 @@ void Game::createGameControls()
 
         // create TA button
     build_TA = new QToolButton();
+    // set the tooltip description for the button
+    build_TA->setToolTip(TA_DESCRIPTION);
     // create the icon for the button
     build_TA->setIcon(QIcon(QPixmap(":/images/TA.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_TA->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
@@ -507,6 +544,8 @@ void Game::createGameControls()
 
         // create Search Engine button
     build_SE = new QToolButton();
+    // set the tooltip description for the button
+    build_SE->setToolTip(SE_DESCRIPTION);
     // create the icon for the button
     build_SE->setIcon(QIcon(QPixmap(":/images/Bing.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_SE->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
@@ -531,6 +570,8 @@ void Game::createGameControls()
 
         // create Language server button
     build_LS = new QToolButton();
+    // set the tooltip description for the button
+    build_LS->setToolTip(LS_DESCRIPTION);
     // create the icon for the button
     build_LS->setIcon(QIcon(QPixmap(":/images/Language_server.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_LS->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
@@ -555,6 +596,8 @@ void Game::createGameControls()
 
         // create Valgrind button
     build_Valgrind = new QToolButton();
+    // set the tooltip description for the button
+    build_Valgrind->setToolTip(VAL_DESCRIPTION);
     // create the icon for the button
     build_Valgrind->setIcon(QIcon(QPixmap(":/images/Valgrind.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_Valgrind->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));
@@ -580,6 +623,8 @@ void Game::createGameControls()
 
         // create Comment button
     build_Comment = new QToolButton();
+    // set the tooltip description for the button
+    build_Comment->setToolTip(COM_DESCRIPTION);
     // create the icon for the button
     build_Comment->setIcon(QIcon(QPixmap(":/images/Comment.png").scaled(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE)));
     build_Comment->setIconSize(QSize(BUILD_BUTTON_SIZE, BUILD_BUTTON_SIZE));

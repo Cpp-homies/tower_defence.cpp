@@ -89,6 +89,7 @@ void Enemy::move()
         }
 
         QPoint nextPos = matrixPath_[point_index_];
+
         if(qobject_cast<Game*>(scene())->isComment(nextPos.x(),nextPos.y()))
         {
             timer_->stop();
