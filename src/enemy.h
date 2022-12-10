@@ -4,6 +4,7 @@
 
 #include <QGraphicsPixmapItem>
 #include <QTimer>
+#include <QSoundEffect>
 
 //enums of main and subtypes, could help with scaling
 
@@ -77,6 +78,7 @@ protected:
     int point_index_;
     EnemyType type_;
     QTimer* timer_;
+
 };
 
 #endif // ENEMY_H

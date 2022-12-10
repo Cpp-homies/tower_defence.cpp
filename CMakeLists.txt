@@ -35,4 +35,5 @@ if(MSVC)
 else()
     # gcc and clang
     target_compile_options(tower_defence PRIVATE -Wall -Wextra -pedantic -Wno-missing-field-initializers)
+
 endif()

@@ -41,6 +41,7 @@
 #include <QInputDialog>
 #include <QDir>
 #include <QStandardPaths>
+#include <QRandomGenerator>
 
 
 #define BUILD_BUTTON_SIZE 95
@@ -91,7 +92,7 @@ QString VAL_DESCRIPTION("<p><b>Valgrind:</b><br>"
                         " something, but when it does, that bug is almost as good as dead.</p>");
 
 Game::Game(QObject* parent,int gamemode)
-    : QGraphicsScene(parent), gamemode_(gamemode)
+    : QGraphicsScene(parent), gamemode_(gamemode), hitsound1_(this), hitsound2_(this), hitsound3_(this), hitsound4_(this)
 {
     // set starting values of health, currency etc
     if (gamemode_ == 0){        // sandbox
@@ -135,7 +136,14 @@ Game::Game(QObject* parent,int gamemode)
         connect(this,SIGNAL(gameWon()),this,SLOT(updateLeaderboard()));
         connect(this,SIGNAL(gameLost()),this,SLOT(updateLeaderboard()));
     }
-
+    hitsound1_.setSource(QUrl::fromLocalFile(":/sounds/Hitsound1.wav"));
+    hitsound2_.setSource(QUrl::fromLocalFile(":/sounds/Hitsound2.wav"));
+    hitsound3_.setSource(QUrl::fromLocalFile(":/sounds/Hitsound3.wav"));
+    hitsound4_.setSource(QUrl::fromLocalFile(":/sounds/Hitsound4.wav"));
+    hitsound1_.setVolume(1.0f);
+    hitsound2_.setVolume(1.0f);
+    hitsound3_.setVolume(1.0f);
+    hitsound4_.setVolume(1.0f);
 }
 
 void Game::createMap(){
@@ -334,6 +342,25 @@ QList<QPoint> Game::BFS(QPoint start, bool blocked) {
         }
     }
     return QList<QPoint>();
+}
+
+void Game::playHitsound() {
+    int choice = QRandomGenerator::global()->bounded(0,4);
+    switch (choice){
+        case 0:
+            hitsound1_.play();
+        break;
+        case 1:
+            hitsound2_.play();
+        break;
+        case 2:
+            hitsound3_.play();
+        break;
+        case 3:
+            hitsound4_.play();
+        break;
+    }
+    //qInfo() << choice;
 }
 
 void Game::createGameControls()

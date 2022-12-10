@@ -42,6 +42,8 @@ public:
     void createGameControls();
     void readWaveFile();
 
+    void playHitsound();
+
     QList<QPointF> convertCoordinates(QList<QPoint> path);
     QList<QPoint> getShortestPath(QPoint start);
     QList<QPoint> BFS(QPoint start, bool blocked);
@@ -134,6 +136,10 @@ private:
     QList<QStringList> waves_;
     QList<Enemy*> activeEnemies_;
 
+    QSoundEffect hitsound1_;
+    QSoundEffect hitsound2_;
+    QSoundEffect hitsound3_;
+    QSoundEffect hitsound4_;
 
     Modes::MODES mode_;
     TowerTypes::TYPES buildType_;
