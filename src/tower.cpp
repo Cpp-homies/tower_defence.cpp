@@ -42,6 +42,9 @@ Tower::Tower(int row, int column, QWidget *parent) : Square(column, row, parent)
     upgradeLevel_ = 1;
     maxLevel_ = 4;
 
+    // has no attack speed buff at creation
+    bool hasAtkSpdBuff_ = false;
+
     // initialize the targetable enemies, at first the tower can only target normal enemies
     std::fill_n(targetAble_, std::size(targetAble_), false);
     targetAble_[EnemyTypes::CompilerError] = true;
@@ -87,6 +90,9 @@ Tower::Tower(int row, int column, int range, int damage,
 
     // set the original damage multipier to 1.0
     damageMultiplier_ = 1.0;
+
+    // has no attack speed buff at creation
+    bool hasAtkSpdBuff_ = false;
 
     // initialize the targetable enemies, at first the tower can only target normal enemies
     std::fill_n(targetAble_, std::size(targetAble_), false);
@@ -306,6 +312,9 @@ void Tower::atkSpeedBuff(double buffFactor) {
         // which increases the speed by buffFactor
         attackInterval_ /= (1 + buffFactor);
 
+        // raise the hasAtkSpeedBuff flag
+        hasAtkSpdBuff_ = true;
+
         // schedule to delete the old attackTimer
         attackTimer_->deleteLater();
 
@@ -320,6 +329,9 @@ void Tower::atkSpeedDebuff(double debuffFactor) {
     if (canFire_) {
         attackInterval_ *= (1 + debuffFactor);
 
+        // lower the hasAtkSpeedBuff flag
+        hasAtkSpdBuff_ = false;
+
         // schedule to delete the old attackTimer
         attackTimer_->deleteLater();
 
@@ -328,6 +340,10 @@ void Tower::atkSpeedDebuff(double debuffFactor) {
         connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
         attackTimer_->start(fmax(attackInterval_, 500));
     }
+}
+
+bool Tower::hasAtkSpdBuff() {
+    return hasAtkSpdBuff_;
 }
 
 // support towers call this to make this tower able to target the given enemy type

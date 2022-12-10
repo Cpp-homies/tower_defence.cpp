@@ -26,11 +26,13 @@ Search_Engine::Search_Engine(int row, int column, QWidget *parent)
 
     // buff all towers and mark them as buffed
     for (Tower* tower : towers) {
-      // buff the tower
-      tower->atkSpeedBuff(atkSpeedBuffFactor_);
+        if (!tower->hasAtkSpdBuff()) {
+            // buff the tower
+            tower->atkSpeedBuff(atkSpeedBuffFactor_);
 
-      // add the buffed tower's location to the list to marked as buffed
-      buffedTowers.prepend(tower->getCoords());
+            // add the buffed tower's location to the list to marked as buffed
+            buffedTowers.prepend(tower->getCoords());
+        }
     }
 
     // add the Search Engine tower into the buffedTowers list so it doesn't buff itself
@@ -129,7 +131,7 @@ void Search_Engine::buffPulse() {
   // loop through all towers in range
   for (Tower* tower : towers) {
       // buff the tower if it hasn't got buff before
-      if (!buffedTowers.contains(tower->getCoords())) {
+      if (!tower->hasAtkSpdBuff() && !buffedTowers.contains(tower->getCoords())) {
           // buff the tower
           tower->atkSpeedBuff(atkSpeedBuffFactor_);
 

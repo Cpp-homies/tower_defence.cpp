@@ -39,6 +39,7 @@ public:
 
     void atkSpeedDebuff(double debuffFactor);
     void targetTableDebuff(EnemyTypes::TYPES type);
+    bool hasAtkSpdBuff();
 
     QGraphicsEllipseItem* getAttackArea();
     QList<QGraphicsItem*> getItemInRange();
@@ -80,6 +81,7 @@ private:
     bool upgradeable_;
 
     bool has_target_;
+    bool hasAtkSpdBuff_;
 
     QPointF target_pos_;
 };
