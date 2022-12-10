@@ -75,8 +75,10 @@ Tower::Tower(int row, int column, QWidget *parent) : Square(column, row, parent)
 }
 
 // constructor that set specific stats, used in subclasses of tower
-Tower::Tower(int row, int column, int range, int damage, int attackInterval, QWidget *parent) : Square(column, row, parent),
-                                                                    range_(range), damage_(damage), attackInterval_(attackInterval) {
+Tower::Tower(int row, int column, int range, int damage,
+             int attackInterval, QWidget *parent)
+    : Square(column, row, parent),range_(range), damage_(damage),
+    attackInterval_(attackInterval) {
     totalCost_ = 0;
     canFire_ = true;
 
@@ -186,7 +188,7 @@ void Tower::setRange(int range) {
 //Fires a projectile at the targetPos
 void Tower::fire(QPointF targetPos) {
 
-    Projectile* projectile = new Projectile(damage_, projectileImagePath_, pierce_);
+    Projectile* projectile = new Projectile(damage_, projectileImagePath_, pierce_, projectileStepSize_);
     projectile->setPos(view->getGame()->getSquarePos(y_,x_)); //takes the same coordinates as the tower
     QLineF ln(view->getGame()->getSquarePos(y_,x_),targetPos); //path of the projectile
     int angle = -1 * ln.angle(); //the angle from tower to target

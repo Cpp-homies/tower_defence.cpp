@@ -15,7 +15,7 @@ Projectile::Projectile(int damage, QString imgPath,
     setTransformOriginPoint(pixmap().width()/2,pixmap().height()/2);
     QTimer * move_timer = new QTimer(this);
     connect(move_timer,SIGNAL(timeout()),this,SLOT(move()));
-    move_timer->start(10);
+    move_timer->start(moveFrequency_);
     if (maxLifetime_ < 100000){
         timer_ = new QTimer(this);
         timer_->singleShot(maxLifetime_, [this](){this->deleteLater();});

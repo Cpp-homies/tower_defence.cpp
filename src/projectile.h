@@ -17,6 +17,7 @@ public:
     double getDistanceTravelled();
     void setMaxRange(double rng);
     void setDistanceTravelled(double dist);
+    void setMoveFrequency(int newValue) {moveFrequency_=newValue;};
 
 public slots:
     void move();
@@ -31,6 +32,7 @@ private:
     int stepSize_;
     int maxLifetime_;
     QTimer* timer_;
+    int moveFrequency_ = 10;
 };
 
 #endif // PROJECTILE_H

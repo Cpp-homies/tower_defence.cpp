@@ -60,8 +60,8 @@
 Game::Game(QObject* parent): QGraphicsScene(parent)
 {
     // set starting values of health, currency etc
-    health_ = 100; // CHANGE TO 100 32767
-    currency_ = 100; // CHANGE TO 100
+    health_ = 100000; // CHANGE TO 100
+    currency_ = 100000; // CHANGE TO 100
     level_ = 0;
     score_ = 0;
     enemyCount_ = 0;
