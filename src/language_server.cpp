@@ -3,8 +3,8 @@
 #include "cmath"
 #include <QPropertyAnimation>
 
-#define LVL2_COST 50
-#define LVL3_COST 100
+#define LVL2_COST 500
+#define LVL3_COST 500
 
 Language_Server::Language_Server(int row, int column, QWidget *parent) : Tower(row, column, 3, 1, 1000, parent) {
     // set Language_Server stats

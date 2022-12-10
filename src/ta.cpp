@@ -1,7 +1,7 @@
 #include "ta.h"
 
 // TA tower upgrade costs can be set here
-#define LVL2_COST 15
+#define LVL2_COST 500
 
 /**
 *

@@ -1,6 +1,6 @@
 #include "search_engine.h"
 
-#define LVL2_COST 15
+#define LVL2_COST 500
 
 //Tower(int x, int y, int range, int damage, int attackSpeed, QWidget *parent=nullptr);
 Search_Engine::Search_Engine(int row, int column, QWidget *parent) : Tower(row, column, 4, 10, 3000, parent) {
