@@ -142,7 +142,7 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
         }
         else {
             // sell successfulll schedule to delete the tower
-            this->deleteLater();
+            deleteLater();
         }
         // reset the state of the game back to normal
         view->getGame()->setMode(Modes::normal);

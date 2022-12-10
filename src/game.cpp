@@ -257,7 +257,7 @@ void Game::createMap(){
                     line.push_back("O");
                 }
             }
-            qInfo() << line;
+            // qInfo() << line;
         }
     }
 
@@ -268,15 +268,17 @@ void Game::createMap(){
     form->setLayout(mapLayout);
     gameLayout->addItem(form);
     shortest_path_ = getShortestPath(start_);
-    qInfo() << shortest_path_;
+    // qInfo() << shortest_path_;
 }
 
 QList<QPoint> Game::getShortestPath(QPoint start) {
     QList<QPoint> path = BFS(start, false);
     if (!path.empty()) {
+        isBlocked_ = false;
         return path;
     }
-    return BFS(start, true);
+    isBlocked_ = true;
+    return BFS(start, isBlocked_);
 }
 
 QList<QPoint> Game::BFS(QPoint start, bool blocked) {
@@ -1078,17 +1080,17 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     // if the type is comment
     if (type == TowerTypes::Comment) {
         // check if this is a path and whether there is already a comment
-        if (isPath(row, column) && !dynamic_cast<Comment*>(widget) && !isEnemy(row, column)) {
+        if (isPath(row, column) && !dynamic_cast<Comment*>(widget) && !isEnemy(row, column) && !isPathEnd(row, column)) {
             // if it is available, start building the comment
             // first, check if the player have enough money or not
             // if yes, build the tower
             if (this->currency_ >= COM_COST) {
                 // create a new tower and add it to the scene
-                Comment* newComment = new Comment(column, row, 10000, dynamic_cast<Path*>(widget), nullptr);
+                Path* oldPath = dynamic_cast<Path*>(widget);
+                Comment* newComment = new Comment(column, row, 10000, oldPath, nullptr);
                 QGraphicsWidget* comment = this->addWidget(newComment);
 
-                // Notify enemeies of path change
-                emit wallAction();
+
 
                 // remove the current square from the grid
                 this->mapLayout->removeItem(item);
@@ -1102,6 +1104,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // deduct the cost of the comment from player's money
                 changeCurrency(-COM_COST);
             
+                // Notify enemeies of path change
                 emit wallAction();
                 
                 return true;
@@ -1300,12 +1303,13 @@ bool Game::sellTower(int row, int column) {
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
     resetButtonHighlights();
     Tower* tower = dynamic_cast<Tower*>(widget);
+    Comment* comment = dynamic_cast<Comment*>(widget);
 
     // if there is no tower occupying the square, return false
-    if (!tower) {
+    if (!tower && !comment) {
         return false;
     }
-    else {
+    else if (tower) {
         // get the total cost of the tower
         int totalCost = tower->getTotalCost();
 
@@ -1325,8 +1329,43 @@ bool Game::sellTower(int row, int column) {
         changeCurrency((totalCost * (1 - SELL_PENALTY)));
 
         coordsOfTowers.removeOne(QPointF(row, column));
+        coordsOfTowers.squeeze();
+        return true;
+    } else {
+        deleteComment(row, column);
+        changeCurrency((COM_COST * (1 - SELL_PENALTY)));
+        coordsOfTowers.removeOne(QPointF(row, column));
+        coordsOfTowers.squeeze();
         return true;
     }
+}
+
+void Game::breakComment(int row, int column) {
+    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
+    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
+    Comment* comment = dynamic_cast<Comment*>(widget);
+    comment->startTimer();
+}
+
+void Game::deleteComment(int row, int column) {
+    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
+    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
+    Comment* comment = dynamic_cast<Comment*>(widget);
+
+    Path* oldPath = comment->getOld();
+    PathType oldType = oldPath->getType();
+    int oldRotation = oldPath->getRotation();
+    Path* newPath = new Path(column, row, oldType, oldRotation, nullptr, nullptr);
+    QGraphicsWidget* path = this->addWidget(newPath);
+    this->removeItem(item->graphicsItem());
+    this->mapLayout->removeItem(item);
+    this->mapLayout->addItem(path, row, column);
+    comment->deleteLater();
+    QTimer* timer = new QTimer(this);
+    timer->setSingleShot(true);
+    timer->setInterval(100);
+    timer->callOnTimeout([this](){emit wallAction();});
+    timer->start();
 }
 
 QWidget* Game::getWidgetAt(int row, int column) {
@@ -1341,6 +1380,16 @@ bool Game::isTower(int row, int column) {
 
 bool Game::isPath(int row, int column) {
     return dynamic_cast<Path*>(getWidgetAt(row, column));
+}
+
+bool Game::isPathEnd(int row, int column) {
+    Path* path = dynamic_cast<Path*>(getWidgetAt(row, column));
+    if (!path) {
+        return false;
+    } else if (path->getType() != Start && path ->getType() != End) {
+        return false;
+    }
+    return true;
 }
 
 bool Game::isComment(int row, int column) {
@@ -1427,9 +1476,15 @@ void Game::enterSellMode() {
 
 void Game::updatePaths()
 {
+
     foreach (Enemy* enemy, activeEnemies_)
     {
-        QList<QPoint> newMatrixPath = getShortestPath(enemy->getMatrixLocation());
+        QPoint start = enemy->getMatrixLocation();
+        if (enemy->getTimer()->isActive()) {
+            start = enemy->getNextLocation();
+        }
+        QList<QPoint> newMatrixPath = getShortestPath(start);
+        // qInfo()<<newMatrixPath;
         enemy->setPath(newMatrixPath,convertCoordinates(newMatrixPath));
         if(!enemy->getTimer()->isActive())
         {

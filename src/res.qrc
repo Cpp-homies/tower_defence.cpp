@@ -50,5 +50,9 @@
         <file>images/CStudent2_projectile.png</file>
         <file>images/CStudent3_projectile.png</file>
         <file>images/CStudent4_projectile.png</file>
+        <file>sounds/Hitsound1.mp3</file>
+        <file>sounds/Hitsound2.mp3</file>
+        <file>sounds/Hitsound3.mp3</file>
+        <file>sounds/Hitsound4.mp3</file>
     </qresource>
 </RCC>

@@ -46,6 +46,9 @@ public:
     QList<QPoint> getShortestPath(QPoint start);
     QList<QPoint> BFS(QPoint start, bool blocked);
 
+    void breakComment(int row, int column);
+    void deleteComment(int row, int column);
+
     int getHealth() const;
     int getScore() const;
     int getLevel() const;
@@ -72,6 +75,7 @@ public:
 
     bool isTower(int row, int column);
     bool isPath(int row, int column);
+    bool isPathEnd(int row, int column);
     bool isComment(int row, int column);
     bool isEnemy(int row, int column);
 public slots:
@@ -97,7 +101,6 @@ public slots:
     void createWave();
     void startGame();
 
-
 signals:
     void gameWon();
     void gameLost();
@@ -110,6 +113,7 @@ private:
     QPoint start_;
     QPoint end_;
     QList<QList<QString>> map_;
+    bool isBlocked_;
 
     int health_;
     int currency_;
