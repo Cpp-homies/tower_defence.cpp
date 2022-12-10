@@ -12,6 +12,8 @@ public:
 
     ~TA();
 
+    void fire(QPointF targetPos);
+
     bool upgrade();
 public slots:
     void buffPulse();
@@ -20,6 +22,8 @@ private:
     double atkSpeedBuffFactor_;
     int buffPulseInterval_;// time between each check for new tower in range (in ms)
     QTimer* buffTimer_;
+
+    int maxRangeMultiplier_ = 1;
 
     QList<QPointF> buffedTowers;
 };

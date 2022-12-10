@@ -36,8 +36,8 @@ MemoryError::MemoryError(MemoryErrorType subType, QList<QPointF> path,QList<QPoi
         setOffset(QPointF(16,16));
         setTransformOriginPoint(pixmap().height(), pixmap().width());
         damage_ = 50;
-        health_ = 50;
-        speed_ = 40;
+        health_ = 100;
+        speed_ = 30;
         break;
 
     default:

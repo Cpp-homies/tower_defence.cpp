@@ -31,8 +31,8 @@ const Qt::GlobalColor atkArea_Color = Qt::black;
 Tower::Tower(int row, int column, QWidget *parent) : Square(column, row, parent) {
     // set the default tower stats
     range_ = 3;
-    damage_ = 10;
-    attackInterval_ = 1000;
+    damage_ = 5;
+    attackInterval_ = 1500;
     damageMultiplier_ = 1.0;
     pierce_ = 0;
     canFire_ = true;
@@ -309,7 +309,7 @@ void Tower::atkSpeedBuff(double buffFactor) {
         // connect a new timer to the getTarget function
         attackTimer_ = new QTimer(this);
         connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
-        attackTimer_->start(attackInterval_);
+        attackTimer_->start(fmax(attackInterval_, 500));
     }
 }
 
@@ -323,7 +323,7 @@ void Tower::atkSpeedDebuff(double debuffFactor) {
         // connect a new timer to the getTarget function
         attackTimer_ = new QTimer(this);
         connect(attackTimer_,SIGNAL(timeout()),this,SLOT(getTarget()));
-        attackTimer_->start(attackInterval_);
+        attackTimer_->start(fmax(attackInterval_, 500));
     }
 }
 

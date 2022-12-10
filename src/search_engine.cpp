@@ -1,11 +1,15 @@
 #include "search_engine.h"
 
 #define LVL2_COST 500
+// Stats can be set here
+#define RANGE 4
+#define SPEED_BUFF 1.1
 
 //Tower(int x, int y, int range, int damage, int attackSpeed, QWidget *parent=nullptr);
-Search_Engine::Search_Engine(int row, int column, QWidget *parent) : Tower(row, column, 4, 10, 3000, parent) {
+Search_Engine::Search_Engine(int row, int column, QWidget *parent)
+    : Tower(row, column, RANGE, 10, 3000, parent) {
     // set Search Engine stats
-    atkSpeedBuffFactor_ = 5;// set the BuffFactor extremely high for testing
+    atkSpeedBuffFactor_ = SPEED_BUFF;// set the BuffFactor extremely high for testing
     canFire_ = false;
     //    atkSpeedBuffFactor_ = 0.2;
     upgradeLevel_ = 1;
@@ -83,7 +87,11 @@ bool Search_Engine::upgrade() {
               ogImagePath_ = ":/images/Google.png";
               towerImg->setPixmap(QPixmap(ogImagePath_));
 
-              // setRange (to make attack area visible after upgrade)
+              // increase speed buff
+              atkSpeedBuffFactor_ = 1.2;
+              damageBuffFactor_ = 2;
+
+              // setRange
               setRange(5);
 
               // make nearby enemies able to target memory errors

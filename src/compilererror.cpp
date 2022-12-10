@@ -18,7 +18,7 @@ CompilerError::CompilerError(CompilerErrorType subType, QList<QPointF> path,QLis
             setOffset(QPointF(16,16));
             setTransformOriginPoint(pixmap().height(), pixmap().width());
             damage_ = 10;
-            health_ = 20;
+            health_ = 15;
             speed_ = 5;            
             break;
 

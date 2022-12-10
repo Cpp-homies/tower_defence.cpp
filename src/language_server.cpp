@@ -3,10 +3,16 @@
 #include "cmath"
 #include <QPropertyAnimation>
 
+// upgrade costs can be set here
 #define LVL2_COST 500
 #define LVL3_COST 500
+// stats can be set here
+#define RANGE 3
+#define DAMAGE 1
+#define ATTACK_INTERVAL 1200 // ms
 
-Language_Server::Language_Server(int row, int column, QWidget *parent) : Tower(row, column, 3, 1, 1000, parent) {
+Language_Server::Language_Server(int row, int column, QWidget *parent)
+    : Tower(row, column, RANGE, DAMAGE, ATTACK_INTERVAL, parent) {
     // set Language_Server stats
     upgradeLevel_ = 1;
     maxLevel_ = 3;
@@ -50,11 +56,15 @@ bool Language_Server::upgrade() {
             // if the player has enough money for the upgrade
             // upgrade the tower
             if (view->getGame()->getCurrency() >= LVL2_COST) {
-                // increase damage by 100%
-                damageBuff(1.0);
+                // increase damage
+                damage_ = 2;
 
-                // setRange (to make attack area visible after upgrade)
-                setRange(3);
+                // setRange
+                setRange(4);
+
+                // increase attack frequency
+                attackInterval_ = 1000;
+
 
                 // update tower graphics
                 projectileImagePath_ = ":/images/Tree_sitter_projectile.png";
@@ -76,11 +86,14 @@ bool Language_Server::upgrade() {
             // if the player has enough money for the upgrade
             // upgrade the tower
             if (view->getGame()->getCurrency() >= LVL2_COST) {
-                // increase attack speed by 200%
-                atkSpeedBuff(2.0);
+                // increase damage
+                damage_ = 10;
 
-                // increase range to 4
-                setRange(4);
+                // increase range
+                setRange(5);
+
+                // increase attack frequency
+                attackInterval_ = 800;
 
                 // can now target memory errors
                 targetAble_[EnemyTypes::MemoryError] = true;

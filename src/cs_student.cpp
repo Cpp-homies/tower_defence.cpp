@@ -36,6 +36,8 @@ bool CS_Student::upgrade() {
             if (view->getGame()->getCurrency() >= LVL2_COST) {
                 // increase damage by 20%
                 this->damage_ = this->damage_ * 1.2;
+
+                // year 2 CStudent can target memory errors
                 targetAble_[EnemyTypes::MemoryError] = true;
 
                 // increase range to 4

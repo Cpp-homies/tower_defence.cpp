@@ -120,6 +120,7 @@ private:
     int level_;
     int finalLevel_;
     int score_;
+    double incomeMultiplier_ = 1.0;
     QList<QPoint> path_;
     QList<QStringList> waves_;
     QList<Enemy*> activeEnemies_;

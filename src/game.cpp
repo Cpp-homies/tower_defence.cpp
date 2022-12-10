@@ -48,9 +48,9 @@
 // prices of towers can be set here
 #define CS_COST 50
 #define TA_COST 100
-#define SE_COST 200
+#define SE_COST 250
 #define COM_COST 20
-#define LS_COST 100
+#define LS_COST 120
 #define VAL_COST 200
 
 // penalty for selling the tower (will be deducted from the tower's total value
@@ -61,7 +61,7 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
 {
     // set starting values of health, currency etc
     health_ = 100000; // CHANGE TO 100
-    currency_ = 100000; // CHANGE TO 100
+    currency_ = 10000; // CHANGE TO 100
     level_ = 0;
     score_ = 0;
     enemyCount_ = 0;
@@ -664,8 +664,7 @@ void Game::createWave()
         }
 
     }
-    ++level_;
-    roundDisplay->setPlainText(QString::number(level_));
+    advanceLevel();
 
 
 
@@ -928,12 +927,14 @@ void Game::setMode(Modes::MODES m) {
 
 void Game::advanceLevel () {
     level_++;
+    roundDisplay->setPlainText(QString::number(level_));
+    incomeMultiplier_ = 1.5 * pow(0.93, level_); // at level 20 ~0.4
 }
 
 void Game::enemyDies(int value)
 {
     changeScore(value);
-    changeCurrency(value);
+    changeCurrency( (int)ceil(value * incomeMultiplier_) );
     Enemy* enemy = qobject_cast<Enemy*>(sender());
     activeEnemies_.removeOne(enemy);
     activeEnemies_.squeeze();
