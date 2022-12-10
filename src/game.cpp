@@ -1029,8 +1029,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 Comment* newComment = new Comment(column, row, 10000, oldPath, nullptr);
                 QGraphicsWidget* comment = this->addWidget(newComment);
 
-                // Notify enemeies of path change
-                emit wallAction();
+
 
                 // remove the current square from the grid
                 this->mapLayout->removeItem(item);
@@ -1044,6 +1043,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
                 // deduct the cost of the comment from player's money
                 changeCurrency(-COM_COST);
             
+                // Notify enemeies of path change
                 emit wallAction();
                 
                 return true;
@@ -1268,11 +1268,18 @@ bool Game::sellTower(int row, int column) {
         changeCurrency((totalCost * (1 - SELL_PENALTY)));
 
         coordsOfTowers.removeOne(QPointF(row, column));
+        coordsOfTowers.squeeze();
         return true;
     } else {
         deleteComment(row, column);
         changeCurrency((COM_COST * (1 - SELL_PENALTY)));
         coordsOfTowers.removeOne(QPointF(row, column));
+        coordsOfTowers.squeeze();
+        QTimer* timer = new QTimer(this);
+        timer->setSingleShot(true);
+        timer->setInterval(200);
+        timer->callOnTimeout([this](){emit wallAction();});
+        timer->start();
         return true;
     }
 }
@@ -1298,7 +1305,7 @@ void Game::deleteComment(int row, int column) {
     this->mapLayout->removeItem(item);
     this->mapLayout->addItem(path, row, column);
     comment->deleteLater();
-    emit wallAction();
+
 }
 
 QWidget* Game::getWidgetAt(int row, int column) {
@@ -1399,9 +1406,11 @@ void Game::enterSellMode() {
 
 void Game::updatePaths()
 {
+
     foreach (Enemy* enemy, activeEnemies_)
     {
         QList<QPoint> newMatrixPath = getShortestPath(enemy->getMatrixLocation());
+        qInfo()<<newMatrixPath;
         enemy->setPath(newMatrixPath,convertCoordinates(newMatrixPath));
         if(!enemy->getTimer()->isActive())
         {
