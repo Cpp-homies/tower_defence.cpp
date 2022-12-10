@@ -54,5 +54,9 @@
         <file>sounds/Hitsound2.mp3</file>
         <file>sounds/Hitsound3.mp3</file>
         <file>sounds/Hitsound4.mp3</file>
+        <file>sounds/Hitsound1.wav</file>
+        <file>sounds/Hitsound2.wav</file>
+        <file>sounds/Hitsound3.wav</file>
+        <file>sounds/Hitsound4.wav</file>
     </qresource>
 </RCC>

@@ -1,8 +1,6 @@
 #include "enemy.h"
 #include "game.h"
 
-#include <QTimer>
-
 Enemy::Enemy(EnemyType type, QList<QPointF> path,QList<QPoint> matrixPath, int health , int damage , int speed , QGraphicsItem * parent):
      QGraphicsPixmapItem(parent), health_(health), damage_(damage), speed_(speed),path_(path),matrixPath_(matrixPath), type_(type)
 {
@@ -17,17 +15,16 @@ Enemy::Enemy(EnemyType type, QList<QPointF> path,QList<QPoint> matrixPath, int h
 
 void Enemy::takeDamage(int damage)
 {
+    qobject_cast<Game*>(scene())->playHitsound();
     health_-=damage;
     if(health_<=0)
     {
         die();
     }
-
 }
 
 void Enemy::die()
 {
-
     emit enemyDies(pointValue_);
     deleteLater();
 
