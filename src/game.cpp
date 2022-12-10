@@ -995,6 +995,22 @@ void Game::keyPressEvent(QKeyEvent* event)
     auto key = event->key();
     if (key == ' '){
         startGame();
+    } else if (key == 'U'){
+        enterUpgradeMode();
+    } else if (key == 'S'){
+        enterSellMode();
+    } else if (key == 'C'){
+        enterBuildCS();
+    } else if (key == 'T'){
+        enterBuildTA();
+    } else if (key == 'E' | key == 'B'){
+        enterBuildSE();
+    } else if (key == 'L'){
+        enterBuildLS();
+    } else if (key == 'V'){
+        enterBuildVal();
+    } else if (key == 'O' | key == '\''){
+        enterBuildCom();
     }
 
 }
