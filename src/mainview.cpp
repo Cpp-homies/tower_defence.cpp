@@ -33,9 +33,9 @@ Leaderboard* MainView::getLeaderboard()
     return leaderboard_;
 }
 
-void MainView::showGame()
+void MainView::showGame(int gamemode)
 {
-    game_= new Game(this);
+    game_= new Game(this, gamemode);
     setScene(game_);
     game_->readWaveFile();
     // Set background image

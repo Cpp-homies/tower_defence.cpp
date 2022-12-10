@@ -18,7 +18,7 @@ public:
     Menu* getMenu();
     Leaderboard* getLeaderboard();
 public slots:
-    void showGame();
+    void showGame(int gamemode); // 0 = sandbox, 1 = easy, 2 = hard
     void showMenu();
     void showLeaderboard();
 

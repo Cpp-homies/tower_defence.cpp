@@ -27,7 +27,7 @@ class Game: public QGraphicsScene
     QThread thread;
 public:
 
-    Game(QObject* parent);
+    Game(QObject* parent, int gamemode = 0);
     QPointF getSquarePos(int row, int column);
     QWidget* getWidgetAt(int row, int column);
     bool buildTower(int row, int column);
@@ -45,6 +45,8 @@ public:
     QList<QPointF> convertCoordinates(QList<QPoint> path);
     QList<QPoint> getShortestPath(QPoint start);
     QList<QPoint> BFS(QPoint start, bool blocked);
+
+    int getGamemode() const {return gamemode_;};
 
     int getHealth() const;
     int getScore() const;
@@ -111,6 +113,8 @@ private:
     QPoint end_;
     QList<QList<QString>> map_;
 
+    int gamemode_; // 0 = sandbox, 1 = easy, 2 = hard
+
     int health_;
     int currency_;
     int time_;
@@ -121,6 +125,7 @@ private:
     int finalLevel_;
     int score_;
     double incomeMultiplier_ = 1.0;
+    double initialIncomeMultiplier_ = 1.5;
     QList<QPoint> path_;
     QList<QStringList> waves_;
     QList<Enemy*> activeEnemies_;
