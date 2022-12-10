@@ -1266,7 +1266,7 @@ bool Game::sellTower(int row, int column) {
         // add the money from selling the tower to player's money
         // current cost penalty for selling a tower is 30%
         changeCurrency((totalCost * (1 - SELL_PENALTY)));
-
+        tower->deleteLater();
         coordsOfTowers.removeOne(QPointF(row, column));
         coordsOfTowers.squeeze();
         return true;
@@ -1275,11 +1275,6 @@ bool Game::sellTower(int row, int column) {
         changeCurrency((COM_COST * (1 - SELL_PENALTY)));
         coordsOfTowers.removeOne(QPointF(row, column));
         coordsOfTowers.squeeze();
-        QTimer* timer = new QTimer(this);
-        timer->setSingleShot(true);
-        timer->setInterval(200);
-        timer->callOnTimeout([this](){emit wallAction();});
-        timer->start();
         return true;
     }
 }
@@ -1305,7 +1300,11 @@ void Game::deleteComment(int row, int column) {
     this->mapLayout->removeItem(item);
     this->mapLayout->addItem(path, row, column);
     comment->deleteLater();
-
+    QTimer* timer = new QTimer(this);
+    timer->setSingleShot(true);
+    timer->setInterval(25);
+    timer->callOnTimeout([this](){emit wallAction();});
+    timer->start();
 }
 
 QWidget* Game::getWidgetAt(int row, int column) {
