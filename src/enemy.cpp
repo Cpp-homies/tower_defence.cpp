@@ -54,7 +54,7 @@ void Enemy::setPath(QList<QPoint> matrixPath,QList<QPointF> path)
 
 QPoint Enemy::getMatrixLocation() const
 {
-    return matrixPath_[point_index_];
+    return matrixPath_[point_index_-1];
 }
 
 QTimer *Enemy::getTimer()
@@ -97,10 +97,8 @@ void Enemy::move()
         }
         // last point not reached, get new destination
         dest_ = path_[point_index_];
+        // qInfo() << nextPos;
         ln = QLineF (pos(),dest_);
-
-
-
     }
 
     // move enemy forward

@@ -224,7 +224,7 @@ void Game::createMap(){
                     line.push_back("O");
                 }
             }
-            qInfo() << line;
+            // qInfo() << line;
         }
     }
 
@@ -235,7 +235,7 @@ void Game::createMap(){
     form->setLayout(mapLayout);
     gameLayout->addItem(form);
     shortest_path_ = getShortestPath(start_);
-    qInfo() << shortest_path_;
+    // qInfo() << shortest_path_;
 }
 
 QList<QPoint> Game::getShortestPath(QPoint start) {
@@ -1302,7 +1302,7 @@ void Game::deleteComment(int row, int column) {
     comment->deleteLater();
     QTimer* timer = new QTimer(this);
     timer->setSingleShot(true);
-    timer->setInterval(200);
+    timer->setInterval(100);
     timer->callOnTimeout([this](){emit wallAction();});
     timer->start();
 }
@@ -1418,8 +1418,12 @@ void Game::updatePaths()
 
     foreach (Enemy* enemy, activeEnemies_)
     {
-        QList<QPoint> newMatrixPath = getShortestPath(enemy->getMatrixLocation());
-        qInfo()<<newMatrixPath;
+        QPoint start = enemy->getMatrixLocation();
+        if (enemy->getTimer()->isActive()) {
+            start = enemy->getNextLocation();
+        }
+        QList<QPoint> newMatrixPath = getShortestPath(start);
+        // qInfo()<<newMatrixPath;
         enemy->setPath(newMatrixPath,convertCoordinates(newMatrixPath));
         if(!enemy->getTimer()->isActive())
         {
