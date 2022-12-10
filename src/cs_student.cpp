@@ -129,6 +129,8 @@ bool CS_Student::upgrade() {
 
             break;
         }
+        // update the tower's description
+        this->updateDescription();
 
         return true;
     }

@@ -15,6 +15,7 @@ public:
     void fire(QPointF targetPos);
 
     bool upgrade();
+    void updateDescription();
 public slots:
     void buffPulse();
 private:

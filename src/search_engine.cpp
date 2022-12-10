@@ -11,6 +11,10 @@ Search_Engine::Search_Engine(int row, int column, QWidget *parent)
     // set Search Engine stats
     atkSpeedBuffFactor_ = SPEED_BUFF;// set the BuffFactor extremely high for testing
     canFire_ = false;
+    attackInterval_ = 0;
+    pierce_ = 0;
+    targetAble_[EnemyTypes::CompilerError] = false;
+
     //    atkSpeedBuffFactor_ = 0.2;
     upgradeLevel_ = 1;
     maxLevel_ = 2;
@@ -29,6 +33,9 @@ Search_Engine::Search_Engine(int row, int column, QWidget *parent)
         if (!tower->hasAtkSpdBuff()) {
             // buff the tower
             tower->atkSpeedBuff(atkSpeedBuffFactor_);
+
+            // update the tower's description
+            tower->updateDescription();
 
             // add the buffed tower's location to the list to marked as buffed
             buffedTowers.prepend(tower->getCoords());
@@ -62,6 +69,9 @@ Search_Engine::~Search_Engine() {
               if (this->upgradeLevel_ >= 2) {
                   tower->targetTableDebuff(EnemyTypes::MemoryError);
               }
+
+              // update the tower's description
+              tower->updateDescription();
           }
         }
     }
@@ -119,8 +129,79 @@ bool Search_Engine::upgrade() {
           break;
       }
 
+      // update the tower's description
+      this->updateDescription();
+
       return true;
   }
+}
+
+void Search_Engine::updateDescription() {
+    // create new Tooltip description for this tower
+    description_ = QString("<p><b>-Search Engine level %1-</b><br><br>"
+                           "<b>Damage: </b>%2<br>"
+                           "<b>Attack interval: </b>%3s<br>"
+                           "<b>Range: </b>%4<br>"
+                           "<b>Pierce: </b>%5<br>"
+                           "<b>Total value: </b>%6<br>"
+                           "<b>Can target: </b>").arg(QString::number(upgradeLevel_),
+                                                            QString::number(damage_),
+                                                            QString::number(attackInterval_ / 1000, 'f', 2),
+                                                            QString::number(range_),
+                                                            QString::number(pierce_),
+                                                            QString::number(totalCost_));
+
+    // list out the enemy types that this tower can target at the moment
+    for (int i = 0, n = 3; i < n; ++i) {
+        QString str = "";
+        // check the enemy type
+        switch (i) {
+        // check if current tower can target given type
+        // if yes, append it to the tower's description
+        case EnemyTypes::RuntimeError:
+        {
+            if(targetAble_[EnemyTypes::RuntimeError] || targetAbleBuff_[EnemyTypes::RuntimeError]) {
+                // add comma at the start of every element except the first one
+                if (i != 0) {
+                    str.append(", ");
+                }
+                str.append("Runtime Errors");
+            }
+            break;
+        }
+        case EnemyTypes::MemoryError:
+        {
+            if(targetAble_[EnemyTypes::MemoryError] || targetAbleBuff_[EnemyTypes::MemoryError]) {
+                // add comma at the start of every element except the first one
+                if (i != 0) {
+                    str.append(", ");
+                }
+                str.append("Memory Errors");
+            }
+            break;
+        }
+        case EnemyTypes::CompilerError:
+        {
+            if(targetAble_[EnemyTypes::CompilerError] || targetAbleBuff_[EnemyTypes::CompilerError]) {
+                // add comma at the start of every element except the first one
+                if (i != 0) {
+                    str.append(", ");
+                }
+                str.append("Compiler Errors");
+            }
+            break;
+        }
+        default:
+            break;
+        }
+
+        description_.append(str);
+    }
+
+    // close the description
+    description_.append("</p>");
+
+    this->setToolTip(description_);
 }
 
 // function for periodically check for new towers in range and buff them
@@ -139,6 +220,9 @@ void Search_Engine::buffPulse() {
           if (this->upgradeLevel_ >= 2) {
               tower->targetTableBuff(EnemyTypes::MemoryError);
           }
+
+          // update the tower's description
+          tower->updateDescription();
 
           // add the buffed tower's location to the list to marked as buffed
           buffedTowers.prepend(tower->getCoords());
