@@ -90,11 +90,25 @@ QString VAL_DESCRIPTION("<p><b>Valgrind:</b><br>"
                         " some might even say that nothing can escape its scope. It does take a bit long for Valgrind to detect"
                         " something, but when it does, that bug is almost as good as dead.</p>");
 
-Game::Game(QObject* parent): QGraphicsScene(parent)
+Game::Game(QObject* parent,int gamemode)
+    : QGraphicsScene(parent), gamemode_(gamemode)
 {
     // set starting values of health, currency etc
-    health_ = 100000; // CHANGE TO 100
-    currency_ = 100000; // CHANGE TO 100
+    if (gamemode_ == 0){        // sandbox
+        health_ = 100000;
+        currency_ = 100000;
+    } else if (gamemode == 1) { // easy
+        health_ = 100;
+        currency_ = 200;
+    } else if (gamemode == 2){  // hard
+        health_ = 1;
+        currency_ = 100;
+        initialIncomeMultiplier_ = 1.0;
+    } else {                    // sandbox
+        gamemode_ = 0;
+        health_ = 100000;
+        currency_ = 100000;
+    }
     level_ = 0;
     score_ = 0;
     enemyCount_ = 0;
@@ -116,9 +130,11 @@ Game::Game(QObject* parent): QGraphicsScene(parent)
     //connects error signal with a message box
     connect(this,SIGNAL(error(QString)),this, SLOT(showError(QString)));
     connect(this,SIGNAL(wallAction()),this,SLOT(updatePaths()));
-    connect(this,SIGNAL(gameWon()),this,SLOT(updateLeaderboard()));
     connect(this,SIGNAL(gameLost()),this,SLOT(stopEnemies()));
-    connect(this,SIGNAL(gameLost()),this,SLOT(updateLeaderboard()));
+    if (gamemode == 2){     // update Leaderboard if gamemode is hard
+        connect(this,SIGNAL(gameWon()),this,SLOT(updateLeaderboard()));
+        connect(this,SIGNAL(gameLost()),this,SLOT(updateLeaderboard()));
+    }
 
 }
 
@@ -975,7 +991,7 @@ void Game::setMode(Modes::MODES m) {
 void Game::advanceLevel () {
     level_++;
     roundDisplay->setPlainText(QString::number(level_));
-    incomeMultiplier_ = 1.5 * pow(0.93, level_); // at level 20 ~0.4
+    incomeMultiplier_ = initialIncomeMultiplier_ * pow(0.93, level_); // at level 20 ~0.4
 }
 
 void Game::enemyDies(int value)
@@ -1026,6 +1042,22 @@ void Game::keyPressEvent(QKeyEvent* event)
     auto key = event->key();
     if (key == ' '){
         startGame();
+    } else if (key == 'U'){
+        enterUpgradeMode();
+    } else if (key == 'S'){
+        enterSellMode();
+    } else if (key == 'C'){
+        enterBuildCS();
+    } else if (key == 'T'){
+        enterBuildTA();
+    } else if (key == 'E' | key == 'B'){
+        enterBuildSE();
+    } else if (key == 'L'){
+        enterBuildLS();
+    } else if (key == 'V'){
+        enterBuildVal();
+    } else if (key == 'O' | key == '\''){
+        enterBuildCom();
     }
 
 }

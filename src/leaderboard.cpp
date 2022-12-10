@@ -30,28 +30,53 @@ Leaderboard::Leaderboard(QObject* parent): QGraphicsScene(parent)
 
     readFile();
 
-    QGraphicsWidget *form = new QGraphicsWidget;
-    QGraphicsLinearLayout* layout = new QGraphicsLinearLayout(Qt::Vertical);
+    QGraphicsWidget *scoresForm = new QGraphicsWidget;
+    QGraphicsWidget *namesForm = new QGraphicsWidget;
+    QGraphicsLinearLayout* scoresLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    QGraphicsLinearLayout* namesLayout = new QGraphicsLinearLayout(Qt::Vertical);
     for(QPair<QString,int> &score:leaderboard_)
     {
         QLabel* highScore = new QLabel();
-        highScore->setFixedWidth(titleText->boundingRect().width()-15);
-        highScore->setText("<div style=\"float: left\">" + score.first +
-                           "</div> <div style=\"float: right; text-align:right\">" +
-                           QString::number(score.second) + "</div>");
+        highScore->setText("<span style=\"color : lime; margin 0;\">"
+                           + QString::number(score.second) + "</span>");
         highScore->setFont(QFont("Roboto", 20, QFont::Bold));
         highScore->setFrameStyle(QFrame::Raised | QFrame::Panel);
-        highScore->setStyleSheet("QLabel { background-color : black; color : lime; padding : 5px; margin : 0 }");
+        highScore->setStyleSheet
+            ("QLabel { background-color : transparent; color : lime; margin : 0; text-align:left }");
         QGraphicsProxyWidget* player = addWidget(highScore);
-        layout->addItem(player);
+        player->setContentsMargins(0,0,0,0);
+        scoresLayout->addItem(player);
+
+        QLabel* highScoreName = new QLabel();
+        highScoreName->setText("<div style=\"color : lime; margin: 0; text-align:right\">"
+                               + score.first.left(30) + "</div>");
+        highScoreName->setFont(QFont("Roboto", 20, QFont::Bold));
+        highScoreName->setFrameStyle(QFrame::Raised | QFrame::Panel);
+        highScoreName->setStyleSheet
+            ("QLabel { background-color : transparent; color : lime; margin : 0; padding : 0; text-align:right }");
+        QGraphicsProxyWidget* playerName = addWidget(highScoreName);
+        playerName->setContentsMargins(0,0,0,0);
+        namesLayout->addItem(playerName);
+        namesLayout->setAlignment(playerName, Qt::AlignRight);
     }
 
+    scoresLayout->setContentsMargins(0,0,0,0);
+    namesLayout->setContentsMargins(0,0,0,0);
+    scoresLayout->setSpacing(10);
+    namesLayout->setSpacing(10);
+
+    scoresForm->setLayout(scoresLayout);
+    addItem(scoresForm);
+
+    scoresForm->setPos(titleText->scenePos().x() + titleText->boundingRect().width()/2 + 1
+                       , titleText->y()+titleText->boundingRect().height()+20);
 
 
-    form->setLayout(layout);
-    addItem(form);
+    namesForm->setLayout(namesLayout);
+    addItem(namesForm);
 
-    form->setPos(titleText->scenePos().x(),this->height()/4);
+    namesForm->setPos(titleText->scenePos().x() - 1 - namesForm->minimumWidth() + titleText->boundingRect().width()/2
+                      , titleText->y()+titleText->boundingRect().height()+20);
 
     // main menu button
     Button * menuButton = new Button(QString("Main menu"), 200, 50);
