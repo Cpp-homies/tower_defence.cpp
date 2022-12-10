@@ -51,7 +51,11 @@ void Enemy::setPath(QList<QPoint> matrixPath,QList<QPointF> path)
 
 QPoint Enemy::getMatrixLocation() const
 {
-    return matrixPath_[point_index_-1];
+    if (point_index_ > 0) {
+        return matrixPath_[point_index_-1];
+    } else {
+        return matrixPath_[point_index_];
+    }
 }
 
 QTimer *Enemy::getTimer()
