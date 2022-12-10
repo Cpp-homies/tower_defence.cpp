@@ -46,6 +46,9 @@ Tower::Tower(int row, int column, QWidget *parent) : Square(column, row, parent)
     std::fill_n(targetAble_, std::size(targetAble_), false);
     targetAble_[EnemyTypes::CompilerError] = true;
 
+    // initialize the targetable buff list to all false
+    std::fill_n(targetAbleBuff_, std::size(targetAbleBuff_), false);
+
     // set tower graphics
     ogImagePath_ = ":/images/CStudent1.png";
     projectileImagePath_ = ":/images/CStudent_projectile.png";
