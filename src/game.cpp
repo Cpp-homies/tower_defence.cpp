@@ -1019,7 +1019,7 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     // if the type is comment
     if (type == TowerTypes::Comment) {
         // check if this is a path and whether there is already a comment
-        if (isPath(row, column) && !dynamic_cast<Comment*>(widget) && !isEnemy(row, column)) {
+        if (isPath(row, column) && !dynamic_cast<Comment*>(widget) && !isEnemy(row, column) && !isPathEnd(row, column)) {
             // if it is available, start building the comment
             // first, check if the player have enough money or not
             // if yes, build the tower
@@ -1319,6 +1319,16 @@ bool Game::isTower(int row, int column) {
 
 bool Game::isPath(int row, int column) {
     return dynamic_cast<Path*>(getWidgetAt(row, column));
+}
+
+bool Game::isPathEnd(int row, int column) {
+    Path* path = dynamic_cast<Path*>(getWidgetAt(row, column));
+    if (!path) {
+        return false;
+    } else if (path->getType() != Start && path ->getType() != End) {
+        return false;
+    }
+    return true;
 }
 
 bool Game::isComment(int row, int column) {

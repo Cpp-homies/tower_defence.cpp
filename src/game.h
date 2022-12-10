@@ -75,6 +75,7 @@ public:
 
     bool isTower(int row, int column);
     bool isPath(int row, int column);
+    bool isPathEnd(int row, int column);
     bool isComment(int row, int column);
     bool isEnemy(int row, int column);
 public slots:
