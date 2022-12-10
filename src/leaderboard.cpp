@@ -49,7 +49,7 @@ Leaderboard::Leaderboard(QObject* parent): QGraphicsScene(parent)
 
         QLabel* highScoreName = new QLabel();
         highScoreName->setText("<div style=\"color : lime; margin: 0; text-align:right\">"
-                               + score.first + "</div>");
+                               + score.first.left(30) + "</div>");
         highScoreName->setFont(QFont("Roboto", 20, QFont::Bold));
         highScoreName->setFrameStyle(QFrame::Raised | QFrame::Panel);
         highScoreName->setStyleSheet

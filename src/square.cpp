@@ -148,7 +148,7 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
         view->getGame()->setMode(Modes::normal);
         break;
     case Modes::normal:
-        view->getGame()->hideAllAttackAreasExcept(QPointF(x_,y_));
+        view->getGame()->hideAllAttackAreasExcept();
         if (this->isTower()){
             this->showHideAttackArea();
         }
