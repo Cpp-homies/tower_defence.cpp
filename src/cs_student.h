@@ -1,3 +1,13 @@
+/**
+ * @file cs_student.h
+ * @authors Hung Vu (hung.h.vu@aalto.fi), Saku (saku.kovanen@aalto.fi)
+ * @brief 
+ * @version 0.1
+ * @date 2022-12-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #ifndef CS_STUDENT_H
 #define CS_STUDENT_H
 

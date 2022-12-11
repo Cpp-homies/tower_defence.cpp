@@ -1,3 +1,13 @@
+/**
+ * @file tower.h
+ * @authors Hung Vu (hung.h.vu@aalto.fi), Saku (saku.kovanen@aalto.fi)
+ * @brief 
+ * @version 0.1
+ * @date 2022-12-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #ifndef TOWER_H
 #define TOWER_H
 
