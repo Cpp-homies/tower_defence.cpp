@@ -170,7 +170,7 @@ Game::Game(QObject* parent,int gamemode)
 void Game::createMap(){
     mapLayout = new QGraphicsGridLayout();
 
-    QFile map(":/files/test.tdmap");
+    QFile map(":/files/map.tdmap");
     if (map.exists() && map.open(QIODevice::ReadOnly)) {
         QTextStream data(&map);
         int width;
