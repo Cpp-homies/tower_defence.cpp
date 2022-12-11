@@ -19,6 +19,9 @@ namespace EnemyTypes{
 
 extern MainView* view;
 
+/**
+ * @brief Base class for all towers in the game, inherited from Square.
+ */
 class Tower : public Square {
 public:
     Tower(QWidget *parent = nullptr);
@@ -53,38 +56,38 @@ public:
     virtual void showHideAttackArea();
     virtual void updateDescription();
 
-    int projectileStepSize_ = 6;
+    int projectileStepSize_ = 6;// how fast the tower's projectile move
 public slots:
     void getTarget();
 protected:
-    QString type_;
-    int range_;
-    double damage_;
-    double damageMultiplier_;
-    double attackInterval_;// in mili-seconds
-    QTimer* attackTimer_;
-    int pierce_;
-    int maxLevel_;
-    int upgradeLevel_;
-    int totalCost_;
-    int rotationAngle_;
+    QString type_;//!< the type of the tower
+    int range_;//!< the attack range of the tower
+    double damage_;//!< the damage of the tower
+    double damageMultiplier_;//!< the damage multiplier of the tower, can be use for buff mechanic
+    double attackInterval_;//!< the interval between the tower's shot, in mili-seconds
+    QTimer* attackTimer_;//!< timer for timing the tower's attack
+    int pierce_;//!< how many enemies (after the first one) can the projectile of this tower pierce through
+    int maxLevel_;//!< the max upgrade level of the tower
+    int upgradeLevel_;// the tower's current upgrade level
+    int totalCost_;//!< the tower current total value
+    int rotationAngle_;//!< the rotation angle of the tower
 
-    QGraphicsPixmapItem * towerImg;
-    QString ogImagePath_;// the original image path in use
-    QString projectileImagePath_;
-    QGraphicsEllipseItem* attack_area_;
+    QGraphicsPixmapItem * towerImg;//!< the tower's image in use
+    QString ogImagePath_;//!< the original image path in use
+    QString projectileImagePath_;//!< the tower's projectile image
+    QGraphicsEllipseItem* attack_area_;//!< the physical attack area of the tower, represent by an ellipse item
     QString description_;
 
-    bool canFire_;// method to check if the tower can fire or not
-    bool targetAble_[3];// array for checking if an enemy is targetable
-    bool targetAbleBuff_[3];// so that support tower can allow towers to target certain enemy types
+    bool canFire_;//!< true if the tower can fire, false otherwise (ex: support towers)
+    bool targetAble_[3];//!< array for checking if an enemy is targetable, an enemy is targetable if the coresponding position for that enemy is true
+    bool targetAbleBuff_[3];//!< array for checking if this tower has been allowed to target an enemy by a support tower, logic to targetAble but is used for buffs
 private:
-    bool upgradeable_;
+    bool upgradeable_;//!< check if the tower is upgradeable or not
 
-    bool has_target_;
-    bool hasAtkSpdBuff_;
+    bool has_target_;//!< check if the tower has a target or not
+    bool hasAtkSpdBuff_;//!< check if the tower has received an attack speed buff from any of the support towers
 
-    QPointF target_pos_;
+    QPointF target_pos_;//!< location of the tower's current target
 };
 
 

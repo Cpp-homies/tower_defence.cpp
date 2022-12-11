@@ -11,6 +11,12 @@
 #define DAMAGE 1
 #define ATTACK_INTERVAL 2000 // ms
 
+/**
+ * @brief Language_Server constructor, create a Language Server tower at the given posion on the grid map.
+ * @param row the row of the tower in the game's grid map
+ * @param column the column of the tower in the game's grid map
+ * @param parent the parent of this item
+ */
 Language_Server::Language_Server(int row, int column, QWidget *parent)
     : Tower(row, column, RANGE, DAMAGE, ATTACK_INTERVAL, parent) {
     // set Language_Server stats
@@ -26,6 +32,10 @@ Language_Server::Language_Server(int row, int column, QWidget *parent)
     this->towerImg->setPos(towerCenter() - QPoint(towerImg->boundingRect().width()/2, towerImg->boundingRect().height()/2) );
 }
 
+/**
+ * @brief Send a pulse-like projectile that damage all enemies in range.
+ * @param QPointF unused, only for matching the overloading signature of the base class
+ */
 void Language_Server::fire(QPointF /* not used */) {
     // create a proxy projectile to use as shooting visual effect
     Projectile* projectile = new Projectile(damage_, projectileImagePath_, pierce_, 0, 200);
@@ -42,6 +52,10 @@ void Language_Server::fire(QPointF /* not used */) {
     view->getGame()->addItem(projectile);
 }
 
+/**
+ * @brief Upgrade this tower if possible.
+ * @return true if the upgrade was successful, false otherwise.
+ */
 bool Language_Server::upgrade() {
     if (upgradeLevel_ >= maxLevel_) {
         // already max level
@@ -123,6 +137,9 @@ bool Language_Server::upgrade() {
     }
 }
 
+/**
+ * @brief Update the tower's text description base on the tower's current stats.
+ */
 void Language_Server::updateDescription() {
     // create new Tooltip description for this tower
     description_ = QString("<p><b>-Language Server level %1-</b><br><br>"

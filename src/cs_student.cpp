@@ -14,10 +14,20 @@
 #define LVL4_COST 500
 #define LVL3_COST 500
 
+/**
+ * @brief CS_Student constructor, create a CS Student tower at the given posion on the grid map.
+ * @param row the row of the tower in the game's grid map
+ * @param column the column of the tower in the game's grid map
+ * @param parent the parent of this item
+ */
 CS_Student::CS_Student(int row, int column, QWidget *parent) : Tower(row, column, parent) {
 
 }
 
+/**
+ * @brief Upgrade this tower if possible.
+ * @return true if the upgrade was successful, false otherwise.
+ */
 bool CS_Student::upgrade() {
     if (upgradeLevel_ >= maxLevel_) {
         // already max level

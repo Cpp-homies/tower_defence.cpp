@@ -164,8 +164,8 @@ private:
      */
     QSoundEffect clicksound_;
 
-    Modes::MODES mode_;
-    TowerTypes::TYPES buildType_;
+    Modes::MODES mode_; //!< the current game mode. Currently there are 5 modes: normal, upgrade, build, sell, exit.
+    TowerTypes::TYPES buildType_; //!< the tower type that will be build, used for build mode
     /**
      * @brief The shortest path between the starting point and the ending point.
      */

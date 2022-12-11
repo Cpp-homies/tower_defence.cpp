@@ -1040,6 +1040,10 @@ void Game::changeScore (int dPoints) {
     scoreDisplay->setPlainText(QString::number(score_));
 }
 
+/**
+ * @brief Set the game's mode to the given mode.
+ * @param m an enum that represents a certain game mode
+ */
 void Game::setMode(Modes::MODES m) {
     mode_ = m;
 }
@@ -1164,6 +1168,13 @@ void Game::showMenu(){
 //    }
 //}
 
+/**
+ * @brief Build a tower of a certain type at the given coordinates on the grid map.
+ * @param row the row of the tower in the game's grid map
+ * @param column the column of the tower in the game's grid map
+ * @param type an enum that represent certain tower types
+ * @return true if the built was successful, false otherwise
+ */
 bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
@@ -1398,6 +1409,12 @@ bool Game::buildTower(int row, int column, TowerTypes::TYPES type) {
 
 }
 
+/**
+ * @brief Sell the tower at the given position on the grid map, which destroy it and give back some money to the player.
+ * @param row the row of the tower in the game's grid map
+ * @param column the column of the tower in the game's grid map
+ * @return true if the sale was successful, false otherwise
+ */
 bool Game::sellTower(int row, int column) {
     // change sell color back to green
     QBrush brush;
@@ -1475,12 +1492,24 @@ void Game::deleteComment(int row, int column) {
     timer->start();
 }
 
+/**
+ * @brief Get a widget at the given position on the game's grid map.
+ * @param row a row in the game's grid map
+ * @param column a column in the game's grid map
+ * @return a pointer to the widget at the given position in the grid map
+ */
 QWidget* Game::getWidgetAt(int row, int column) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
     return widget;
 }
 
+/**
+ * @brief Check if the item at the given position in the grid map is a Tower or not.
+ * @param row a row in the game's grid map
+ * @param column a column in the game's grid map
+ * @return true if the item is a Tower, false otherwise
+ */
 bool Game::isTower(int row, int column) {
     return dynamic_cast<Tower*>(getWidgetAt(row, column));
 }
@@ -1513,6 +1542,9 @@ bool Game::isEnemy(int row, int column)
     return false;
 }
 
+/**
+ * @brief Set the game to upgrade mode for upgrading tower.
+ */
 void Game::enterUpgradeMode() {
     resetButtonHighlights();
 
@@ -1523,6 +1555,9 @@ void Game::enterUpgradeMode() {
     upgradeButton->setBrush(brush);
 }
 
+/**
+ * @brief Set the game to build mode, with the tower type CS Student.
+ */
 void Game::enterBuildCS() {
     resetButtonHighlights();
 
@@ -1531,6 +1566,9 @@ void Game::enterBuildCS() {
     build_CSstudent->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
+/**
+ * @brief Set the game to build mode, with the tower type TA.
+ */
 void Game::enterBuildTA() {
     resetButtonHighlights();
 
@@ -1539,6 +1577,9 @@ void Game::enterBuildTA() {
     build_TA->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
+/**
+ * @brief Set the game to build mode, with the tower type Search Engine.
+ */
 void Game::enterBuildSE() {
     resetButtonHighlights();
 
@@ -1547,6 +1588,9 @@ void Game::enterBuildSE() {
     build_SE->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
+/**
+ * @brief Set the game to build mode, with the tower type Language Server.
+ */
 void Game::enterBuildLS() {
     resetButtonHighlights();
 
@@ -1555,6 +1599,9 @@ void Game::enterBuildLS() {
     build_LS->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
+/**
+ * @brief Set the game to build mode, with the tower type Valgrind.
+ */
 void Game::enterBuildVal() {
     resetButtonHighlights();
 
@@ -1571,6 +1618,9 @@ void Game::enterBuildCom() {
     build_Comment->setStyleSheet("background-color: rgb(0,255,0); border: 1px solid black");
 }
 
+/**
+ * @brief Set the game to sell mode.
+ */
 void Game::enterSellMode() {
     resetButtonHighlights();
 
@@ -1619,6 +1669,12 @@ void Game::addSpawnedEnemies(int amount)
     spawnedThisWave_+= amount;
 }
 
+/**
+ * @brief Upgrade the tower at the given coordinates on the grid map.
+ * @param row the row of the tower in the game's grid map
+ * @param column the column of the tower in the game's grid map
+ * @return true if the upgrade was successful, false otherwise
+ */
 bool Game::upgradeTower(int row, int column) {
     QWidget* widget = getWidgetAt(row, column);
     Tower* tower= dynamic_cast<Tower*>(widget);
