@@ -1,3 +1,13 @@
+/**
+ * @file enemy.h
+ * @author Siim Kasela (siim.kasela@aalto.fi)
+ * @brief 
+ * @version 0.1
+ * @date 2022-12-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #ifndef ENEMY_H
 #define ENEMY_H
 
@@ -36,7 +46,10 @@ enum RuntimeErrorType
     StackOverflow=7
 };
 
-
+/**
+ * @brief Virtual class of the enemies. All enemies in the game are inherited from this class.
+ * 
+ */
 class Enemy: public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
@@ -66,17 +79,55 @@ signals:
     void addedEnemy(Enemy*);
 
 protected:
-
+    /**
+     * @brief The health of the enemy.
+     * 
+     */
     int health_;
+    /**
+     * @brief The damage what the enemy will deal when it reaches to the end of the path.
+     * 
+     */
     int damage_;
-    int speed_; // 0 to 70
+    /**
+     * @brief The speed at which the enemies move along the path. Should be set between the values 0-70.
+     * 
+     */
+    int speed_;
+    /**
+     * @brief The value of the enemy that is turned into points and currency once the enemy is killed.
+     * 
+     */
     int pointValue_;
-//    Game game_;
+    /**
+     * @brief The QPointF(pixels) list of the path where the enemy moves along. 
+     * 
+     */
     QList<QPointF> path_;
+    /**
+     * @brief The QPoint list of the path. (Grid locations)
+     * 
+     */
     QList<QPoint> matrixPath_;
+    /**
+     * @brief The next destination of the enemy.
+     * 
+     */
     QPointF dest_;
+    /**
+     * @brief An index to keep track of the enemy movement along the path.
+     * 
+     */
     int point_index_;
+    /**
+     * @brief The type of the enemy specified by the enum EnemyType
+     * 
+     */
     EnemyType type_;
+    /**
+     * @brief The timer which is used to move the enemy.
+     * 
+     */
     QTimer* timer_;
 
 };

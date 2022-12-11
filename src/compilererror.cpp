@@ -1,6 +1,23 @@
+/**
+ * @file compilererror.cpp
+ * @author Siim Kasela (siim.kasela@aalto.fi)
+ * @brief 
+ * @version 0.1
+ * @date 2022-12-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "compilererror.h"
 #include <QGraphicsScene>
-
+/**
+ * @brief Construct a new Compiler Error:: Compiler Error object
+ * Checks the subType of the enemy and sets the member values accordingly.
+ * 
+ * @param subType 
+ * @param path 
+ * @param matrixPath 
+ */
 CompilerError::CompilerError(CompilerErrorType subType, QList<QPointF> path,QList<QPoint> matrixPath): Enemy(EnemyType::CompilerError,path, matrixPath), name_(subType)
 {
     switch (subType) {
@@ -28,7 +45,10 @@ CompilerError::CompilerError(CompilerErrorType subType, QList<QPointF> path,QLis
     }
     pointValue_ = health_;
 }
-
+/**
+ * @brief After being killed calls the explodeException() function.
+ * 
+ */
 void CompilerError::die()
 {
     if(name_==CompilerErrorType::Exception)
@@ -39,7 +59,10 @@ void CompilerError::die()
     deleteLater();
 
 }
-
+/**
+ * @brief Spawns the amount of SyntaxError enemies on the location of the enemy and sets different speeds to each of them. 
+ * 
+ */
 void CompilerError::explodeException()
 {
 

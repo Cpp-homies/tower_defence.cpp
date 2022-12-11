@@ -709,7 +709,11 @@ void Game::createGameControls()
     gameLayout->addItem(form);
 }
 
-//creates a wave of enemies for one level according to the description in wave.txt
+/**
+ * @brief Creates a wave of enemies for one level according to the description in wave.txt.
+ * The intervals between enemies and types of enemies is implemented using QTimer timers.
+ * 
+ */
 void Game::createWave()
 {
 
@@ -775,6 +779,12 @@ void Game::createWave()
 
 }
 
+/**
+ * @brief Is called to spawn an enemy of the specified type. (Enum is located in enemy.h)
+ * Calls the slot addEnemy which will create the enemy and adds it to the scene.
+ * 
+ * @param type One of the values of the enum EnemyType
+ */
 void Game::spawnEnemy(int type)
 {
     QList<QPoint> shortestPath = getShortestPath(start_);
@@ -800,11 +810,18 @@ void Game::spawnEnemy(int type)
 
 }
 
+/**
+ * @brief Is called when the game is lost or won.
+ * Reads the data from the leaderboard file (or creates it), compares the current score to the leaderboard 
+ * and asks the name of the player if it is in the top10. Updates the leaderboard accordingly.
+ * Uses QInputDialog for communicating with the player.
+ * 
+ */
 void Game::updateLeaderboard()
 {
     QFile file(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)+"_leaderboard.dat");
 
-
+    //read the leaderboard file or create it
     if(!file.open(QIODevice::ReadWrite))
     {
 
@@ -812,7 +829,7 @@ void Game::updateLeaderboard()
         return;
     }
     QDataStream stream(&file);
-
+    //if empty
     if(stream.atEnd())
     {
         bool ok;
@@ -826,6 +843,7 @@ void Game::updateLeaderboard()
         }
 
     }
+    //if not empty
     else
     {
         QList<QPair<QString,int>> fullLeaderboard;
@@ -885,10 +903,15 @@ void Game::updateLeaderboard()
     MainView* view_ = qobject_cast<MainView*>(this->parent());
 
     view_->showLeaderboard();
-    mode_ = Modes::exit;// added to handle object deletion
+    mode_ = Modes::exit;
     this->deleteLater();
 }
 
+/**
+ * @brief Displays an error message in a QMessageBox
+ * 
+ * @param message The message in QString
+ */
 void Game::showError(QString message)
 {
     QMessageBox::warning(qobject_cast<QWidget*>(this), tr("Error"),
@@ -896,7 +919,13 @@ void Game::showError(QString message)
 
 }
 
-//converting grid matrix coordinates to scene coordinates for the enemie path
+/**
+ * @brief Converts grid matrix coordinates to scene coordinates for the enemy path.
+ * 
+ * @param path The grid representation of the enemy path.
+ * @return QList<QPointF> 
+ */
+
 QList<QPointF> Game::convertCoordinates(QList<QPoint> path)
 {
     QList<QPointF> pathF =  QList<QPointF>(path.length());
@@ -910,6 +939,14 @@ QList<QPointF> Game::convertCoordinates(QList<QPoint> path)
     return pathF;
 }
 
+/**
+ * @brief Reads the wave.txt file which specifies the levels of the games.
+ * README.txt can be found in /src/files.
+ * Adds waves to the QList<QStringList> waves_ member which will be used for waves' creation and
+ * the finalLevel_ member.
+ * 
+ * 
+ */
 void Game::readWaveFile()
 {
     QFile file(":/files/waves.txt");
@@ -942,16 +979,33 @@ void Game::readWaveFile()
 }
 
 
-
+/**
+ * @brief Performs a check if the game is lost.
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Game::isLost() const{
     return health_<=0;
 }
 
+/**
+ * @brief Performs a check if the game is won.
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Game::isWon() const
 {
     return  health_>0 && level_==finalLevel_ ;
 }
 
+/**
+ * @brief Performs a check if the level is won.
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Game::isWaveWon()
 {
 
@@ -964,23 +1018,45 @@ bool Game::isWaveWon()
 
 }
 
+/**
+ * @brief Returns the health of the player.
+ * 
+ * @return int 
+ */
 int Game::getHealth() const {
     return health_;
 }
 
+/**
+ * @brief Returns the amount of currency the player has.
+ * 
+ * @return int 
+ */
 int Game::getCurrency() const {
     return currency_;
 }
-
+/**
+ * @brief Returns the amount of currently active enemies.
+ * 
+ * @return int 
+ */
 int Game::getEnemyCount() const
 {
     return enemyCount_;
 }
-
+/**
+ * @brief Returns the currently active level.
+ * 
+ * @return int 
+ */
 int Game::getLevel() const {
     return level_;
 }
-
+/**
+ * @brief Returns the current score.
+ * 
+ * @return int 
+ */
 int Game::getScore() const {
     return score_;
 }
@@ -993,6 +1069,11 @@ TowerTypes::TYPES Game::getBuildType() const {
     return buildType_;
 }
 
+/**
+ * @brief Is called when the player takes damage from an enemy. 
+ * 
+ * @param dHealth The amount of damage dealt by an enemy.
+ */
 void Game::takeDamage (int dHealth) {
     health_-=dHealth;
     healthDisplay->setPlainText(QString::number(health_));
@@ -1018,11 +1099,21 @@ void Game::takeDamage (int dHealth) {
     }
 }
 
+/**
+ * @brief Changes the currency amount.
+ * 
+ * @param dCurrency The amount to be added to currency.
+ */
 void Game::changeCurrency (int dCurrency) {
     currency_+=dCurrency;
     wealthDisplay->setPlainText(QString::number(currency_));
 }
 
+/**
+ * @brief Changes the score.
+ * 
+ * @param dPoints The amount of points to be added.
+ */
 void Game::changeScore (int dPoints) {
     score_+=dPoints;
     scoreDisplay->setPlainText(QString::number(score_));
@@ -1031,13 +1122,22 @@ void Game::changeScore (int dPoints) {
 void Game::setMode(Modes::MODES m) {
     mode_ = m;
 }
-
+/**
+ * @brief Advances the level by 1.
+ * 
+ */
 void Game::advanceLevel () {
     level_++;
     roundDisplay->setPlainText(QString::number(level_));
     incomeMultiplier_ = initialIncomeMultiplier_ * pow(0.90, level_); // at level 20 ~0.12 * the initialMultiplier
 }
 
+/**
+ * @brief Is called when an enemy dies.
+ * Updates the activeEnemies_ list and performs level and game ending checks.
+ * 
+ * @param value The value that will be added the score and currency.
+ */
 void Game::enemyDies(int value)
 {
     changeScore(value);
@@ -1063,6 +1163,12 @@ void Game::enemyDies(int value)
 
 }
 
+/**
+ * @brief Adds an enemy to the game.
+ * Connects all signals and slots relevant to the enemy. 
+ * 
+ * @param enemy The enemy to be added.
+ */
 void Game::addEnemy(Enemy* enemy)
 {
     addItem(enemy);
@@ -1110,6 +1216,13 @@ void Game::keyPressEvent(QKeyEvent* event)
 
 }
 
+/**
+ * @brief Returns the scene location of a square in the grid.
+ * 
+ * @param row The row in the grid.
+ * @param column The column in the grid.
+ * @return QPointF 
+ */
 QPointF Game::getSquarePos(int row, int column){
 
     return mapLayout->itemAt(row,column)->graphicsItem()->scenePos();
@@ -1491,6 +1604,14 @@ bool Game::isComment(int row, int column) {
     return dynamic_cast<Comment*>(getWidgetAt(row, column));
 }
 
+/**
+ * @brief Checks if the location is populated by enemies.
+ * 
+ * @param row The row in the grid.
+ * @param column The column in the grid.
+ * @return true 
+ * @return false 
+ */
 bool Game::isEnemy(int row, int column)
 {
     QPoint point(row,column);
@@ -1569,6 +1690,12 @@ void Game::enterSellMode() {
     sellButton->setBrush(brush);
 }
 
+/**
+ * @brief Updates the paths of all the enemies.
+ * Path is calculated using breath-first search and returned by getShortestPath(QPoint).
+ * Is connected to the wallAction() signal.
+ * 
+ */
 void Game::updatePaths()
 {
 
@@ -1588,11 +1715,19 @@ void Game::updatePaths()
     }
 }
 
+/**
+ * @brief Updates the currently active enemy count.
+ * 
+ */
 void Game::updateEnemyCount()
 {
     enemyCount_=activeEnemies_.length();
 }
 
+/**
+ * @brief Stops the timers of all the enemies in the game.
+ * 
+ */
 void Game::stopEnemies()
 {
     foreach (Enemy* enemy, activeEnemies_) {
@@ -1602,6 +1737,11 @@ void Game::stopEnemies()
     }
 }
 
+/**
+ * @brief Adds amount of enemies that have been spawned during this level up to this point.
+ * 
+ * @param amount The amount of enemies added.
+ */
 void Game::addSpawnedEnemies(int amount)
 {
     spawnedThisWave_+= amount;
