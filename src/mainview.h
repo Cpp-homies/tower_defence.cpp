@@ -1,3 +1,13 @@
+/**
+ * @file mainview.h
+ * @author Siim Kasela (siim.kasela@aalto.fi)
+ * @brief 
+ * @version 0.1
+ * @date 2022-12-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #ifndef MAINVIEW_H
 #define MAINVIEW_H
 
@@ -7,6 +17,10 @@
 
 #include <QGraphicsView>
 
+/**
+ * @brief Class for representing the View that contains the Menu, Game and Leaderboard.
+ * 
+ */
 class MainView :  public QGraphicsView
 {
     Q_OBJECT
@@ -24,8 +38,20 @@ public slots:
 
 
 private:
+    /**
+     * @brief The game scene.
+     * 
+     */
     Game* game_ = nullptr;
+    /**
+     * @brief The menu scene.
+     * 
+     */
     Menu* menu_;
+    /**
+     * @brief The leaderboard scene.
+     * 
+     */
     Leaderboard* leaderboard_;
 };
 
