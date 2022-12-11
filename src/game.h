@@ -123,7 +123,7 @@ private:
 
     int health_;
     int currency_;
-    int time_;
+    //int time_;
     int wavesEnemyCount_;
     QAtomicInteger<int> spawnedThisWave_;
     int enemyCount_;

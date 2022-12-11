@@ -82,7 +82,7 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
             }
             else {
                 // build successful, schedule to delete the square
-                deleteLater();
+                //deleteLater();
                 // reset the mode of the game back to normal
                 view->getGame()->setMode(Modes::normal);
             }
