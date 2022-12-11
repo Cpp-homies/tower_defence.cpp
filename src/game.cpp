@@ -880,7 +880,8 @@ void Game::updateLeaderboard()
     MainView* view_ = qobject_cast<MainView*>(this->parent());
 
     view_->showLeaderboard();
-
+    mode_ = Modes::exit;// added to handle object deletion
+    this->deleteLater();
 }
 
 void Game::showError(QString message)
@@ -998,11 +999,16 @@ void Game::takeDamage (int dHealth) {
     if(isLost())
     {
         emit gameLost();
+        disconnect(this,SIGNAL(gameLost()),nullptr,nullptr);
         return;
     }
     if(isWaveWon())
     {
-        isWon() ? emit gameWon() :  createWave();
+        if(isWon())
+        {
+           emit gameWon();
+           disconnect(this, SIGNAL(gameWon()),nullptr,nullptr);
+        } else   createWave();
 
     }
 }
@@ -1035,13 +1041,17 @@ void Game::enemyDies(int value)
     activeEnemies_.removeOne(enemy);
     activeEnemies_.squeeze();
     updateEnemyCount();
-    QTimer* timer = new QTimer();
+    QTimer* timer = new QTimer(this);
     timer->setSingleShot(true);
     timer->setInterval(500);
     timer->callOnTimeout([this](){
         if(this->isWaveWon())
         {
-            this->isWon() ? emit this->gameWon() : this->createWave() ;
+            if(isWon())
+            {
+                emit this->gameWon();
+                disconnect(this, SIGNAL(gameWon()),nullptr,nullptr);
+            } else this->createWave() ;
         }
     });
     timer->start();

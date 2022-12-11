@@ -15,6 +15,6 @@ int main(int argc, char *argv[])
     view->showMenu();
 
     view->show();
-
+    QObject::connect(&a,&QApplication::aboutToQuit,[](){delete view;});
     return a.exec();
 }
