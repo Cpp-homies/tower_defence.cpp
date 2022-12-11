@@ -35,9 +35,9 @@ MemoryError::MemoryError(MemoryErrorType subType, QList<QPointF> path,QList<QPoi
         setPixmap(QPixmap(":/images/Mismatched.png"));
         setOffset(QPointF(16,16));
         setTransformOriginPoint(pixmap().height(), pixmap().width());
-        damage_ = 50;
-        health_ = 100;
-        speed_ = 30;
+        damage_ = 20;
+        health_ = 200;
+        speed_ = 40;
         break;
 
     default:

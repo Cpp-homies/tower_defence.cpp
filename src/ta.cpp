@@ -9,14 +9,14 @@
 #define ATTACK_INTERVAL 1500 // ms
 #define PIERCE  3
 #define SPEED_BUFF 1.05
-#define DAMAGE_BUFF 1.1
+#define DAMAGE_BUFF 1.5
 
 //Tower(int x, int y, int range, int damage, int attackSpeed, QWidget *parent=nullptr);
 TA::TA(int row, int column, QWidget *parent)
     : Tower(row, column, RANGE, DAMAGE, ATTACK_INTERVAL, parent) {
     // set TA stats
     atkSpeedBuffFactor_ = SPEED_BUFF;
-    damageBuffFactor_ = 1.5;
+    damageBuffFactor_ = DAMAGE_BUFF;
     upgradeLevel_ = 1;
     maxLevel_ = 2;
     buffPulseInterval_ = 2000;

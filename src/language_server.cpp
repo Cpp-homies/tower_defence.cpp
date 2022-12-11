@@ -9,7 +9,7 @@
 // stats can be set here
 #define RANGE 3
 #define DAMAGE 1
-#define ATTACK_INTERVAL 1200 // ms
+#define ATTACK_INTERVAL 2000 // ms
 
 Language_Server::Language_Server(int row, int column, QWidget *parent)
     : Tower(row, column, RANGE, DAMAGE, ATTACK_INTERVAL, parent) {
@@ -57,13 +57,13 @@ bool Language_Server::upgrade() {
             // upgrade the tower
             if (view->getGame()->getCurrency() >= LVL2_COST) {
                 // increase damage
-                damage_ = 2;
+                damage_ = 8;
 
                 // setRange
                 setRange(4);
 
                 // increase attack frequency
-                attackInterval_ = 1000;
+                attackInterval_ = 1600;
 
 
                 // update tower graphics
@@ -87,13 +87,13 @@ bool Language_Server::upgrade() {
             // upgrade the tower
             if (view->getGame()->getCurrency() >= LVL2_COST) {
                 // increase damage
-                damage_ = 10;
+                damage_ = 16;
 
                 // increase range
                 setRange(5);
 
                 // increase attack frequency
-                attackInterval_ = 800;
+                attackInterval_ = 1200;
 
                 // can now target memory errors
                 targetAble_[EnemyTypes::MemoryError] = true;

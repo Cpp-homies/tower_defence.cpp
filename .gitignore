@@ -56,3 +56,4 @@ Mkfile.old
 dkms.conf
 src/tower_defence.pro.user
 .qtc_clangd/
+.obsidian

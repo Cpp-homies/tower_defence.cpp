@@ -4,9 +4,9 @@
 // Stats can be set here
 #define RANGE 50
 #define DAMAGE 50
-#define ATTACK_INTERVAL 3000 // ms
-#define PIERCE  0
-#define PROJECTILE_MOVE_INTERVAL 3 // default 10, lower to get faster projectiles
+#define ATTACK_INTERVAL 5000 // ms
+#define PIERCE  2
+#define PROJECTILE_MOVE_INTERVAL 5 // default 10, lower to get faster projectiles
 #define PROJECTILE_STEP_SIZE 30 // theoretical max is 32. If large, projectile may skip over enemies
 
 Valgrind::Valgrind(int row, int column, QWidget *parent/*unused*/)
