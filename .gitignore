@@ -33,7 +33,6 @@ src/main
 
 
 # Executables
-*.exe
 *.out
 *.app
 *.i*86
