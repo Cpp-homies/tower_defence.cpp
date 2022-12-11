@@ -31,7 +31,7 @@ public:
     double getDistanceTravelled();
     void setMaxRange(double rng);
     void setDistanceTravelled(double dist);
-    void setMoveFrequency(int newValue) {moveFrequency_=newValue;};
+    void setMoveFrequency(int newValue) {moveInterval_=newValue;};
 
 public slots:
     void move();
