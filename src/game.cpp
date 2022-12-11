@@ -1264,35 +1264,6 @@ void Game::showMenu(){
 }
 
 /**
- *
- * The below function was used for testing and is now outdated
- *
- */
-// build a default tower (CS Student)
-//bool Game::buildTower(int row, int column) {
-//    QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
-//    QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
-
-//    // if there is a tower occupying the square, return false
-//    if (dynamic_cast<Tower*>(widget) || isPath(row, column)) {
-//        return false;
-//    }
-//    else {
-//        // create a new tower and add it to the scene
-//        QGraphicsWidget* tower = this->addWidget(new CS_Student(row, column, nullptr));
-
-//        // remove the current square from the grid
-//        this->removeItem(item->graphicsItem());
-//        this->mapLayout->removeItem(item);
-
-//        // add a tower to the grid at the given possition
-//        this->mapLayout->addItem(tower, row, column);
-
-//        return true;
-//    }
-//}
-
-/**
  * @brief Build a tower of a certain type at the given coordinates on the grid map.
  * @param row the row of the tower in the game's grid map
  * @param column the column of the tower in the game's grid map
@@ -1588,6 +1559,11 @@ bool Game::sellTower(int row, int column) {
     }
 }
 
+/**
+ * @brief The enemy's method of destroying a comment tower. Breaks the comment tower after its duration value passes.
+ * @param row The row of the comment tower.
+ * @param column The column of the comment tower.
+ */
 void Game::breakComment(int row, int column) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
@@ -1595,6 +1571,11 @@ void Game::breakComment(int row, int column) {
     comment->startTimer();
 }
 
+/**
+ * @brief Deletes a comment tower at a given location.
+ * @param row The row of the comment tower.
+ * @param column The column of the comment tower.
+ */
 void Game::deleteComment(int row, int column) {
     QGraphicsLayoutItem* item = this->mapLayout->itemAt(row, column);
     QWidget* widget = (dynamic_cast<QGraphicsProxyWidget*>(item))->widget();
@@ -1638,10 +1619,22 @@ bool Game::isTower(int row, int column) {
     return dynamic_cast<Tower*>(getWidgetAt(row, column));
 }
 
+/**
+ * @brief Checks if the square at the given location is a path tile.
+ * @param row The row of the square in question.
+ * @param column The column of the square in question.
+ * @return A boolean denoting if the square located at the given location is a path tile or not.
+ */
 bool Game::isPath(int row, int column) {
     return dynamic_cast<Path*>(getWidgetAt(row, column));
 }
 
+/**
+ * @brief Checks if the square at the given location is an end of the enemy's path.
+ * @param row The row of the square in question.
+ * @param column The column of the square in question.
+ * @return A boolean denoting if the square located at the given location is an end of the enemy's path.
+ */
 bool Game::isPathEnd(int row, int column) {
     Path* path = dynamic_cast<Path*>(getWidgetAt(row, column));
     if (!path) {
@@ -1652,6 +1645,12 @@ bool Game::isPathEnd(int row, int column) {
     return true;
 }
 
+/**
+ * @brief Checks if the square at the given location contains a comment tower.
+ * @param row The row of the location in question.
+ * @param column The column of the location in question.
+ * @return A boolean denoting if the square at the given location contains a comment tower or not.
+ */
 bool Game::isComment(int row, int column) {
     return dynamic_cast<Comment*>(getWidgetAt(row, column));
 }
@@ -1767,7 +1766,6 @@ void Game::enterSellMode() {
  * @brief Updates the paths of all the enemies.
  * Path is calculated using breath-first search and returned by getShortestPath(QPoint).
  * Is connected to the wallAction() signal.
- * 
  */
 void Game::updatePaths()
 {
@@ -1779,7 +1777,7 @@ void Game::updatePaths()
             start = enemy->getNextLocation();
         }
         QList<QPoint> newMatrixPath = getShortestPath(start);
-        // qInfo()<<newMatrixPath;
+
         enemy->setPath(newMatrixPath,convertCoordinates(newMatrixPath));
         if(!enemy->getTimer()->isActive())
         {
@@ -1883,6 +1881,9 @@ void Game::hideAllAttackAreasExcept(QPointF exclude)
 
 }
 
+/**
+ * @brief Starts the game.
+ */
 void Game::startGame() {
     if(level_==0 )
     {
