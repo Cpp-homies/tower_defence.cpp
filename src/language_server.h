@@ -4,7 +4,7 @@
 #include "tower.h"
 
 /**
- * @brief A Search Engine tower type. Can attack all enemies in range at the same time. Inherited from Tower class.
+ * @brief A Language Server tower type. Can attack all enemies in range at the same time. Inherited from Tower class.
  */
 class Language_Server : public Tower {
 public:
