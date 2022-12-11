@@ -1035,7 +1035,7 @@ void Game::setMode(Modes::MODES m) {
 void Game::advanceLevel () {
     level_++;
     roundDisplay->setPlainText(QString::number(level_));
-    incomeMultiplier_ = initialIncomeMultiplier_ * pow(0.93, level_); // at level 20 ~0.4
+    incomeMultiplier_ = initialIncomeMultiplier_ * pow(0.90, level_); // at level 20 ~0.12 * the initialMultiplier
 }
 
 void Game::enemyDies(int value)
