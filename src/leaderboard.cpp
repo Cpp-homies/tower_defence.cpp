@@ -1,3 +1,13 @@
+/**
+ * @file leaderboard.cpp
+ * @authors Siim (siim.kasela@aalto.fi), Saku (saku.kovanen@aalto.fi)
+ * @brief 
+ * @version 0.1
+ * @date 2022-12-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "leaderboard.h"
 #include "mainview.h"
 #include "button.h"
@@ -8,7 +18,11 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 
-
+/**
+ * @brief Construct a new Leaderboard:: Leaderboard object. Places the graphics into the leaderboard scene.
+ * 
+ * @param parent The parent object of the leaderboard scene.
+ */
 Leaderboard::Leaderboard(QObject* parent): QGraphicsScene(parent)
 {
     // set size 1280x717 (use 717 height because we dont want scroll)
@@ -88,11 +102,20 @@ Leaderboard::Leaderboard(QObject* parent): QGraphicsScene(parent)
     addItem(menuButton);
 }
 
+/**
+ * @brief Sets leaderboard.
+ * 
+ * @param leaderboard New leaderboard.
+ */
 void Leaderboard::setLeaderBoard(QList<QPair<QString, int> > leaderboard)
 {
     leaderboard_ = leaderboard;
 }
 
+/**
+ * @brief Reads the leaderboard data file from OS specific data location. On windows %appdata%
+ * 
+ */
 void Leaderboard::readFile()
 {
     QFile file(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)+"_leaderboard.dat");
@@ -121,6 +144,10 @@ void Leaderboard::readFile()
     file.close();
 }
 
+/**
+ * @brief Shows menu.
+ * 
+ */
 void Leaderboard::showMenu(){
     MainView* view = qobject_cast<MainView*>(this->parent());
     view->showMenu();

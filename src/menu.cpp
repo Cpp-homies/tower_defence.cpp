@@ -1,3 +1,13 @@
+/**
+ * @file menu.cpp
+ * @authors Saku (saku.kovanen@aalto.fi)
+ * @brief 
+ * @version 0.1
+ * @date 2022-12-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "menu.h"
 #include "mainview.h"
 #include "button.h"
@@ -11,7 +21,11 @@
 #include <QGraphicsTextItem>
 #include <QSignalMapper>
 
-
+/**
+ * @brief Construct a new Menu:: Menu object. Places all the graphics in the menu scene.
+ * 
+ * @param parent The parent object of the menu scene.
+ */
 Menu::Menu(QObject *parent): QGraphicsScene(parent)
 {
     setSceneRect(0,0,1280,717);
@@ -78,16 +92,29 @@ Menu::Menu(QObject *parent): QGraphicsScene(parent)
     addItem(quitButton);
 }
 
+/**
+ * @brief Shows game.
+ * 
+ * @param gamemode Specifies the gamemode of the game showed.
+ */
 void Menu::showGame(int gamemode){
     MainView* view = qobject_cast<MainView*>(this->parent());
     view->showGame(gamemode);
 }
 
+/**
+ * @brief Shows leaderboard.
+ * 
+ */
 void Menu::showLeaderboard(){
     MainView* view = qobject_cast<MainView*>(this->parent());
     view->showLeaderboard();
 }
 
+/**
+ * @brief Quits the whole program.
+ * 
+ */
 void Menu::quit(){
     MainView* view = qobject_cast<MainView*>(this->parent());
     view->close();

@@ -1,3 +1,13 @@
+/**
+ * @file button.cpp
+ * @author Saku (saku.kovanen@aalto.fi)
+ * @brief 
+ * @version 0.1
+ * @date 2022-12-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "button.h"
 #include <QBrush>
 #include <QGraphicsTextItem>
@@ -5,6 +15,15 @@
 #include <QFontDatabase>
 #include <QCursor>
 
+/**
+ * @brief Construct a new Button:: Button object. Creates a button.
+ * 
+ * @param name Text shown on the button.
+ * @param w Width of the button.
+ * @param h Height of the button.
+ * @param backgroundColor Color of the button.
+ * @param parent The parent of the button.
+ */
 Button::Button(QString name, int w, int h, QColor backgroundColor, QGraphicsItem *parent):
     QGraphicsRectItem(parent), backgroundColor_(backgroundColor)
 {
@@ -35,7 +54,11 @@ void Button::mousePressEvent(QGraphicsSceneMouseEvent */* unused */)
     emit clicked();
 }
 
-void Button::hoverEnterEvent(QGraphicsSceneHoverEvent */* unused */)
+/**
+ * @brief Changes the button color when mouse hovers over the button.
+ * 
+ */
+void Button::hoverEnterEvent(QGraphicsSceneHoverEvent * /* unused */)
 {
     // change color to dark green
     if (brush().color() == backgroundColor_) {
@@ -46,6 +69,10 @@ void Button::hoverEnterEvent(QGraphicsSceneHoverEvent */* unused */)
     }
 }
 
+/**
+ * @brief Changes the button color back to original color, when mouse no longer hovers over it.
+ * 
+ */
 void Button::hoverLeaveEvent(QGraphicsSceneHoverEvent * /* unused */)
 {
     // change color back to green

@@ -374,6 +374,10 @@ void Game::playClicksound() {
     clicksound_.play();
 }
 
+/**
+ * @brief Creates the game controls and hooks them up to their actions. Places all the controls into the gameLayout.
+ * 
+ */
 void Game::createGameControls()
 {
     //for testing purposes, all Layouts will auto adjust the size
@@ -1083,8 +1087,11 @@ void Game::addEnemy(Enemy* enemy)
 
 }
 
-//just testing scene changing
-//can be used for other purposes
+/**
+ * @brief Initiates the correct functions related to the key pressed.
+ * 
+ * @param event The event. Mainly it contains the character which corresponds to the key which was pressed. 
+ */
 void Game::keyPressEvent(QKeyEvent* event)
 {
     auto key = event->key();
@@ -1115,6 +1122,10 @@ QPointF Game::getSquarePos(int row, int column){
     return mapLayout->itemAt(row,column)->graphicsItem()->scenePos();
 }
 
+/**
+ * @brief Exits the game into the main menu.
+ * 
+ */
 void Game::showMenu(){
     MainView* view = qobject_cast<MainView*>(this->parent());
     view->showMenu();
@@ -1671,9 +1682,16 @@ void Game::startGame() {
     }
 }
 
-void Game::addLabelTo(QGraphicsLinearLayout* layout, QString towerName, QString stylesheet) {
+/**
+ * @brief Adds create a specified label and adds it to the layout specified.
+ * 
+ * @param layout The layout the new created label will be added.
+ * @param text The text on the label.
+ * @param stylesheet The stylesheet that will be applied to the label.
+ */
+void Game::addLabelTo(QGraphicsLinearLayout* layout, QString text, QString stylesheet) {
     // Add price visuals
-    QLabel * label = new QLabel(towerName);
+    QLabel * label = new QLabel(text);
     label->setStyleSheet(stylesheet);
     // set font
     QFont font("Roboto", 14);

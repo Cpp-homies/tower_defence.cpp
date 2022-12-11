@@ -52,6 +52,14 @@ public:
     void breakComment(int row, int column);
     void deleteComment(int row, int column);
     
+    /**
+     * @brief Get the Gamemode:
+     * 0 = sandbox, 
+     * 1 = easy, 
+     * 2 = hard
+     * 
+     * @return int Corresponds to the gamemode of the game instance.
+     */
     int getGamemode() const {return gamemode_;};
 
     int getHealth() const;
@@ -120,6 +128,10 @@ private:
     QList<QList<QString>> map_;
     bool isBlocked_;
 
+    /**
+     * @brief Corresponds to the gamemode of the game instance.
+     * 
+     */
     int gamemode_; // 0 = sandbox, 1 = easy, 2 = hard
 
     int health_;
@@ -131,7 +143,15 @@ private:
     int level_;
     int finalLevel_;
     int score_;
+    /**
+     * @brief Income is multiplied by this double before it is added to the currency
+     * 
+     */
     double incomeMultiplier_ = 1.0;
+    /**
+     * @brief Income is initially set to this. It will decrease based on the round
+     * 
+     */
     double initialIncomeMultiplier_ = 2.0;
     QList<QPoint> path_;
     QList<QStringList> waves_;
@@ -147,21 +167,80 @@ private:
     TowerTypes::TYPES buildType_;
     QList<QPoint> shortest_path_;
 
+    /**
+     * @brief Displays the round number.
+     * 
+     */
     QGraphicsTextItem * roundDisplay;
+    /**
+     * @brief Displays the score accumulated during current run.
+     * 
+     */
     QGraphicsTextItem * scoreDisplay;
+    /**
+     * @brief Displays the amount health points left.
+     * 
+     */
     QGraphicsTextItem * healthDisplay;
+    /**
+     * @brief Displays the amount of currency.
+     * 
+     */
     QGraphicsTextItem * wealthDisplay;
+    /**
+     * @brief Button to enter upgrade mode.
+     * 
+     */
     Button * upgradeButton;
+    /**
+     * @brief Button to enter sell mode.
+     * 
+     */
     Button * sellButton;
+    /**
+     * @brief Button to start round 1, if round is 0.
+     * 
+     */
     Button * nextRoundButton;
+    /**
+     * @brief Button to build CS student.
+     * 
+     */
     QToolButton* build_CSstudent;
+    /**
+     * @brief Button to build Teacher's Assistant.
+     * 
+     */
     QToolButton* build_TA;
+    /**
+     * @brief Button to build Search Engine.
+     * 
+     */
     QToolButton* build_SE;
+    /**
+     * @brief Button to build Language Server
+     * 
+     */
     QToolButton* build_LS;
+    /**
+     * @brief Button to build Valgrind.
+     * 
+     */
     QToolButton* build_Valgrind;
+    /**
+     * @brief Button to build comment.
+     * 
+     */
     QToolButton* build_Comment;
+    /**
+     * @brief Stylesheet for the build buttons.
+     * 
+     */
     QString buildButtonStylesheet;
-
+    /**
+     * @brief List of the coordinates of the towers.
+     * 
+     */
     QList<QPointF> coordsOfTowers;
 
     void addLabelTo(QGraphicsLinearLayout* layout, QString towerName, QString stylesheet);
