@@ -153,19 +153,14 @@ Game::Game(QObject* parent,int gamemode)
     hitsound4_.setVolume(0.1f);
     clicksound_.setVolume(1.0f);
 }
-
+/**
+ * @brief Reads the map file and uses the information to construct the map's tile and path objects at the appropriate
+ * locations as denoted by the file data.
+ */
 void Game::createMap(){
     mapLayout = new QGraphicsGridLayout();
 
-//    QFile test(":/files/testing.map");
-//    test.open(QIODevice::WriteOnly);
-//    QDataStream out(&test);
-//    out << (qint32)16;
-//    out << (qint32)9;
-//    test.close();
-
     QFile map(":/files/test.tdmap");
-    // TODO: Handle invalid map (either doesn't exist or wrong format)
     if (map.exists() && map.open(QIODevice::ReadOnly)) {
         QTextStream data(&map);
         int width;
@@ -185,6 +180,13 @@ void Game::createMap(){
         }
         map.close();
         map_ = matrix;
+
+        // About the map data:
+        // 1: Normal square, on which towers can be built.
+        // 2: Path tile, on which comment towers can be built. (These are only intermediate paths, that is, neither start nor end points of the path.)
+        // A: Starting point for enemies, on which no towers of any kind can be built.
+        // B: Ending point for enemies, on which no towers of any kind can be built.
+
         for (int j = 0; j < height; ++j) {
             for (int i = 0; i < width; ++i) {
                 QString value = matrix[j][i];
@@ -280,19 +282,7 @@ void Game::createMap(){
                 }
             }
         }
-        for (int j = 0; j < height; ++j) {
-            QString line = "";
-            for (int i = 0; i < width; ++i) {
-                if (isPath(j, i)) {
-                    line.push_back(" ");
-                } else {
-                    line.push_back("O");
-                }
-            }
-            // qInfo() << line;
-        }
     }
-
     // set margins to 0
     mapLayout->setContentsMargins(0,0,0,0);
 
@@ -300,9 +290,16 @@ void Game::createMap(){
     form->setLayout(mapLayout);
     gameLayout->addItem(form);
     shortest_path_ = getShortestPath(start_);
-    // qInfo() << shortest_path_;
 }
 
+/**
+ * @brief Gets the shortest list of path coordinates which the enemies can take to get from an arbitrary path coordinate to the ending point.
+ * Uses the following priority:
+ * - If there is at least one unobstructed path between the given start point and the ending point, take the shortest path.
+ * - If all paths are obstructed, take the shortest path to the ending point disregarding any obstructions.
+ * @param start The path coordinate to start from.
+ * @return A list of path coordinates, representing the shortest path enemies can take to get to the ending point.
+ */
 QList<QPoint> Game::getShortestPath(QPoint start) {
     QList<QPoint> path = BFS(start, false);
     if (!path.empty()) {
@@ -313,6 +310,15 @@ QList<QPoint> Game::getShortestPath(QPoint start) {
     return BFS(start, isBlocked_);
 }
 
+/**
+ * @brief Breadth-first search algorithm, assuming one can only move either vertically or horizontally.
+ * @param start The path coordinate to start from.
+ * @param blocked Whether to search in obstructed or unobstructed mode.
+ * That is:
+ * - Obstructed mode: All paths to the end are assumed to be obstructed, so search for the shortest route while assuming there are no obstructions.
+ * - Unobstructed mode: It is assumed that there is at least one path to the ending point. Find the shortest route.
+ * @return A list of path coordinates, representing the shortest path enemies can take to get to the ending point.
+ */
 QList<QPoint> Game::BFS(QPoint start, bool blocked) {
     QQueue<QList<QPoint>> to_visit;
     QList<QPoint> initial;
@@ -352,6 +358,9 @@ QList<QPoint> Game::BFS(QPoint start, bool blocked) {
     return QList<QPoint>();
 }
 
+/**
+ * @brief Plays a random keyboard noise (hitsound) from the four available hitsounds.
+ */
 void Game::playHitsound() {
     int choice = QRandomGenerator::global()->bounded(0,4);
     switch (choice){
@@ -370,6 +379,9 @@ void Game::playHitsound() {
     }
 }
 
+/**
+ * @brief Plays a mouseclick sound.
+ */
 void Game::playClicksound() {
     clicksound_.play();
 }

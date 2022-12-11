@@ -117,7 +117,13 @@ signals:
 private:
     QPoint start_;
     QPoint end_;
+    /**
+     * @brief The decoded map, represented by a matrix of characters.
+     */
     QList<QList<QString>> map_;
+    /**
+     * @brief A boolean stating if all paths are obstructed or not.
+     */
     bool isBlocked_;
 
     int gamemode_; // 0 = sandbox, 1 = easy, 2 = hard
@@ -137,14 +143,32 @@ private:
     QList<QStringList> waves_;
     QList<Enemy*> activeEnemies_;
 
+    /**
+     * @brief The first hitsound sample.
+     */
     QSoundEffect hitsound1_;
+    /**
+     * @brief The second hitsound sample.
+     */
     QSoundEffect hitsound2_;
+    /**
+     * @brief The third hitsound sample.
+     */
     QSoundEffect hitsound3_;
+    /**
+     * @brief The fourth hitsound sample.
+     */
     QSoundEffect hitsound4_;
+    /**
+     * @brief The mouseclick sound sample.
+     */
     QSoundEffect clicksound_;
 
     Modes::MODES mode_;
     TowerTypes::TYPES buildType_;
+    /**
+     * @brief The shortest path between the starting point and the ending point.
+     */
     QList<QPoint> shortest_path_;
 
     QGraphicsTextItem * roundDisplay;
