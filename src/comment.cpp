@@ -1,6 +1,6 @@
 /**
  * @file comment.cpp
- * @authors rv (harvey.lim@aalto.fi)
+ * @authors Harvey Lim (harvey.lim@aalto.fi)
  * @brief File containing the comment tower class methods.
  * @version 0.1
  * @date 2022-12-11

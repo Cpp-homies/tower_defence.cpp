@@ -1,6 +1,6 @@
 /**
  * @file path.h
- * @authors rv (harvey.lim@aalto.fi)
+ * @authors Harvey Lim (harvey.lim@aalto.fi)
  * @brief File containing the path tile class definition and its members.
  * @version 0.1
  * @date 2022-12-11

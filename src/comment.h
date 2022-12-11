@@ -1,6 +1,6 @@
 /**
  * @file comment.h
- * @authors rv (harvey.lim@aalto.fi)
+ * @authors Harvey Lim (harvey.lim@aalto.fi)
  * @brief File containing the comment tower class and its members.
  * @version 0.1
  * @date 2022-12-11
