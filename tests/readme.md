@@ -1,18 +1,7 @@
-# Test files
+# Testing
 
-It is a common practice to do unit tests of each class before you integrate it into the project to validate its operation.
-In this folder, you can create your own unit test files to validate the operation of your components.
+Testing was a crucial part of the development. Especially because we had no prior experience of qt. Testing was done manually. When the project advanced and got bigger and more complex, reproducing the found bugs was harder and harder. Thus we started to use screen capture to investigate the steps leading to that bug. Also qt creator’s built in debugger was used extensively. Git, miro board and telegram chat was used to track the issues and the progress to solve them. 
+A few problems required cooperation since some parts of the project were more familiar to other team members. For these situations we used Telegram or had extra meetings on our Discord channel.
 
-> It might be a good idea to also take some notes about the tests since you are required to 
-  report these in the final report.
 
-# Unit Tests
-
-## Test of MyClass
-
-**Involved Classes:**
-
-**Test File:**
-
-**Results:**
 
