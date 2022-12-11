@@ -1,6 +1,6 @@
 /**
  * @file path.cpp
- * @authors rv (harvey.lim@aalto.fi)
+ * @authors rv (harvey.lim@aalto.fi), Saku Kovanen (saku.kovanen@aalto.fi)
  * @brief File containing the path tile methods.
  * @version 0.1
  * @date 2022-12-11

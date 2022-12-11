@@ -1,6 +1,6 @@
 /**
  * @file square.h
- * @author Hung (), Saku (saku.kovanen@aalto.fi)
+ * @authors Siim Kasela (siim.kasela@aalto.fi), Saku Kovanen (saku.kovanen@aalto.fi), rv (harvey.lim@aalto.fi), Hung Vu (hung.h.vu@aalto.fi)
  * @brief 
  * @version 0.1
  * @date 2022-12-11
