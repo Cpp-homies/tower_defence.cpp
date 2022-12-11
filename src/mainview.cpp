@@ -1,7 +1,21 @@
+/**
+ * @file mainview.cpp
+ * @author Siim Kasela (siim.kasela@aalto.fi)
+ * @brief 
+ * @version 0.1
+ * @date 2022-12-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "mainview.h"
 #include "menu.h"
 
-
+/**
+ * @brief Construct a new Main View:: Main View object
+ * 
+ * @param parent 
+ */
 MainView::MainView(QWidget *parent): QGraphicsView(parent)
 {
     setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
@@ -17,22 +31,41 @@ MainView::MainView(QWidget *parent): QGraphicsView(parent)
     setBackgroundBrush(brush);
 
 }
-
+/**
+ * @brief Returns the game pointer.
+ * 
+ * @return Game* 
+ */
 Game* MainView::getGame()
 {
     return game_;
 }
 
+/**
+ * @brief Returns the menu pointer.
+ * 
+ * @return Menu* 
+ */
 Menu* MainView::getMenu()
 {
     return menu_;
 }
 
+/**
+ * @brief Returns the leaderboard pointer.
+ * 
+ * @return Leaderboard* 
+ */
 Leaderboard* MainView::getLeaderboard()
 {
     return leaderboard_;
 }
 
+/**
+ * @brief Switches to the game scene.
+ * 
+ * @param gamemode The mode of the game to use.
+ */
 void MainView::showGame(int gamemode)
 {
     game_= new Game(this, gamemode);
@@ -44,6 +77,10 @@ void MainView::showGame(int gamemode)
     setBackgroundBrush(brush);
 }
 
+/**
+ * @brief Switches to the menu scene.
+ * 
+ */
 void MainView::showMenu()
 {
     setScene(menu_);
@@ -54,6 +91,10 @@ void MainView::showMenu()
     setBackgroundBrush(brush);
 }
 
+/**
+ * @brief Switches to the leaderboard scene.
+ * 
+ */
 void MainView::showLeaderboard()
 {
 

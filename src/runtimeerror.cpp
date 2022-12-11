@@ -1,7 +1,23 @@
+/**
+ * @file runtimeerror.cpp
+ * @author Siim Kasela (siim.kasela@aalto.fi)
+ * @brief 
+ * @version 0.1
+ * @date 2022-12-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "runtimeerror.h"
 #include <QGraphicsScene>
 #include "game.h"
-
+/**
+ * @brief Construct a new Runtime Error:: Runtime Error object
+ * Checks the subType of the enemy and sets the members accordingly.
+ * @param subType 
+ * @param path 
+ * @param matrixPath 
+ */
 RuntimeError::RuntimeError(RuntimeErrorType subType, QList<QPointF> path,QList<QPoint> matrixPath): Enemy(EnemyType::MemoryError,path, matrixPath), name_(subType)
 {
     switch (subType) {
@@ -28,7 +44,13 @@ RuntimeError::RuntimeError(RuntimeErrorType subType, QList<QPointF> path,QList<Q
     }
     pointValue_=health_;
 }
-
+/**
+ * @brief Is called when the enemy takes damage from a projectile.
+ * Since this a boss enemy it releases faster minions and has a nr of stages.
+ * Minions are released after every stage.
+ * 
+ * @param damage The amount of damage taken by the projectile.
+ */
 void RuntimeError::takeDamage(int damage)
 {
     if(name_==RuntimeErrorType::StackOverflow)
