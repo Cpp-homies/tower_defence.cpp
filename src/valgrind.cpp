@@ -9,6 +9,12 @@
 #define PROJECTILE_MOVE_INTERVAL 8 // default 10, lower to get faster projectiles
 #define PROJECTILE_STEP_SIZE 30 // theoretical max is 32. If large, projectile may skip over enemies
 
+/**
+ * @brief Valgrind constructor, create a Valgrind tower at the given posion on the grid map.
+ * @param row the row of the tower in the game's grid map
+ * @param column the column of the tower in the game's grid map
+ * @param parent the parent of this item
+ */
 Valgrind::Valgrind(int row, int column, QWidget *parent/*unused*/)
     : Tower(row, column, RANGE, DAMAGE, ATTACK_INTERVAL, parent) {
     // set Valgrind stats
@@ -44,6 +50,9 @@ bool Valgrind::upgrade() {
     }
 }
 
+/**
+ * @brief Update the tower's text description base on the tower's current stats.
+ */
 void Valgrind::updateDescription() {
     // create new Tooltip description for this tower
     description_ = QString("<p><b>-Valgrind level %1-</b><br><br>"
@@ -112,6 +121,10 @@ void Valgrind::updateDescription() {
     this->setToolTip(description_);
 }
 
+/**
+ * @brief Fire a projectile at the given target position.
+ * @param targetPos the position of the target to fire at
+ */
 void Valgrind::fire(QPointF targetPos) {
 
     Projectile* projectile = new Projectile(damage_, projectileImagePath_, pierce_, PROJECTILE_STEP_SIZE);

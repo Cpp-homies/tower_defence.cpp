@@ -6,6 +6,13 @@
 #define SPEED_BUFF 1.1
 
 //Tower(int x, int y, int range, int damage, int attackSpeed, QWidget *parent=nullptr);
+
+/**
+ * @brief Search_Engine constructor, create a Search Engine tower at the given posion on the grid map.
+ * @param row the row of the tower in the game's grid map
+ * @param column the column of the tower in the game's grid map
+ * @param parent the parent of this item
+ */
 Search_Engine::Search_Engine(int row, int column, QWidget *parent)
     : Tower(row, column, RANGE, 10, 3000, parent) {
     // set Search Engine stats
@@ -54,6 +61,9 @@ Search_Engine::Search_Engine(int row, int column, QWidget *parent)
     attackTimer_->stop();
 }
 
+/**
+ * @brief Search_Engine destructor, delete the Search Engine's members and remove the buff from all the towers buffed by this one.
+ */
 Search_Engine::~Search_Engine() {
     // if the game mode is not exit
     if (view->getGame()->getMode() != Modes::exit) {
@@ -81,6 +91,10 @@ Search_Engine::~Search_Engine() {
   buffTimer_->deleteLater();
 }
 
+/**
+ * @brief Upgrade this tower if possible.
+ * @return true if the upgrade was successful, false otherwise.
+ */
 bool Search_Engine::upgrade() {
   if (upgradeLevel_ >= maxLevel_) {
       // already max level
@@ -136,6 +150,9 @@ bool Search_Engine::upgrade() {
   }
 }
 
+/**
+ * @brief Update the tower's text description base on the tower's current stats.
+ */
 void Search_Engine::updateDescription() {
     // create new Tooltip description for this tower
     description_ = QString("<p><b>-Search Engine level %1-</b><br><br>"
@@ -204,7 +221,9 @@ void Search_Engine::updateDescription() {
     this->setToolTip(description_);
 }
 
-// function for periodically check for new towers in range and buff them
+/**
+ * @brief Send out a buff pulse that buff all towers in range that haven't been buffed yet.
+ */
 void Search_Engine::buffPulse() {
   // get all the nearby towers in range
   QList<Tower*> towers = getTowersInRange();

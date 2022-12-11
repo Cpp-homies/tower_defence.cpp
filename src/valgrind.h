@@ -3,6 +3,9 @@
 
 #include "tower.h"
 
+/**
+ * @brief A Valgrind tower type. Can attack all enemies on the map. Inherited from Tower class.
+ */
 class Valgrind : public Tower {
 public:
     Valgrind(int row, int column, QWidget *parent=nullptr);

@@ -3,6 +3,9 @@
 
 #include "tower.h"
 
+/**
+ * @brief A CS Student tower type. Can attack enemies in range. Inherited from Tower class.
+ */
 class CS_Student : public Tower {
 public:
     CS_Student();

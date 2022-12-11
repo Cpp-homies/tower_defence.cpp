@@ -12,6 +12,13 @@
 #define DAMAGE_BUFF 1.5
 
 //Tower(int x, int y, int range, int damage, int attackSpeed, QWidget *parent=nullptr);
+
+/**
+ * @brief TA constructor, create a TA tower at the given posion on the grid map.
+ * @param row the row of the tower in the game's grid map
+ * @param column the column of the tower in the game's grid map
+ * @param parent the parent of this item
+ */
 TA::TA(int row, int column, QWidget *parent)
     : Tower(row, column, RANGE, DAMAGE, ATTACK_INTERVAL, parent) {
     // set TA stats
@@ -58,6 +65,9 @@ TA::TA(int row, int column, QWidget *parent)
     buffTimer_->start(buffPulseInterval_);
 }
 
+/**
+ * @brief TA destructor, delete the TA's members and remove the buff from all the towers buffed by this one.
+ */
 TA::~TA() {
     if (view->getGame()->getMode() != Modes::exit) {
         // remove the buff from all buffed towers
@@ -78,6 +88,10 @@ TA::~TA() {
     buffTimer_->deleteLater();
 }
 
+/**
+ * @brief Upgrade this tower if possible.
+ * @return true if the upgrade was successful, false otherwise.
+ */
 bool TA::upgrade() {
     if (upgradeLevel_ >= maxLevel_) {
         // already max level
@@ -135,6 +149,9 @@ bool TA::upgrade() {
     }
 }
 
+/**
+ * @brief Update the tower's text description base on the tower's current stats.
+ */
 void TA::updateDescription() {
     // create new Tooltip description for this tower
     description_ = QString("<p><b>-Teaching Assistant level %1-</b><br><br>"
@@ -203,7 +220,9 @@ void TA::updateDescription() {
     this->setToolTip(description_);
 }
 
-// function for periodically check for new towers in range and buff them
+/**
+ * @brief Send out a buff pulse that buff all towers in range that haven't been buffed yet.
+ */
 void TA::buffPulse() {
     // get all the nearby towers in range
     QList<Tower*> towers = getTowersInRange();
@@ -224,7 +243,10 @@ void TA::buffPulse() {
     }
 }
 
-//Fires a projectile at the targetPos
+/**
+ * @brief Fire a projectile at the given target position.
+ * @param targetPos the position of the target to fire at
+ */
 void TA::fire(QPointF targetPos) {
 
     Projectile* projectile = new Projectile(damage_, projectileImagePath_, pierce_, projectileStepSize_);
