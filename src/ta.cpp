@@ -1,4 +1,5 @@
 #include "ta.h"
+#include "projectile.h"
 
 // TA tower upgrade costs can be set here
 #define LVL2_COST 500

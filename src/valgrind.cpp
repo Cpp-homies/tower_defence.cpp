@@ -1,4 +1,5 @@
 #include "valgrind.h"
+#include "projectile.h"
 
 // Stats can be set here
 #define RANGE 50

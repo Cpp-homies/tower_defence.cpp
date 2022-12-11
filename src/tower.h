@@ -2,8 +2,6 @@
 #define TOWER_H
 
 #include "square.h"
-#include "game.h"
-#include "projectile.h"
 #include <QGraphicsEllipseItem>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsItem>
