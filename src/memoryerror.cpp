@@ -1,5 +1,21 @@
+/**
+ * @file memoryerror.cpp
+ * @author Siim Kasela (siim.kasela@aalto.fi)
+ * @brief 
+ * @version 0.1
+ * @date 2022-12-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "memoryerror.h"
-
+/**
+ * @brief Construct a new Memory Error:: Memory Error object
+ * Checks the subtype of the error and set the members accordingly.
+ * @param subType 
+ * @param path 
+ * @param matrixPath 
+ */
 MemoryError::MemoryError(MemoryErrorType subType, QList<QPointF> path,QList<QPoint> matrixPath): Enemy(EnemyType::MemoryError,path, matrixPath), name_(subType)
 {
     switch (subType) {
