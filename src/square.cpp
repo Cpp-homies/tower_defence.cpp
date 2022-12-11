@@ -1,3 +1,13 @@
+/**
+ * @file square.cpp
+ * @authors Hung (), Saku (saku.kovanen@aalto.fi)
+ * @brief 
+ * @version 0.1
+ * @date 2022-12-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "square.h"
 #include "projectile.h"
 #include "tower.h"
@@ -9,6 +19,13 @@
 
 extern MainView * view;
 
+/**
+ * @brief Construct a new Square:: Square object
+ * 
+ * @param x X-coordinate of the square.
+ * @param y Y-coordinate of the square.
+ * @param parent The parent widget of the square.
+ */
 Square::Square(int x, int y, QWidget *parent)
     : QLabel(parent), x_(x), y_(y)
 {
@@ -20,6 +37,10 @@ Square::Square(int x, int y, QWidget *parent)
     setPixmap(tilePics[r]);
 }
 
+/**
+ * @brief Based on the mode, builds a tower or upgrades the tower on the square. Changes mode back to normal mode.
+ * 
+ */
 void Square::mousePressEvent(QMouseEvent* /* unused */){
     // switch case for handling interactions
     // according to current mode of the game
@@ -159,7 +180,11 @@ void Square::mousePressEvent(QMouseEvent* /* unused */){
 
 }
 
-//Fires a projectile at the targetPos
+/**
+ * @brief Fires a projectile at the targetPos.
+ * 
+ * @param targetPos Position the projectile is fired at.
+ */
 void Square::fire(QPointF targetPos){
 
     Projectile* projectile = new Projectile(10);
@@ -179,13 +204,25 @@ void Square::fire(QPointF targetPos){
 
 }
 
-
+/**
+ * @brief Rotates the square pixmap.
+ * 
+ * @param angle Angle to be rotated.
+ * @param pixmap Pixmap to be rotated.
+ * @return QPixmap Rotated pixmap.
+ */
 QPixmap Square::rotate(int angle, QPixmap pixmap){
     QTransform rotation;
     rotation.rotate(angle);
     return pixmap.transformed(rotation);
 }
 
+/**
+ * @brief Checks if the square is a tower.
+ * 
+ * @return true Square is a tower.
+ * @return false Square is not a tower.
+ */
 bool Square::isTower(){
     return false;
 }
