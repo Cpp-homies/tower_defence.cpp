@@ -47,7 +47,7 @@ Tower::Tower(int row, int column, QWidget *parent) : Square(column, row, parent)
     description_ = "";
 
     // has no attack speed buff at creation
-    bool hasAtkSpdBuff_ = false;
+    hasAtkSpdBuff_ = false;
 
     // initialize the targetable enemies, at first the tower can only target normal enemies
     std::fill_n(targetAble_, std::size(targetAble_), false);
@@ -96,7 +96,7 @@ Tower::Tower(int row, int column, int range, int damage,
     damageMultiplier_ = 1.0;
 
     // has no attack speed buff at creation
-    bool hasAtkSpdBuff_ = false;
+    hasAtkSpdBuff_ = false;
 
     // initialize the targetable enemies, at first the tower can only target normal enemies
     std::fill_n(targetAble_, std::size(targetAble_), false);
