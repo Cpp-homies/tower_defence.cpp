@@ -1076,11 +1076,19 @@ int Game::getLevel() const {
 int Game::getScore() const {
     return score_;
 }
-
+/**
+ * @brief Get the mode
+ * 
+ * @return Modes::MODES Mode which is active
+ */
 Modes::MODES Game::getMode() const {
     return mode_;
 }
-
+/**
+ * @brief Get the tower type
+ * 
+ * @return TowerTypes::TYPES The type of tower selected 
+ */
 TowerTypes::TYPES Game::getBuildType() const {
     return buildType_;
 }
@@ -1847,6 +1855,10 @@ bool Game::upgradeTower(int row, int column) {
     }
 }
 
+/**
+ * @brief Resets the button highlighting back to default.
+ * 
+ */
 void Game::resetButtonHighlights() {
     build_CSstudent->setStyleSheet(buildButtonStylesheet);
     build_TA->setStyleSheet(buildButtonStylesheet);
@@ -1865,6 +1877,11 @@ void Game::resetButtonHighlights() {
     sellButton->setBrush(brush);
 }
 
+/**
+ * @brief Hides attack areas of all the towers except the tower on the specified coordinate.
+ * 
+ * @param exclude Coordinates of tower of which attack area will not be hidden by this function.
+ */
 void Game::hideAllAttackAreasExcept(QPointF exclude)
 {
     for (QPointF towerCoords : coordsOfTowers){
