@@ -1,5 +1,4 @@
 #include "menu.h"
-#include "square.h"
 #include "mainview.h"
 #include "button.h"
 #include <QGraphicsScene>

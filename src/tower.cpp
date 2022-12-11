@@ -11,9 +11,6 @@
 #include <QTimer>
 #include <typeinfo>
 #include <iostream>
-#include "compilererror.h"
-#include "memoryerror.h"
-#include "runtimeerror.h"
 #include "mainview.h"
 #include <QGraphicsPixmapItem>
 #include <cmath>

@@ -1,6 +1,5 @@
 #include "cs_student.h"
 #include "tower.h"
-#include "projectile.h"
 #include <QGraphicsEllipseItem>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsItem>
@@ -8,7 +7,6 @@
 #include <QObject>
 #include <QList>
 #include "mainview.h"
-#include "enemy.h"
 #include <QTimer>
 
 // CS tower upgrade costs can be set here
