@@ -1,3 +1,13 @@
+/**
+ * @file main.cpp
+ * @authors Siim Kasela (siim.kasela@aalto.fi), Saku Kovanen (saku.kovanen@aalto.fi), rv (harvey.lim@aalto.fi), Hung Vu (hung.h.vu@aalto.fi)
+ * @brief 
+ * @version 0.1
+ * @date 2022-12-11
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include <QApplication>
 #include "mainview.h"
 

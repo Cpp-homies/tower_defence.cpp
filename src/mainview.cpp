@@ -1,6 +1,6 @@
 /**
  * @file mainview.cpp
- * @author Siim Kasela (siim.kasela@aalto.fi)
+ * @author Siim Kasela (siim.kasela@aalto.fi), Saku Kovanen (saku.kovanen@aalto.fi)
  * @brief 
  * @version 0.1
  * @date 2022-12-11

@@ -1,6 +1,6 @@
 /**
  * @file leaderboard.h
- * @authors Siim (siim.kasela@aalto.fi), Saku (saku.kovanen@aalto.fi)
+ * @authors Siim (siim.kasela@aalto.fi), Saku Kovanen (saku.kovanen@aalto.fi)
  * @brief 
  * @version 0.1
  * @date 2022-12-11
