@@ -58,5 +58,6 @@
         <file>sounds/Hitsound2.wav</file>
         <file>sounds/Hitsound3.wav</file>
         <file>sounds/Hitsound4.wav</file>
+        <file>sounds/Mouseclick.wav</file>
     </qresource>
 </RCC>

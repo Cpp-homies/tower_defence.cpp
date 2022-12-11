@@ -1,5 +1,6 @@
 #include "runtimeerror.h"
 #include <QGraphicsScene>
+#include "game.h"
 
 RuntimeError::RuntimeError(RuntimeErrorType subType, QList<QPointF> path,QList<QPoint> matrixPath): Enemy(EnemyType::MemoryError,path, matrixPath), name_(subType)
 {
@@ -37,6 +38,7 @@ void RuntimeError::takeDamage(int damage)
 
         if(health_/increments > (health_-damage)/increments && (health_-damage)/increments >=1)
         {
+            qobject_cast<Game*>(scene())->playClicksound();
             int stage = (health_-damage)/increments-1;
             QList<QPixmap> stageImgs;
             stageImgs << QPixmap(":/images/Stack_overflow6.png") << QPixmap(":/images/Stack_overflow5.png")
@@ -55,6 +57,7 @@ void RuntimeError::takeDamage(int damage)
         }
 
     }
+    qobject_cast<Game*>(scene())->playHitsound();
     health_-=damage;
     if(health_<=0)
     {

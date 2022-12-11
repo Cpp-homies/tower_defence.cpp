@@ -43,6 +43,7 @@ public:
     void readWaveFile();
 
     void playHitsound();
+    void playClicksound();
 
     QList<QPointF> convertCoordinates(QList<QPoint> path);
     QList<QPoint> getShortestPath(QPoint start);
@@ -140,6 +141,7 @@ private:
     QSoundEffect hitsound2_;
     QSoundEffect hitsound3_;
     QSoundEffect hitsound4_;
+    QSoundEffect clicksound_;
 
     Modes::MODES mode_;
     TowerTypes::TYPES buildType_;

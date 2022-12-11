@@ -146,10 +146,12 @@ Game::Game(QObject* parent,int gamemode)
     hitsound2_.setSource(QUrl::fromLocalFile(":/sounds/Hitsound2.wav"));
     hitsound3_.setSource(QUrl::fromLocalFile(":/sounds/Hitsound3.wav"));
     hitsound4_.setSource(QUrl::fromLocalFile(":/sounds/Hitsound4.wav"));
-    hitsound1_.setVolume(1.0f);
-    hitsound2_.setVolume(1.0f);
-    hitsound3_.setVolume(1.0f);
-    hitsound4_.setVolume(1.0f);
+    clicksound_.setSource(QUrl::fromLocalFile(":/sounds/Mouseclick.wav"));
+    hitsound1_.setVolume(0.1f);
+    hitsound2_.setVolume(0.1f);
+    hitsound3_.setVolume(0.1f);
+    hitsound4_.setVolume(0.1f);
+    clicksound_.setVolume(1.0f);
 }
 
 void Game::createMap(){
@@ -366,7 +368,10 @@ void Game::playHitsound() {
             hitsound4_.play();
         break;
     }
-    //qInfo() << choice;
+}
+
+void Game::playClicksound() {
+    clicksound_.play();
 }
 
 void Game::createGameControls()
