@@ -148,6 +148,18 @@ Game::Game(QObject* parent,int gamemode)
     connect(this,SIGNAL(error(QString)),this, SLOT(showError(QString)));
     connect(this,SIGNAL(wallAction()),this,SLOT(updatePaths()));
     connect(this,SIGNAL(gameLost()),this,SLOT(stopEnemies()));
+    if (gamemode == 1){
+        connect(this,&Game::gameWon,this,[this]()
+        {
+            QMessageBox::information(qobject_cast<QWidget*>(this), tr("Nice!"),
+                         "You did well! But to get a high score you need play in hard mode.");
+        });
+        connect(this,&Game::gameLost,this,[this]()
+        {
+            QMessageBox::information(qobject_cast<QWidget*>(this), tr("Almost!"),
+                         "You did well! But to get a high score you need play in hard mode.");
+        });
+    }
     if (gamemode == 2){     // update Leaderboard if gamemode is hard
         connect(this,SIGNAL(gameWon()),this,SLOT(updateLeaderboard()));
         connect(this,SIGNAL(gameLost()),this,SLOT(updateLeaderboard()));
