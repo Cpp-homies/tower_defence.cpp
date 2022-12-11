@@ -1035,7 +1035,7 @@ void Game::enemyDies(int value)
     activeEnemies_.removeOne(enemy);
     activeEnemies_.squeeze();
     updateEnemyCount();
-    QTimer* timer = new QTimer();
+    QTimer* timer = new QTimer(this);
     timer->setSingleShot(true);
     timer->setInterval(500);
     timer->callOnTimeout([this](){
