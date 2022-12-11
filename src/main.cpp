@@ -15,6 +15,10 @@ int main(int argc, char *argv[])
     view->showMenu();
 
     view->show();
-    QObject::connect(&a,&QApplication::aboutToQuit,[](){delete view;});
+    QObject::connect(&a,&QApplication::aboutToQuit,[]()
+    {
+        view->getGame()->setMode(Modes::exit);
+        delete view;
+    });
     return a.exec();
 }
